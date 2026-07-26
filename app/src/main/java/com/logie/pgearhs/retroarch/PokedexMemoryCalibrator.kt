@@ -37,7 +37,17 @@ package com.logie.pgearhs.retroarch
 class PokedexMemoryCalibrator(
     private val host: String,
     private val port: Int,
-    private val onDiagnostic: (String) -> Unit = {}
+    private val onDiagnostic: (String) -> Unit = {},
+    /**
+     * If you know exactly how many species are currently owned/seen (e.g. the player just
+     * told you), this searches for an exact bit-count match *without* the owned⊆seen
+     * subset constraint or the SaveBlock2 header plausibility checks - useful when those
+     * assumptions might themselves be wrong and are hiding the real struct. Temporary/
+     * manual debugging aid for now; worth wiring into a real UI field if it keeps proving
+     * useful.
+     */
+    private val knownOwnedCount: Int? = null,
+    private val knownSeenCount: Int? = null
 ) {
 
     companion object {
@@ -163,6 +173,18 @@ class PokedexMemoryCalibrator(
             return Result.Failure("Memory read failed.")
         }
         onDiagnostic("Calibration ($mode): dump took ${System.currentTimeMillis() - dumpStart}ms (${snapshot.size} bytes).")
+
+        if (knownOwnedCount != null && knownSeenCount != null) {
+            val exactMatches = findExactCountCandidates(snapshot, knownOwnedCount, knownSeenCount)
+            onDiagnostic(
+                "Calibration ($mode): exact-count search (owned=$knownOwnedCount seen=$knownSeenCount, " +
+                    "no subset/header constraints) found ${exactMatches.size} match(es)" +
+                    (if (exactMatches.isNotEmpty()) " @ ${exactMatches.joinToString { "0x" + it.toString(16) }}" else "")
+            )
+            if (exactMatches.size == 1) {
+                return buildSuccess(snapshot, offset = exactMatches[0], source = "$mode exact-count match")
+            }
+        }
 
         val candidates = findPokedexCandidates(snapshot)
         onDiagnostic(
@@ -297,6 +319,33 @@ class PokedexMemoryCalibrator(
         }
 
         return true
+    }
+
+    /**
+     * Bare-minimum search: only requires a valid nationalMagic byte, then an exact bit-count
+     * match on owned[]/seen[] - no subset constraint, no header plausibility checks. Used
+     * when we know the real counts (the player just told us) and want to rule out one of
+     * the other assumptions being wrong and hiding the real struct.
+     */
+    private fun findExactCountCandidates(snapshot: ByteArray, expectedOwned: Int, expectedSeen: Int): List<Int> {
+        val candidates = mutableListOf<Int>()
+        val lastOwnedOffset = snapshot.size - 2 * NUM_DEX_FLAG_BYTES
+
+        var ownedOffset = NATIONAL_MAGIC_TO_OWNED
+        while (ownedOffset < lastOwnedOffset) {
+            val pokedexOffset = ownedOffset - POKEDEX_OWNED_OFFSET
+            val magic = snapshot.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)
+            if (magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED) {
+                val owned = countSetBitsAt(snapshot, ownedOffset)
+                if (owned == expectedOwned) {
+                    val seen = countSetBitsAt(snapshot, ownedOffset + NUM_DEX_FLAG_BYTES)
+                    if (seen == expectedSeen) candidates.add(pokedexOffset)
+                }
+            }
+            ownedOffset++
+        }
+
+        return candidates
     }
 
     /**

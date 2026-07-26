@@ -86,7 +86,12 @@ class PokedexActivity : BaseImmersiveActivity() {
 
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
-                PokedexMemoryCalibrator(host, port, onDiagnostic = DebugLog::add).calibrateAndRead()
+                PokedexMemoryCalibrator(
+                    host, port,
+                    onDiagnostic = DebugLog::add,
+                    knownOwnedCount = 3,
+                    knownSeenCount = 17
+                ).calibrateAndRead()
             }
 
             when (result) {
