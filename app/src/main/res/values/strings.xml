@@ -20,4 +20,10 @@
     <string name="downloading_update">Downloading %1$s…</string>
     <string name="update_check_failed_title">Update check failed</string>
     <string name="update_download_failed_title">Download failed</string>
+    <string name="pokedex_national">National</string>
+    <string name="pokedex_regional">Regional</string>
+    <string name="pokedex_number_format">No. %03d</string>
+    <string name="pokedex_height_weight_format">%1$.1f m · %2$.1f kg</string>
+    <string name="pokedex_abilities_label">Abilities</string>
+    <string name="pokedex_base_stats_label">Base Stats</string>
 </resources>

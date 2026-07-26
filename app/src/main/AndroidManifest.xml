@@ -44,5 +44,17 @@
             android:resizeableActivity="true"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density" />
 
+        <activity
+            android:name=".pokedex.PokedexActivity"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density" />
+
+        <activity
+            android:name=".pokedex.PokedexDetailActivity"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density" />
+
     </application>
 </manifest>

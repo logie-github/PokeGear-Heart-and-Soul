@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/johtoBackground"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/nationalDexButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/pokedex_national"
+        app:layout_constraintEnd_toStartOf="@id/regionalDexButton"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/regionalDexButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/pokedex_regional"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/nationalDexButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/pokedexColumnGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pokedexList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/pokedexColumnGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nationalDexButton" />
+
+    <com.logie.pgearhs.pokedex.PokemonPreviewSpriteView
+        android:id="@+id/previewSprite"
+        android:layout_width="256px"
+        android:layout_height="256px"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/pokedexColumnGuideline"
+        app:layout_constraintTop_toBottomOf="@id/nationalDexButton" />
+
+    <TextView
+        android:id="@+id/previewName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/johtoOnBackground"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/previewSprite"
+        app:layout_constraintStart_toStartOf="@id/previewSprite"
+        app:layout_constraintTop_toBottomOf="@id/previewSprite" />
+
+    <TextView
+        android:id="@+id/previewNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:alpha="0.8"
+        android:textColor="@color/johtoOnBackground"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/previewSprite"
+        app:layout_constraintStart_toStartOf="@id/previewSprite"
+        app:layout_constraintTop_toBottomOf="@id/previewName" />
+
+    <TextView
+        android:id="@+id/previewType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:alpha="0.8"
+        android:textColor="@color/johtoOnBackground"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/previewSprite"
+        app:layout_constraintStart_toStartOf="@id/previewSprite"
+        app:layout_constraintTop_toBottomOf="@id/previewNumber" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
