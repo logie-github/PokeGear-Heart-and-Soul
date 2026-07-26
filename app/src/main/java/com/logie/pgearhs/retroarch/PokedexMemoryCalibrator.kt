@@ -10,10 +10,17 @@ import kotlinx.coroutines.delay
  * no player action needed. Once located, national-dex-enabled state and the owned/seen
  * bitfields are read directly out of the already-captured snapshot (no extra round trips).
  *
- * Relative offsets below come straight from this build's include/global.h:
+ * Relative offsets below come from this build's include/global.h, with one correction:
  *   struct SaveBlock2 { ... playTimeMinutes @0x10, playTimeSeconds @0x11, playTimeVBlanks
  *   @0x12 ... pokedex @0x18 { order, mode, nationalMagic @+0x02, ... owned[] @+0x10,
- *   seen[] @+0x44 } }
+ *   seen[] @+0x44 (comment) } }
+ * The struct's own "0x44" offset comment for seen[] is stale: NUM_DEX_FLAG_BYTES =
+ * ROUND_BITS_TO_BYTES(NUM_SPECIES) where NUM_SPECIES = SPECIES_EGG = 462 (species.h),
+ * giving 58 bytes per bitfield, not the 52 the comment's offset implies - so seen[]'s real
+ * offset is owned[]'s start (+0x10) plus 58 bytes = +0x4A, six bytes later than commented.
+ * Reading from +0x44 shifts almost the whole seen[] bitfield by 6 bytes (48 bits) relative
+ * to the real dex numbering - confirmed the hard way via a real debug report showing ~250
+ * unrelated species incorrectly marked visible.
  *
  * This only locates SaveBlock2. The game's full national-dex check also cross-references
  * VAR_NATIONAL_DEX and FLAG_SYS_NATIONAL_DEX in SaveBlock1 (a separately-allocated struct,
@@ -38,9 +45,10 @@ class PokedexMemoryCalibrator(
         private const val MAX_PLAUSIBLE_PLAYTIME_HOURS = 999
         private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
+        private const val NUM_DEX_FLAG_BYTES = 58 // ROUND_BITS_TO_BYTES(SPECIES_EGG=462)
         private const val POKEDEX_OWNED_OFFSET = 0x10
-        private const val POKEDEX_SEEN_OFFSET = 0x44
-        private const val DEX_BITFIELD_READ_BYTES = 64 // generous - covers up to dex #512
+        private const val POKEDEX_SEEN_OFFSET = POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES // 0x4A, not the stale 0x44 comment
+        private const val DEX_BITFIELD_READ_BYTES = NUM_DEX_FLAG_BYTES
 
         private const val NATIONAL_MAGIC_ENABLED: Byte = 0xDA.toByte()
         private const val NATIONAL_MAGIC_DISABLED: Byte = 0x00
@@ -126,6 +134,11 @@ class PokedexMemoryCalibrator(
                     pokedexOffset + POKEDEX_SEEN_OFFSET,
                     pokedexOffset + POKEDEX_SEEN_OFFSET + DEX_BITFIELD_READ_BYTES
                 )
+                onDiagnostic(
+                    "Calibration: pokedex struct at dump offset 0x${pokedexOffset.toString(16)}, " +
+                        "nationalMagic=${if (nationalEnabled) "0xDA" else "0x00"}, " +
+                        "owned bits set=${owned.countSetBits()}, seen bits set=${seen.countSetBits()}"
+                )
                 Result.Success(nationalEnabled, owned, seen)
             }
             else -> Result.Failure(
@@ -193,4 +206,6 @@ class PokedexMemoryCalibrator(
     /** GBA is little-endian ARM. */
     private fun readU16LE(bytes: ByteArray, offset: Int): Int =
         bytes[offset].toUByteValue() or (bytes[offset + 1].toUByteValue() shl 8)
+
+    private fun ByteArray.countSetBits(): Int = sumOf { Integer.bitCount(it.toUByteValue()) }
 }
