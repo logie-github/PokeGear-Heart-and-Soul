@@ -2,13 +2,20 @@ package com.logie.pgearhs.retroarch
 
 /**
  * SaveBlock1/SaveBlock2 are runtime-allocated - there's no fixed compile-time address to
- * read from (no .map/.elf exists for this exact build). Instead of guessing an address, or
- * indirectly hunting for a live counter (play time) and walking to the pokedex struct from
- * there, this searches directly for the pokedex data itself using a structural constraint
- * that's true regardless of what's actually been caught: every bit set in owned[] must also
- * be set in seen[] (you can't catch something you've never seen), and owned[]/seen[]/
- * nationalMagic sit at fixed, known distances from each other. That's specific enough to
- * find in a single EWRAM dump, no diffing or waiting required.
+ * read from (no .map/.elf exists for this exact build). Two strategies, tried in order:
+ *
+ * 1. Known-pointer fast path: this hack is pokeemerald-based, and pret's public symbol
+ *    table for vanilla pokeemerald (github.com/pret/pokeemerald, `symbols` branch) gives
+ *    gSaveBlock2Ptr's own fixed IWRAM address as 0x03005D90 (a global pointer *variable*,
+ *    not the struct itself - the struct it points to is dynamically allocated in EWRAM).
+ *    If this hack kept the same global variable layout as vanilla pokeemerald (plausible
+ *    for a decomp-based hack that hasn't restructured its globals), reading 4 bytes there
+ *    gives the real runtime EWRAM address directly - no scanning needed at all.
+ * 2. Structural fallback: if that address doesn't resolve to something valid (the hack
+ *    shifted its global layout), search EWRAM directly for the pokedex data itself using a
+ *    constraint that's true regardless of what's been caught: every bit set in owned[]
+ *    must also be set in seen[] (can't catch what you've never seen), with owned[]/seen[]/
+ *    nationalMagic at their known fixed distances from each other.
  *
  * Relative offsets below come from this build's include/global.h, with one correction:
  *   struct Pokedex { order, mode, nationalMagic @+0x02, ... owned[] @+0x10, seen[] @+0x44
@@ -18,14 +25,14 @@ package com.logie.pgearhs.retroarch
  * giving 58 bytes per bitfield, not the 52 the comment's offset implies - so seen[]'s real
  * offset is owned[]'s start (+0x10) plus 58 bytes = +0x4A, six bytes later than commented.
  *
- * Tries RetroArchMemoryBridge.CommandMode.CORE_MEMORY first, then falls back to CORE_RAM
- * if nothing is found - these two commands can address memory differently depending on
- * whether the running core implements full libretro memory-map descriptors (see
- * RetroArchMemoryBridge's doc comment), and PokemonResort's Gen2/Gen3 support does the
- * same retry for the same reason.
+ * Both strategies try RetroArchMemoryBridge.CommandMode.CORE_MEMORY first, then CORE_RAM -
+ * these two commands can address memory differently depending on whether the running core
+ * implements full libretro memory-map descriptors (see RetroArchMemoryBridge's doc
+ * comment); PokemonResort's Gen2/Gen3 support retries with the other command for the same
+ * reason. The known-pointer path specifically needs CORE_MEMORY's real bus addressing
+ * (0x0300xxxx for IWRAM) to make sense, so CORE_RAM is only tried for the fallback scan.
  *
- * [onDiagnostic] is an optional hook for logging step-by-step timing/candidate-count info
- * (wire it to DebugLog.add).
+ * [onDiagnostic] is an optional hook for logging step-by-step info (wire it to DebugLog.add).
  */
 class PokedexMemoryCalibrator(
     private val host: String,
@@ -34,11 +41,20 @@ class PokedexMemoryCalibrator(
 ) {
 
     companion object {
+        // pret/pokeemerald symbols (github.com/pret/pokeemerald, `symbols` branch), a
+        // public reference for vanilla Emerald - may or may not still hold for this hack.
+        private const val KNOWN_SAVEBLOCK2_PTR_ADDR = 0x03005D90
+
+        private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
+        private const val EWRAM_SIZE = RetroArchMemoryBridge.EWRAM_SIZE
+
+        private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
         private const val NUM_DEX_FLAG_BYTES = 58 // ROUND_BITS_TO_BYTES(SPECIES_EGG=462)
         private const val POKEDEX_OWNED_OFFSET = 0x10
         private const val POKEDEX_SEEN_OFFSET = POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES // 0x4A, not the stale 0x44 comment
         private const val NATIONAL_MAGIC_TO_OWNED = POKEDEX_OWNED_OFFSET - POKEDEX_NATIONAL_MAGIC_OFFSET
+        private const val POKEDEX_STRUCT_READ_BYTES = POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES
 
         private const val NATIONAL_MAGIC_ENABLED: Byte = 0xDA.toByte()
         private const val NATIONAL_MAGIC_DISABLED: Byte = 0x00
@@ -61,11 +77,13 @@ class PokedexMemoryCalibrator(
             return Result.Failure("Can't reach RetroArch - check host/port and that it's running.")
         }
 
-        val memoryResult = attemptWithMode(RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
+        tryKnownPointer()?.let { return it }
+
+        val memoryResult = attemptStructuralScan(RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
         if (memoryResult is Result.Success) return memoryResult
 
-        onDiagnostic("Calibration: CORE_MEMORY found nothing usable, retrying with CORE_RAM…")
-        val ramResult = attemptWithMode(RetroArchMemoryBridge.CommandMode.CORE_RAM)
+        onDiagnostic("Calibration: CORE_MEMORY scan found nothing usable, retrying with CORE_RAM…")
+        val ramResult = attemptStructuralScan(RetroArchMemoryBridge.CommandMode.CORE_RAM)
         if (ramResult is Result.Success) return ramResult
 
         // Prefer whichever failure is more specific than a bare "not found".
@@ -76,7 +94,38 @@ class PokedexMemoryCalibrator(
         }
     }
 
-    private suspend fun attemptWithMode(mode: RetroArchMemoryBridge.CommandMode): Result {
+    /** Tries pret's known vanilla-pokeemerald gSaveBlock2Ptr address. Null = didn't pan out, fall through. */
+    private fun tryKnownPointer(): Result? {
+        val bridge = RetroArchMemoryBridge(host, port, commandMode = RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
+
+        val ptrBytes = bridge.readMemory(KNOWN_SAVEBLOCK2_PTR_ADDR, 4) ?: run {
+            onDiagnostic("Calibration: couldn't read known gSaveBlock2Ptr address 0x${KNOWN_SAVEBLOCK2_PTR_ADDR.toString(16)}.")
+            return null
+        }
+        val saveBlock2Address = readU32LE(ptrBytes, 0)
+        onDiagnostic("Calibration: gSaveBlock2Ptr (known pokeemerald addr) = 0x${saveBlock2Address.toString(16)}")
+
+        if (saveBlock2Address < EWRAM_BASE || saveBlock2Address >= EWRAM_BASE + EWRAM_SIZE) {
+            onDiagnostic("Calibration: that's outside EWRAM - this hack's global layout doesn't match vanilla pokeemerald here.")
+            return null
+        }
+
+        val pokedexAddress = saveBlock2Address + SAVEBLOCK2_TO_POKEDEX
+        val structBytes = bridge.readMemory(pokedexAddress, POKEDEX_STRUCT_READ_BYTES) ?: run {
+            onDiagnostic("Calibration: pointer looked valid but reading the pokedex struct failed.")
+            return null
+        }
+
+        val validated = validatePokedexStruct(structBytes, offset = 0)
+        if (!validated) {
+            onDiagnostic("Calibration: known pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
+            return null
+        }
+
+        return buildSuccess(structBytes, offset = 0, source = "known pointer")
+    }
+
+    private suspend fun attemptStructuralScan(mode: RetroArchMemoryBridge.CommandMode): Result {
         val bridge = RetroArchMemoryBridge(host, port, commandMode = mode)
 
         val dumpStart = System.currentTimeMillis()
@@ -94,28 +143,36 @@ class PokedexMemoryCalibrator(
                 "Couldn't find the registered-Pokemon data in memory. Make sure a save is " +
                     "actually loaded (past the title/intro screen)."
             )
-            1 -> {
-                val pokedexOffset = candidates[0]
-                val nationalEnabled = snapshot[pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET] == NATIONAL_MAGIC_ENABLED
-                val owned = snapshot.copyOfRange(
-                    pokedexOffset + POKEDEX_OWNED_OFFSET,
-                    pokedexOffset + POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES
-                )
-                val seen = snapshot.copyOfRange(
-                    pokedexOffset + POKEDEX_SEEN_OFFSET,
-                    pokedexOffset + POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES
-                )
-                onDiagnostic(
-                    "Calibration ($mode): pokedex struct at dump offset 0x${pokedexOffset.toString(16)}, " +
-                        "nationalMagic=${if (nationalEnabled) "0xDA" else "0x00"}, " +
-                        "owned bits set=${owned.countSetBits()}, seen bits set=${seen.countSetBits()}"
-                )
-                Result.Success(nationalEnabled, owned, seen)
-            }
+            1 -> buildSuccess(snapshot, offset = candidates[0], source = "$mode scan")
             else -> Result.Failure(
                 "Found ${candidates.size} possible matches in memory - too ambiguous to trust. Try again."
             )
         }
+    }
+
+    private fun buildSuccess(bytes: ByteArray, offset: Int, source: String): Result.Success {
+        val nationalEnabled = bytes[offset + POKEDEX_NATIONAL_MAGIC_OFFSET] == NATIONAL_MAGIC_ENABLED
+        val owned = bytes.copyOfRange(offset + POKEDEX_OWNED_OFFSET, offset + POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES)
+        val seen = bytes.copyOfRange(offset + POKEDEX_SEEN_OFFSET, offset + POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES)
+        onDiagnostic(
+            "Calibration ($source): nationalMagic=${if (nationalEnabled) "0xDA" else "0x00"}, " +
+                "owned bits set=${owned.countSetBits()}, seen bits set=${seen.countSetBits()}"
+        )
+        return Result.Success(nationalEnabled, owned, seen)
+    }
+
+    private fun validatePokedexStruct(bytes: ByteArray, offset: Int): Boolean {
+        val magic = bytes.getOrNull(offset + POKEDEX_NATIONAL_MAGIC_OFFSET) ?: return false
+        if (magic != NATIONAL_MAGIC_ENABLED && magic != NATIONAL_MAGIC_DISABLED) return false
+
+        var seenHasAnyBitSet = false
+        for (i in 0 until NUM_DEX_FLAG_BYTES) {
+            val ownedByte = bytes[offset + POKEDEX_OWNED_OFFSET + i].toUByteValue()
+            val seenByte = bytes[offset + POKEDEX_SEEN_OFFSET + i].toUByteValue()
+            if (seenByte != 0) seenHasAnyBitSet = true
+            if (ownedByte and seenByte.inv() != 0) return false
+        }
+        return seenHasAnyBitSet
     }
 
     /**
@@ -129,31 +186,21 @@ class PokedexMemoryCalibrator(
 
         var ownedOffset = NATIONAL_MAGIC_TO_OWNED
         while (ownedOffset < lastOwnedOffset) {
-            val magic = snapshot[ownedOffset - NATIONAL_MAGIC_TO_OWNED]
-            if (magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED) {
-                val seenOffset = ownedOffset + NUM_DEX_FLAG_BYTES
-                var isSubset = true
-                var seenHasAnyBitSet = false
-                for (i in 0 until NUM_DEX_FLAG_BYTES) {
-                    val ownedByte = snapshot[ownedOffset + i].toUByteValue()
-                    val seenByte = snapshot[seenOffset + i].toUByteValue()
-                    if (seenByte != 0) seenHasAnyBitSet = true
-                    if (ownedByte and seenByte.inv() != 0) {
-                        isSubset = false
-                        break
-                    }
-                }
-                // Reject the trivial all-zero match - blank/unused memory regions satisfy
-                // "owned ⊆ seen" vacuously, so require at least one real seen species.
-                if (isSubset && seenHasAnyBitSet) {
-                    candidates.add(ownedOffset - POKEDEX_OWNED_OFFSET)
-                }
+            val pokedexOffset = ownedOffset - POKEDEX_OWNED_OFFSET
+            if (validatePokedexStruct(snapshot, pokedexOffset)) {
+                candidates.add(pokedexOffset)
             }
             ownedOffset++
         }
 
         return candidates
     }
+
+    private fun readU32LE(bytes: ByteArray, offset: Int): Int =
+        (bytes[offset].toUByteValue()) or
+            (bytes[offset + 1].toUByteValue() shl 8) or
+            (bytes[offset + 2].toUByteValue() shl 16) or
+            (bytes[offset + 3].toUByteValue() shl 24)
 
     private fun Byte.toUByteValue(): Int = this.toInt() and 0xFF
 
