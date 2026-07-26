@@ -198,6 +198,23 @@ class PokedexMemoryCalibrator(
             if (exactMatches.size == 1) {
                 return buildSuccess(snapshot, offset = exactMatches[0], source = "$mode exact-count match")
             }
+            if (exactMatches.size > 1) {
+                // An exact owned/seen bit-count match is a far stronger signal than the
+                // structural checks below - worth disambiguating on its own terms (real
+                // IWRAM pointer, then header plausibility) before falling through to the
+                // much noisier structural scan.
+                if (mode == RetroArchMemoryBridge.CommandMode.CORE_MEMORY) {
+                    resolveViaIwramPointer(exactMatches, snapshot, source = "$mode exact-count + IWRAM pointer")?.let { return it }
+                }
+                val headerValidated = exactMatches.filter { validateSaveBlock2Header(snapshot, it - SAVEBLOCK2_TO_POKEDEX) }
+                onDiagnostic(
+                    "Calibration ($mode): of those, ${headerValidated.size} also pass SaveBlock2 header " +
+                        "plausibility" + (if (headerValidated.isNotEmpty()) " @ ${headerValidated.joinToString { "0x" + it.toString(16) }}" else "")
+                )
+                if (headerValidated.size == 1) {
+                    return buildSuccess(snapshot, offset = headerValidated[0], source = "$mode exact-count + header match")
+                }
+            }
         }
 
         val candidates = findPokedexCandidates(snapshot)
@@ -238,7 +255,7 @@ class PokedexMemoryCalibrator(
      * candidates' computed addresses. A real pointer landing exactly on one of them is a
      * much stronger signal than any plausibility heuristic - it's not a coincidence.
      */
-    private fun resolveViaIwramPointer(candidates: List<Int>, snapshot: ByteArray): Result? {
+    private fun resolveViaIwramPointer(candidates: List<Int>, snapshot: ByteArray, source: String = "IWRAM pointer match"): Result? {
         val bridge = RetroArchMemoryBridge(host, port, commandMode = RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
         // readRegion, not readMemory - a 32KB read as hex text in one UDP response would
         // blow past the receive buffer and silently fail to parse, same as dumpEwram()
@@ -259,7 +276,7 @@ class PokedexMemoryCalibrator(
         onDiagnostic("Calibration: IWRAM pointer scan found ${matches.size} candidate(s) with a real pointer aimed at them.")
 
         return when (matches.size) {
-            1 -> buildSuccess(snapshot, offset = matches.first(), source = "IWRAM pointer match")
+            1 -> buildSuccess(snapshot, offset = matches.first(), source = source)
             else -> null
         }
     }
