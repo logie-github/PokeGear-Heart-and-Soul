@@ -185,6 +185,8 @@ class PokedexMemoryCalibrator(
             return null
         }
 
+        logKnownPointerDiagnostics(block)
+
         val validated = validatePokedexStruct(block, offset = SAVEBLOCK2_TO_POKEDEX)
         if (!validated) {
             onDiagnostic("Calibration: candidate pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
@@ -192,6 +194,41 @@ class PokedexMemoryCalibrator(
         }
 
         return buildSuccess(block, offset = SAVEBLOCK2_TO_POKEDEX, source = "known pointer 0x${knownAddr.toString(16)}")
+    }
+
+    /**
+     * Verbatim diagnostic dump of everything validatePokedexStruct() checks for the
+     * known-pointer path, logged unconditionally (pass or fail) - this address is
+     * confirmed correct (byte-verified directly against the real ROM's own literal pool,
+     * not inferred from a rebuild), so if validation still fails here the bug is in one of
+     * these checks/offsets, not the address. This pinpoints which one.
+     */
+    private fun logKnownPointerDiagnostics(block: ByteArray) {
+        val pokedexOffset = SAVEBLOCK2_TO_POKEDEX
+        val magic = block.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)?.toUByteValue()
+        val owned = countSetBitsAt(block, pokedexOffset + POKEDEX_OWNED_OFFSET)
+        val seen = countSetBitsAt(block, pokedexOffset + POKEDEX_SEEN_OFFSET)
+
+        val gender = block.getOrNull(PLAYER_GENDER_OFFSET)?.toUByteValue()
+        val hours = readU16LE(block, PLAYTIME_HOURS_OFFSET)
+        val minutes = block.getOrNull(PLAYTIME_MINUTES_OFFSET)?.toUByteValue()
+        val seconds = block.getOrNull(PLAYTIME_SECONDS_OFFSET)?.toUByteValue()
+        val vblanks = block.getOrNull(PLAYTIME_VBLANKS_OFFSET)?.toUByteValue()
+        val nameBytes = (0 until PLAYER_NAME_LENGTH).map { block.getOrNull(PLAYER_NAME_OFFSET + it)?.toUByteValue() }
+        val headerOk = validateSaveBlock2Header(block, 0)
+
+        val dumpLen = minOf(block.size, SAVEBLOCK2_TO_POKEDEX + 24)
+        val hex = block.copyOfRange(0, dumpLen).joinToString(" ") { "%02x".format(it.toUByteValue()) }
+
+        onDiagnostic(
+            "Calibration diag: nationalMagic=0x${magic?.toString(16) ?: "?"} ownedBits=$owned seenBits=$seen " +
+                "headerPlausible=$headerOk"
+        )
+        onDiagnostic(
+            "Calibration diag: gender=$gender hours=$hours minutes=$minutes seconds=$seconds vblanks=$vblanks " +
+                "nameBytes=$nameBytes"
+        )
+        onDiagnostic("Calibration diag: first $dumpLen bytes from SaveBlock2 = $hex")
     }
 
     private suspend fun attemptStructuralScan(mode: RetroArchMemoryBridge.CommandMode): Result {
