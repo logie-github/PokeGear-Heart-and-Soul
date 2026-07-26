@@ -5,4 +5,7 @@
     <color name="johtoAccent">#F2C230</color>
     <color name="pgMenuBackground">#FFFFFF</color>
     <color name="pgOnMenuBackground">#1B2A4A</color>
+    <color name="pgBarWhite">#FFFFFF</color>
+    <color name="pgBarGray">#AAAAAA</color>
+    <color name="pgBarDarkGray">#555555</color>
 </resources>

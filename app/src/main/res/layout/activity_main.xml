@@ -17,6 +17,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Header bar, drawn above the dots but underneath the header image and nav icon. -->
+    <View
+        android:id="@+id/headerBar"
+        android:layout_width="0dp"
+        android:layout_height="80px"
+        android:background="@color/pgBarGray"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/navIconRightPaddingGuideline"
         android:layout_width="wrap_content"
@@ -33,8 +43,8 @@
 
     <ImageView
         android:id="@+id/headerImage"
-        android:layout_width="325px"
-        android:layout_height="50px"
+        android:layout_width="650px"
+        android:layout_height="100px"
         android:layout_marginTop="15px"
         android:contentDescription="@string/app_name"
         android:src="@drawable/header"
@@ -48,6 +58,34 @@
         android:layout_marginTop="5px"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/navIconRightPaddingGuideline" />
+
+    <!-- Divider stripes touching the nav icon's bottom pixel. -->
+    <View
+        android:id="@+id/navIconDividerWhite"
+        android:layout_width="0dp"
+        android:layout_height="10px"
+        android:background="@color/pgBarWhite"
+        app:layout_constraintTop_toBottomOf="@id/navIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/navIconDividerGray"
+        android:layout_width="0dp"
+        android:layout_height="15px"
+        android:background="@color/pgBarGray"
+        app:layout_constraintTop_toBottomOf="@id/navIconDividerWhite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/navIconDividerDarkGray"
+        android:layout_width="0dp"
+        android:layout_height="5px"
+        android:background="@color/pgBarDarkGray"
+        app:layout_constraintTop_toBottomOf="@id/navIconDividerGray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/helloText"
