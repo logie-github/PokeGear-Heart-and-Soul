@@ -1,0 +1,88 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build release APK
+    runs-on: ubuntu-latest
+
+    env:
+      PGEARHS_KEYSTORE_B64: ${{ secrets.PGEARHS_KEYSTORE_B64 }}
+      PGEARHS_KEYSTORE_PASSWORD: ${{ secrets.PGEARHS_KEYSTORE_PASSWORD }}
+      PGEARHS_KEY_ALIAS: ${{ secrets.PGEARHS_KEY_ALIAS }}
+      PGEARHS_KEY_PASSWORD: ${{ secrets.PGEARHS_KEY_PASSWORD }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set release tag
+        shell: bash
+        run: |
+          BASE_VERSION=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts)
+          test -n "$BASE_VERSION"
+          AUTO_TAG="v${BASE_VERSION}.${GITHUB_RUN_ID}"
+          echo "RELEASE_TAG=$AUTO_TAG" >> "$GITHUB_ENV"
+
+      - name: Set signing path
+        run: echo "PGEARHS_KEYSTORE_PATH=$RUNNER_TEMP/pgearhs-release.jks" >> "$GITHUB_ENV"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare release signing
+        run: |
+          test -n "$PGEARHS_KEYSTORE_B64"
+          printf '%s' "$PGEARHS_KEYSTORE_B64" | base64 --decode > "$PGEARHS_KEYSTORE_PATH"
+
+      - name: Build release APK
+        run: |
+          ./gradlew assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "PokeGear-HeartSoul-${RELEASE_TAG}.apk"
+
+      - name: Verify APK signing certificate
+        run: |
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          EXPECTED=$(keytool -exportcert -keystore "$PGEARHS_KEYSTORE_PATH" -storepass "$PGEARHS_KEYSTORE_PASSWORD" -alias "$PGEARHS_KEY_ALIAS" |
+            openssl dgst -sha256 | awk '{print $2}')
+          ACTUAL=$("$APKSIGNER" verify --print-certs-pem "PokeGear-HeartSoul-${RELEASE_TAG}.apk" |
+            openssl x509 -outform DER |
+            openssl dgst -sha256 |
+            awk '{print $NF}')
+          test -n "$EXPECTED"
+          if [[ "$ACTUAL" != "$EXPECTED" ]]; then
+            echo "APK certificate mismatch: actual=$ACTUAL expected=$EXPECTED" >&2
+            exit 1
+          fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PokeGear-HeartSoul-${{ env.RELEASE_TAG }}
+          path: PokeGear-HeartSoul-*.apk
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.RELEASE_TAG }}
+          commit: ${{ github.sha }}
+          name: PokéGear Heart & Soul ${{ env.RELEASE_TAG }}
+          artifacts: PokeGear-HeartSoul-${{ env.RELEASE_TAG }}.apk
+          allowUpdates: true
+          replacesArtifacts: true
+          generateReleaseNotes: true

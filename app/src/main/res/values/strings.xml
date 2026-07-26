@@ -9,4 +9,15 @@
     <string name="menu_background_movement_left">Scroll left</string>
     <string name="menu_background_movement_figure_eight">Figure 8</string>
     <string name="menu_background_movement_none">None</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="checking_for_updates">Checking GitHub for the latest release…</string>
+    <string name="up_to_date_title">Up to date</string>
+    <string name="up_to_date_message">You already have the latest version of PokéGear: Heart &amp; Soul.</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_message">PokéGear: Heart &amp; Soul %1$s is available. Download and install it?</string>
+    <string name="update_action_later">Later</string>
+    <string name="update_action_update">Update</string>
+    <string name="downloading_update">Downloading %1$s…</string>
+    <string name="update_check_failed_title">Update check failed</string>
+    <string name="update_download_failed_title">Download failed</string>
 </resources>
