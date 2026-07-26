@@ -32,8 +32,10 @@ class PokedexMemoryCalibrator(
 ) {
 
     companion object {
+        private const val PLAYTIME_HOURS_OFFSET = 0x0E // u16, immediately before minutes
         private const val PLAYTIME_MINUTES_OFFSET = 0x10
         private const val PLAYTIME_VBLANKS_OFFSET = 0x12
+        private const val MAX_PLAUSIBLE_PLAYTIME_HOURS = 999
         private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
         private const val POKEDEX_OWNED_OFFSET = 0x10
@@ -97,9 +99,16 @@ class PokedexMemoryCalibrator(
             magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED
         }
         onDiagnostic(
-            "Calibration: ${candidates.size} raw candidate(s) matched the play-time timing " +
-                "signature, ${validated.size} passed the nationalMagic check."
+            "Calibration: ${candidates.size} raw candidate(s) matched the play-time+hours " +
+                "timing signature, ${validated.size} passed the nationalMagic check."
         )
+        if (candidates.isNotEmpty() && validated.isEmpty()) {
+            val seenMagicBytes = candidates.joinToString(", ") { pokedexOffset ->
+                val magic = snapshotB.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)
+                "0x" + (magic?.toInt()?.and(0xFF) ?: -1).toString(16)
+            }
+            onDiagnostic("Calibration: rejected candidate(s) had nationalMagic byte(s): $seenMagicBytes")
+        }
 
         return when (validated.size) {
             0 -> Result.Failure(
@@ -139,7 +148,7 @@ class PokedexMemoryCalibrator(
         val candidates = mutableListOf<Int>()
         val lastIndex = minOf(before.size, after.size) - (PLAYTIME_VBLANKS_OFFSET + 1)
 
-        for (i in 0 until lastIndex) {
+        for (i in PLAYTIME_MINUTES_OFFSET - PLAYTIME_HOURS_OFFSET until lastIndex) {
             val minutesA = before[i].toUByteValue()
             val secondsA = before[i + 1].toUByteValue()
             val vblanksA = before[i + 2].toUByteValue()
@@ -161,6 +170,15 @@ class PokedexMemoryCalibrator(
             val maxExpected = elapsedSeconds + slackSeconds
             if (delta < minExpected || delta > maxExpected) continue
 
+            // Cross-check playTimeHours (u16, immediately before minutes): must be a small,
+            // non-decreasing number - rules out coincidental matches elsewhere in RAM whose
+            // "minutes/seconds/vblanks"-shaped bytes just happened to satisfy the above.
+            val hoursOffset = i - (PLAYTIME_MINUTES_OFFSET - PLAYTIME_HOURS_OFFSET)
+            val hoursA = readU16LE(before, hoursOffset)
+            val hoursB = readU16LE(after, hoursOffset)
+            if (hoursA > MAX_PLAUSIBLE_PLAYTIME_HOURS || hoursB > MAX_PLAUSIBLE_PLAYTIME_HOURS) continue
+            if (hoursB < hoursA) continue
+
             val pokedexOffset = i - PLAYTIME_MINUTES_OFFSET + SAVEBLOCK2_TO_POKEDEX
             if (pokedexOffset < 0 || pokedexOffset + POKEDEX_SEEN_OFFSET + DEX_BITFIELD_READ_BYTES > after.size) continue
 
@@ -171,4 +189,8 @@ class PokedexMemoryCalibrator(
     }
 
     private fun Byte.toUByteValue(): Int = this.toInt() and 0xFF
+
+    /** GBA is little-endian ARM. */
+    private fun readU16LE(bytes: ByteArray, offset: Int): Int =
+        bytes[offset].toUByteValue() or (bytes[offset + 1].toUByteValue() shl 8)
 }
