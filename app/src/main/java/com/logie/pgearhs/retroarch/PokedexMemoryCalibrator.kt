@@ -81,7 +81,7 @@ class PokedexMemoryCalibrator(
         // work than all the others combined.
         private const val MAX_PLAUSIBLE_SEEN_COUNT = 100
 
-        private const val MAX_LOGGED_CANDIDATES = 100
+        private const val MAX_LOGGED_CANDIDATES = 500
     }
 
     sealed class Result {
