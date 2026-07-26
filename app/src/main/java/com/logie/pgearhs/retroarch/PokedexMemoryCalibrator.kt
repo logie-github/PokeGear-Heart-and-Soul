@@ -120,8 +120,9 @@ class PokedexMemoryCalibrator(
 
         return when (validated.size) {
             0 -> Result.Failure(
-                "Couldn't find the save data in memory. Make sure the game is running, " +
-                    "in the overworld (not a menu/battle), and left idle during calibration."
+                "Couldn't find the save data in memory. Make sure a save is actually loaded " +
+                    "(past the title/intro screen) - menus and battles are fine, but play time " +
+                    "won't be ticking yet if you're still at the title screen."
             )
             1 -> {
                 val pokedexOffset = validated[0]
