@@ -38,4 +38,11 @@
     <string name="retroarch_sync_status_success">Synced (%1$s Dex) — %2$d registered.</string>
     <string name="pokedex_sync_status_active">Live synced — showing %1$d registered species only.</string>
     <string name="pokedex_sync_status_inactive">Not live-synced — showing the full dex. Sync in Settings.</string>
+    <string name="debug_log_button">Debug Log</string>
+    <string name="debug_log_title">Debug Log</string>
+    <string name="debug_log_empty">No entries logged yet.</string>
+    <string name="debug_log_send">Send to Git</string>
+    <string name="debug_log_close">Close</string>
+    <string name="debug_log_report_ready">Debug report %1$s is ready. Submit the issue to send it.</string>
+    <string name="debug_log_open_failed">Could not open GitHub report %1$s: %2$s</string>
 </resources>
