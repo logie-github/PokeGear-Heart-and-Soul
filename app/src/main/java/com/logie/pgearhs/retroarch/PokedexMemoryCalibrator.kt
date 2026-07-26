@@ -48,6 +48,11 @@ class PokedexMemoryCalibrator(
         private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
         private const val EWRAM_SIZE = RetroArchMemoryBridge.EWRAM_SIZE
 
+        // IWRAM is where a real gSaveBlock2Ptr global pointer variable would live (see
+        // KNOWN_SAVEBLOCK2_PTR_ADDR above) - only 32KB, cheap to scan in full.
+        private const val IWRAM_BASE = 0x03000000
+        private const val IWRAM_SIZE = 0x8000
+
         private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
         private const val NUM_DEX_FLAG_BYTES = 58 // ROUND_BITS_TO_BYTES(SPECIES_EGG=462)
@@ -177,10 +182,46 @@ class PokedexMemoryCalibrator(
                     val seen = countSetBitsAt(snapshot, offset + POKEDEX_SEEN_OFFSET)
                     onDiagnostic("Calibration ($mode): candidate @0x${offset.toString(16)} - owned=$owned seen=$seen")
                 }
+
+                if (mode == RetroArchMemoryBridge.CommandMode.CORE_MEMORY) {
+                    resolveViaIwramPointer(candidates, snapshot)?.let { return it }
+                }
+
                 Result.Failure(
                     "Found ${candidates.size} possible matches in memory - too ambiguous to trust. Try again."
                 )
             }
+        }
+    }
+
+    /**
+     * A real gSaveBlock2Ptr global pointer variable lives somewhere in IWRAM (only 32KB -
+     * cheap to scan in full) holding the exact address of the true SaveBlock2. Rather than
+     * guess one fixed address (which failed - this hack's globals don't match vanilla
+     * pokeemerald), scan all of IWRAM for a pointer matching any of our already-validated
+     * candidates' computed addresses. A real pointer landing exactly on one of them is a
+     * much stronger signal than any plausibility heuristic - it's not a coincidence.
+     */
+    private fun resolveViaIwramPointer(candidates: List<Int>, snapshot: ByteArray): Result? {
+        val bridge = RetroArchMemoryBridge(host, port, commandMode = RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
+        val iwram = bridge.readMemory(IWRAM_BASE, IWRAM_SIZE) ?: run {
+            onDiagnostic("Calibration: couldn't read IWRAM to disambiguate candidates.")
+            return null
+        }
+
+        val expectedAddressToOffset = candidates.associateBy { offset -> EWRAM_BASE + offset - SAVEBLOCK2_TO_POKEDEX }
+
+        val matches = mutableSetOf<Int>()
+        for (i in 0..iwram.size - 4) {
+            val value = readU32LE(iwram, i)
+            expectedAddressToOffset[value]?.let { matches.add(it) }
+        }
+
+        onDiagnostic("Calibration: IWRAM pointer scan found ${matches.size} candidate(s) with a real pointer aimed at them.")
+
+        return when (matches.size) {
+            1 -> buildSuccess(snapshot, offset = matches.first(), source = "IWRAM pointer match")
+            else -> null
         }
     }
 
