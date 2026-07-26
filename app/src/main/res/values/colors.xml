@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="johtoBackground">#1B2A4A</color>
+    <color name="johtoOnBackground">#FFFFFF</color>
+    <color name="johtoAccent">#F2C230</color>
+</resources>

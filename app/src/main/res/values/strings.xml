@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PokéGear: Heart &amp; Soul</string>
+    <string name="hello_johto">Hello Johto!</string>
+    <string name="settings_title">Settings</string>
+    <string name="prefer_top_display_label">Launch on top display</string>
+    <string name="prefer_top_display_hint">Off by default: PokéGear opens on the bottom screen. Turn this on to launch on the top screen instead.</string>
+</resources>
