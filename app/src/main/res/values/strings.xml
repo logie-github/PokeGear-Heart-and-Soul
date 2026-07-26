@@ -37,7 +37,8 @@
     <string name="retroarch_sync_status_failed">Could not locate save data in memory. Make sure the game is running, host/port are correct, and try again.</string>
     <string name="retroarch_sync_status_success">Synced (%1$s Dex) — %2$d registered.</string>
     <string name="pokedex_sync_status_active">Live synced — showing %1$d registered species only.</string>
-    <string name="pokedex_sync_status_inactive">Not live-synced — showing the full dex. Sync in Settings.</string>
+    <string name="pokedex_sync_status_inactive">Not live-synced — showing the full dex. Retry from Settings if this doesn\'t update.</string>
+    <string name="pokedex_sync_status_syncing">Syncing with RetroArch…</string>
     <string name="debug_log_button">Debug Log</string>
     <string name="debug_log_title">Debug Log</string>
     <string name="debug_log_empty">No entries logged yet.</string>

@@ -39,6 +39,8 @@ class PokedexMemoryCalibrator(
 ) {
 
     companion object {
+        private const val PLAYER_NAME_OFFSET = 0x00 // SaveBlock2's very first field
+        private const val PLAYER_NAME_LENGTH = 7 // PLAYER_NAME_LENGTH, constants/global.h
         private const val PLAYTIME_HOURS_OFFSET = 0x0E // u16, immediately before minutes
         private const val PLAYTIME_MINUTES_OFFSET = 0x10
         private const val PLAYTIME_VBLANKS_OFFSET = 0x12
@@ -107,8 +109,8 @@ class PokedexMemoryCalibrator(
             magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED
         }
         onDiagnostic(
-            "Calibration: ${candidates.size} raw candidate(s) matched the play-time+hours " +
-                "timing signature, ${validated.size} passed the nationalMagic check."
+            "Calibration: ${candidates.size} raw candidate(s) matched the play-time+hours+name " +
+                "signature, ${validated.size} passed the nationalMagic check."
         )
         if (candidates.isNotEmpty() && validated.isEmpty()) {
             val seenMagicBytes = candidates.joinToString(", ") { pokedexOffset ->
@@ -192,6 +194,18 @@ class PokedexMemoryCalibrator(
             val hoursB = readU16LE(after, hoursOffset)
             if (hoursA > MAX_PLAUSIBLE_PLAYTIME_HOURS || hoursB > MAX_PLAUSIBLE_PLAYTIME_HOURS) continue
             if (hoursB < hoursA) continue
+
+            // Cross-check playerName (SaveBlock2's very first field): real names don't
+            // contain Gen3 text control codes (scroll/paragraph/newline, 0xFA-0xFE) - a
+            // coincidental match elsewhere in RAM is far more likely to hit these than 7
+            // bytes of an actual player name would.
+            val nameOffset = i - PLAYTIME_MINUTES_OFFSET + PLAYER_NAME_OFFSET
+            if (nameOffset < 0) continue
+            val looksLikeName = (0 until PLAYER_NAME_LENGTH).all { offset ->
+                val b = after[nameOffset + offset].toUByteValue()
+                b !in 0xFA..0xFE
+            }
+            if (!looksLikeName) continue
 
             val pokedexOffset = i - PLAYTIME_MINUTES_OFFSET + SAVEBLOCK2_TO_POKEDEX
             if (pokedexOffset < 0 || pokedexOffset + POKEDEX_SEEN_OFFSET + DEX_BITFIELD_READ_BYTES > after.size) continue

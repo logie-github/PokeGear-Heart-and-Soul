@@ -5,11 +5,19 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logie.pgearhs.R
+import com.logie.pgearhs.debug.DebugLog
 import com.logie.pgearhs.retroarch.LiveDexState
+import com.logie.pgearhs.retroarch.PokedexMemoryCalibrator
+import com.logie.pgearhs.retroarch.RetroArchConnection
+import com.logie.pgearhs.retroarch.RetroArchMemoryBridge
 import com.logie.pgearhs.ui.BaseImmersiveActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PokedexActivity : BaseImmersiveActivity() {
 
@@ -61,6 +69,55 @@ class PokedexActivity : BaseImmersiveActivity() {
         nationalButton.setOnClickListener { setDexMode(DexMode.NATIONAL) }
         regionalButton.setOnClickListener { setDexMode(DexMode.REGIONAL) }
 
+        updateDexModeButtons()
+        updateSyncStatusLabel()
+        updatePreview(animate = false)
+
+        if (!LiveDexState.isSynced) {
+            autoSync()
+        }
+    }
+
+    /** Runs a live sync automatically, no Settings visit or button press required. */
+    private fun autoSync() {
+        val host = RetroArchConnection.getHost(this)
+        val port = RetroArchConnection.getPort(this)
+        syncStatusLabel.text = getString(R.string.pokedex_sync_status_syncing)
+        DebugLog.add("Pokedex auto-sync: attempting against $host:$port…")
+
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val bridge = RetroArchMemoryBridge(host, port)
+                PokedexMemoryCalibrator(bridge, onDiagnostic = DebugLog::add).calibrateAndRead()
+            }
+
+            when (result) {
+                is PokedexMemoryCalibrator.Result.Success -> {
+                    LiveDexState.applySyncResult(result.nationalDexEnabled, result.owned, result.seen)
+                    DebugLog.add(
+                        "Pokedex auto-sync succeeded: " +
+                            "${if (result.nationalDexEnabled) "National" else "Regional"} Dex, " +
+                            "${LiveDexState.registeredCount} registered."
+                    )
+                    dexMode = if (result.nationalDexEnabled) DexMode.NATIONAL else DexMode.REGIONAL
+                    refreshAfterSync()
+                }
+                is PokedexMemoryCalibrator.Result.Failure -> {
+                    DebugLog.add("! Pokedex auto-sync failed: ${result.reason}")
+                    updateSyncStatusLabel()
+                }
+            }
+        }
+    }
+
+    private fun refreshAfterSync() {
+        val currentSpeciesId = entries.getOrNull(selectedIndex)?.speciesId
+        entries = loadEntriesForCurrentMode()
+        selectedIndex = entries.indexOfFirst { it.speciesId == currentSpeciesId }.coerceAtLeast(0)
+
+        adapter.submit(entries, dexMode)
+        adapter.setSelectedIndex(selectedIndex)
+        recyclerView.scrollToPosition(selectedIndex)
         updateDexModeButtons()
         updateSyncStatusLabel()
         updatePreview(animate = false)
