@@ -24,6 +24,23 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/headerLeftPaddingGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <ImageView
+        android:id="@+id/headerImage"
+        android:layout_width="325px"
+        android:layout_height="50px"
+        android:layout_marginTop="15px"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/headerLeftPaddingGuideline" />
+
     <com.logie.pgearhs.ui.SpriteAnimationView
         android:id="@+id/navIcon"
         android:layout_width="90px"
