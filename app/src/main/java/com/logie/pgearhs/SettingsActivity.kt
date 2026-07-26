@@ -1,10 +1,10 @@
 package com.logie.pgearhs
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.logie.pgearhs.ui.BaseImmersiveActivity
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : BaseImmersiveActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

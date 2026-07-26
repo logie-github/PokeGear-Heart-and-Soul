@@ -2,9 +2,9 @@ package com.logie.pgearhs
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.logie.pgearhs.ui.BaseImmersiveActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseImmersiveActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
