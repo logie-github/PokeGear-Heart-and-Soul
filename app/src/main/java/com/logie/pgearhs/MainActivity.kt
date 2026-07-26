@@ -2,6 +2,7 @@ package com.logie.pgearhs
 
 import android.content.Intent
 import android.media.MediaPlayer
+import android.media.PlaybackParams
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.ImageView
@@ -27,7 +28,11 @@ class MainActivity : BaseImmersiveActivity() {
         setContentView(R.layout.activity_main)
 
         menuBackgroundDots = findViewById(R.id.menuBackgroundDots)
-        selectSound = MediaPlayer.create(this, R.raw.se_select)
+        // The on-device MIDI synth doesn't honor this file's encoded tempo, playing it
+        // back at roughly half the intended speed - compensate by doubling playback rate.
+        selectSound = MediaPlayer.create(this, R.raw.se_select)?.apply {
+            playbackParams = PlaybackParams().setSpeed(2f)
+        }
 
         buttonSelection = ButtonSelectionController(
             listOf(
