@@ -100,6 +100,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Right-side button column, 20px under the last header divider line, hanging 50px
+         off the right edge of the screen. -->
+    <ImageView
+        android:id="@+id/buttonMap"
+        android:layout_width="640px"
+        android:layout_height="80px"
+        android:layout_marginTop="20px"
+        android:layout_marginEnd="-50px"
+        android:contentDescription="@null"
+        android:src="@drawable/map"
+        app:layout_constraintTop_toBottomOf="@id/navIconDividerDarkGray"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonCall"
+        android:layout_width="640px"
+        android:layout_height="80px"
+        android:layout_marginTop="20px"
+        android:layout_marginEnd="-50px"
+        android:contentDescription="@null"
+        android:src="@drawable/call"
+        app:layout_constraintTop_toBottomOf="@id/buttonMap"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonSwitchOff"
+        android:layout_width="640px"
+        android:layout_height="80px"
+        android:layout_marginTop="20px"
+        android:layout_marginEnd="-50px"
+        android:contentDescription="@null"
+        android:src="@drawable/switch_off"
+        app:layout_constraintTop_toBottomOf="@id/buttonCall"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/helloText"
         android:layout_width="wrap_content"
