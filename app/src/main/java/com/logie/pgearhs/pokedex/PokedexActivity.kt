@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logie.pgearhs.R
+import com.logie.pgearhs.retroarch.LiveDexState
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 
 class PokedexActivity : BaseImmersiveActivity() {
@@ -18,6 +19,7 @@ class PokedexActivity : BaseImmersiveActivity() {
     private lateinit var previewName: TextView
     private lateinit var previewNumber: TextView
     private lateinit var previewType: TextView
+    private lateinit var syncStatusLabel: TextView
     private lateinit var nationalButton: Button
     private lateinit var regionalButton: Button
 
@@ -34,12 +36,20 @@ class PokedexActivity : BaseImmersiveActivity() {
         previewName = findViewById(R.id.previewName)
         previewNumber = findViewById(R.id.previewNumber)
         previewType = findViewById(R.id.previewType)
+        syncStatusLabel = findViewById(R.id.syncStatusLabel)
         nationalButton = findViewById(R.id.nationalDexButton)
         regionalButton = findViewById(R.id.regionalDexButton)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        entries = PokedexRepository.byNationalDex(this)
+        // If a live sync has run, default to whichever dex the save actually has unlocked.
+        dexMode = if (LiveDexState.isSynced && !LiveDexState.nationalDexEnabled) {
+            DexMode.REGIONAL
+        } else {
+            DexMode.NATIONAL
+        }
+
+        entries = loadEntriesForCurrentMode()
         adapter = PokedexAdapter(entries, dexMode, selectedIndex) { position ->
             selectedIndex = position
             adapter.setSelectedIndex(position)
@@ -52,7 +62,25 @@ class PokedexActivity : BaseImmersiveActivity() {
         regionalButton.setOnClickListener { setDexMode(DexMode.REGIONAL) }
 
         updateDexModeButtons()
+        updateSyncStatusLabel()
         updatePreview(animate = false)
+    }
+
+    private fun loadEntriesForCurrentMode(): List<PokedexEntry> {
+        val all = if (dexMode == DexMode.NATIONAL) {
+            PokedexRepository.byNationalDex(this)
+        } else {
+            PokedexRepository.byRegionalDex(this)
+        }
+        return all.filter { LiveDexState.isVisible(it.nationalDexNumber) }
+    }
+
+    private fun updateSyncStatusLabel() {
+        syncStatusLabel.text = if (LiveDexState.isSynced) {
+            getString(R.string.pokedex_sync_status_active, LiveDexState.registeredCount)
+        } else {
+            getString(R.string.pokedex_sync_status_inactive)
+        }
     }
 
     private fun setDexMode(mode: DexMode) {
@@ -60,11 +88,7 @@ class PokedexActivity : BaseImmersiveActivity() {
 
         val currentSpeciesId = entries.getOrNull(selectedIndex)?.speciesId
         dexMode = mode
-        entries = if (mode == DexMode.NATIONAL) {
-            PokedexRepository.byNationalDex(this)
-        } else {
-            PokedexRepository.byRegionalDex(this)
-        }
+        entries = loadEntriesForCurrentMode()
         selectedIndex = entries.indexOfFirst { it.speciesId == currentSpeciesId }.coerceAtLeast(0)
 
         adapter.submit(entries, dexMode)
@@ -82,6 +106,7 @@ class PokedexActivity : BaseImmersiveActivity() {
     }
 
     private fun moveSelection(delta: Int) {
+        if (entries.isEmpty()) return
         val newIndex = (selectedIndex + delta).coerceIn(0, entries.lastIndex)
         if (newIndex == selectedIndex) return
         selectedIndex = newIndex

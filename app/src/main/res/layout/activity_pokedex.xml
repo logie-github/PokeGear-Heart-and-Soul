@@ -27,6 +27,18 @@
         app:layout_constraintStart_toEndOf="@id/nationalDexButton"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/syncStatusLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:alpha="0.7"
+        android:textColor="@color/johtoOnBackground"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nationalDexButton" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/pokedexColumnGuideline"
         android:layout_width="wrap_content"
@@ -42,7 +54,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/pokedexColumnGuideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nationalDexButton" />
+        app:layout_constraintTop_toBottomOf="@id/syncStatusLabel" />
 
     <com.logie.pgearhs.pokedex.PokemonPreviewSpriteView
         android:id="@+id/previewSprite"
@@ -51,7 +63,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/pokedexColumnGuideline"
-        app:layout_constraintTop_toBottomOf="@id/nationalDexButton" />
+        app:layout_constraintTop_toBottomOf="@id/syncStatusLabel" />
 
     <TextView
         android:id="@+id/previewName"

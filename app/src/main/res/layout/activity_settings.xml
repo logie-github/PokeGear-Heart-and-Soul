@@ -1,107 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/johtoBackground"
-    android:padding="24dp">
+    android:background="@color/johtoBackground">
 
-    <TextView
-        android:id="@+id/settingsHeader"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings_title"
-        android:textColor="@color/johtoOnBackground"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:padding="24dp">
 
-    <TextView
-        android:id="@+id/preferTopDisplayLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/prefer_top_display_label"
-        android:textColor="@color/johtoOnBackground"
-        app:layout_constraintEnd_toStartOf="@id/preferTopDisplaySwitch"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settingsHeader" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/preferTopDisplaySwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/preferTopDisplayLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/preferTopDisplayLabel" />
-
-    <TextView
-        android:id="@+id/preferTopDisplayHint"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:alpha="0.7"
-        android:text="@string/prefer_top_display_hint"
-        android:textColor="@color/johtoOnBackground"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preferTopDisplayLabel" />
-
-    <TextView
-        android:id="@+id/menuBackgroundMovementLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/menu_background_movement_label"
-        android:textColor="@color/johtoOnBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preferTopDisplayHint" />
-
-    <RadioGroup
-        android:id="@+id/menuBackgroundMovementGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/menuBackgroundMovementLabel">
-
-        <RadioButton
-            android:id="@+id/movementOptionLeft"
+        <TextView
+            android:id="@+id/settingsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/johtoAccent"
-            android:text="@string/menu_background_movement_left"
-            android:textColor="@color/johtoOnBackground" />
+            android:text="@string/settings_title"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioButton
-            android:id="@+id/movementOptionFigureEight"
+        <TextView
+            android:id="@+id/preferTopDisplayLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/prefer_top_display_label"
+            android:textColor="@color/johtoOnBackground"
+            app:layout_constraintEnd_toStartOf="@id/preferTopDisplaySwitch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settingsHeader" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/preferTopDisplaySwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/johtoAccent"
-            android:text="@string/menu_background_movement_figure_eight"
-            android:textColor="@color/johtoOnBackground" />
+            app:layout_constraintBottom_toBottomOf="@id/preferTopDisplayLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/preferTopDisplayLabel" />
 
-        <RadioButton
-            android:id="@+id/movementOptionNone"
+        <TextView
+            android:id="@+id/preferTopDisplayHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.7"
+            android:text="@string/prefer_top_display_hint"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/preferTopDisplayLabel" />
+
+        <TextView
+            android:id="@+id/menuBackgroundMovementLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/menu_background_movement_label"
+            android:textColor="@color/johtoOnBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/preferTopDisplayHint" />
+
+        <RadioGroup
+            android:id="@+id/menuBackgroundMovementGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/johtoAccent"
-            android:text="@string/menu_background_movement_none"
-            android:textColor="@color/johtoOnBackground" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuBackgroundMovementLabel">
 
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/movementOptionLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/johtoAccent"
+                android:text="@string/menu_background_movement_left"
+                android:textColor="@color/johtoOnBackground" />
 
-    <Button
-        android:id="@+id/checkForUpdatesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/check_for_updates"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/menuBackgroundMovementGroup" />
+            <RadioButton
+                android:id="@+id/movementOptionFigureEight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/johtoAccent"
+                android:text="@string/menu_background_movement_figure_eight"
+                android:textColor="@color/johtoOnBackground" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <RadioButton
+                android:id="@+id/movementOptionNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/johtoAccent"
+                android:text="@string/menu_background_movement_none"
+                android:textColor="@color/johtoOnBackground" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/checkForUpdatesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/check_for_updates"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuBackgroundMovementGroup" />
+
+        <TextView
+            android:id="@+id/retroArchSyncLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/retroarch_sync_label"
+            android:textColor="@color/johtoOnBackground"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkForUpdatesButton" />
+
+        <EditText
+            android:id="@+id/retroArchHostInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:autofillHints="none"
+            android:hint="@string/retroarch_host_hint"
+            android:inputType="textUri"
+            android:textColor="@color/johtoOnBackground"
+            android:textColorHint="#80FFFFFF"
+            app:layout_constraintEnd_toStartOf="@id/retroArchPortInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retroArchSyncLabel"
+            app:layout_constraintWidth_percent="0.6" />
+
+        <EditText
+            android:id="@+id/retroArchPortInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints="none"
+            android:hint="@string/retroarch_port_hint"
+            android:inputType="number"
+            android:textColor="@color/johtoOnBackground"
+            android:textColorHint="#80FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/retroArchHostInput"
+            app:layout_constraintTop_toBottomOf="@id/retroArchSyncLabel" />
+
+        <Button
+            android:id="@+id/calibrateSyncButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/retroarch_calibrate_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retroArchHostInput" />
+
+        <TextView
+            android:id="@+id/retroArchSyncStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.85"
+            android:text="@string/retroarch_sync_status_idle"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calibrateSyncButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -28,4 +28,14 @@
     <string name="pokedex_base_stats_label">Base Stats</string>
     <string name="pokedex_temp_button">Pokedex (temp)</string>
     <string name="coming_soon_toast">Coming soon!</string>
+    <string name="retroarch_sync_label">RetroArch Live Sync</string>
+    <string name="retroarch_host_hint">Host (e.g. 127.0.0.1)</string>
+    <string name="retroarch_port_hint">Port</string>
+    <string name="retroarch_calibrate_button">Calibrate &amp; Sync Now</string>
+    <string name="retroarch_sync_status_idle">Not synced yet. Make sure the ROM is running in RetroArch and idle (not moving/battling) while calibrating.</string>
+    <string name="retroarch_sync_status_working">Calibrating… reading memory twice, a few seconds apart. Keep the game idle.</string>
+    <string name="retroarch_sync_status_failed">Could not locate save data in memory. Make sure the game is running, host/port are correct, and try again.</string>
+    <string name="retroarch_sync_status_success">Synced (%1$s Dex) — %2$d registered.</string>
+    <string name="pokedex_sync_status_active">Live synced — showing %1$d registered species only.</string>
+    <string name="pokedex_sync_status_inactive">Not live-synced — showing the full dex. Sync in Settings.</string>
 </resources>

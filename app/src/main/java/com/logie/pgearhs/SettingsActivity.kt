@@ -1,10 +1,16 @@
 package com.logie.pgearhs
 
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.logie.pgearhs.retroarch.LiveDexState
+import com.logie.pgearhs.retroarch.PokedexMemoryCalibrator
+import com.logie.pgearhs.retroarch.RetroArchConnection
+import com.logie.pgearhs.retroarch.RetroArchMemoryBridge
 import com.logie.pgearhs.ui.AppRelease
 import com.logie.pgearhs.ui.AppUpdater
 import com.logie.pgearhs.ui.BaseImmersiveActivity
@@ -48,6 +54,49 @@ class SettingsActivity : BaseImmersiveActivity() {
 
         findViewById<android.widget.Button>(R.id.checkForUpdatesButton).setOnClickListener {
             checkForUpdates()
+        }
+
+        setUpRetroArchSync()
+    }
+
+    private fun setUpRetroArchSync() {
+        val hostInput = findViewById<EditText>(R.id.retroArchHostInput)
+        val portInput = findViewById<EditText>(R.id.retroArchPortInput)
+        hostInput.setText(RetroArchConnection.getHost(this))
+        portInput.setText(RetroArchConnection.getPort(this).toString())
+
+        findViewById<android.widget.Button>(R.id.calibrateSyncButton).setOnClickListener {
+            val host = hostInput.text.toString().ifBlank { "127.0.0.1" }
+            val port = portInput.text.toString().toIntOrNull() ?: RetroArchConnection.DEFAULT_PORT
+            RetroArchConnection.setHost(this, host)
+            RetroArchConnection.setPort(this, port)
+            runCalibration(host, port)
+        }
+    }
+
+    private fun runCalibration(host: String, port: Int) {
+        val statusView = findViewById<TextView>(R.id.retroArchSyncStatus)
+        statusView.text = getString(R.string.retroarch_sync_status_working)
+
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val bridge = RetroArchMemoryBridge(host, port)
+                PokedexMemoryCalibrator(bridge).calibrateAndRead()
+            }
+
+            when (result) {
+                is PokedexMemoryCalibrator.Result.Success -> {
+                    LiveDexState.applySyncResult(result.nationalDexEnabled, result.owned, result.seen)
+                    statusView.text = getString(
+                        R.string.retroarch_sync_status_success,
+                        if (result.nationalDexEnabled) getString(R.string.pokedex_national) else getString(R.string.pokedex_regional),
+                        LiveDexState.registeredCount
+                    )
+                }
+                is PokedexMemoryCalibrator.Result.Failure -> {
+                    statusView.text = result.reason
+                }
+            }
         }
     }
 
