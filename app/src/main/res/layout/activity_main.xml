@@ -17,11 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Gear outline, left-aligned, above the dots. Source has built-in padding sized to fit the screen at native scale, so it's placed at its natural size, not stretched. -->
+    <!-- Gear outline, left-aligned, above the dots. Uniformly (not stretch-)scaled so its
+         height exactly matches 1080px, which both Thor displays share, so it fits flush
+         against the top and bottom of the screen without distorting its aspect ratio. -->
     <ImageView
         android:id="@+id/gearOutline"
-        android:layout_width="225px"
-        android:layout_height="800px"
+        android:layout_width="304px"
+        android:layout_height="1080px"
         android:contentDescription="@null"
         android:src="@drawable/gearoutline"
         app:layout_constraintTop_toTopOf="parent"
