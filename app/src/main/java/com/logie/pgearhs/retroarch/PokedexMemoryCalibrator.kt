@@ -58,6 +58,23 @@ class PokedexMemoryCalibrator(
 
         private const val NATIONAL_MAGIC_ENABLED: Byte = 0xDA.toByte()
         private const val NATIONAL_MAGIC_DISABLED: Byte = 0x00
+
+        // Extra SaveBlock2-header plausibility checks, all single-snapshot range/shape
+        // checks (no diffing, no waiting) - "owned ⊆ seen" alone is too weak once the
+        // pokedex is sparse (a fresh/early save has few owned bits, so almost any random
+        // seen[]-shaped bytes satisfy the subset constraint). These use fields at fixed,
+        // known offsets from SaveBlock2's start (include/global.h):
+        //   playerName[7] @+0x00, playerGender @+0x08, playTimeHours (u16) @+0x0E,
+        //   playTimeMinutes @+0x10, playTimeSeconds @+0x11, playTimeVBlanks @+0x12
+        private const val PLAYER_NAME_OFFSET = 0x00
+        private const val PLAYER_NAME_LENGTH = 7 // PLAYER_NAME_LENGTH, constants/global.h
+        private const val PLAYER_GENDER_OFFSET = 0x08
+        private const val PLAYTIME_HOURS_OFFSET = 0x0E
+        private const val PLAYTIME_MINUTES_OFFSET = 0x10
+        private const val PLAYTIME_SECONDS_OFFSET = 0x11
+        private const val PLAYTIME_VBLANKS_OFFSET = 0x12
+        private const val MAX_PLAUSIBLE_PLAYTIME_HOURS = 999
+        private const val WRAP_MINUTES_SECONDS = 60
     }
 
     sealed class Result {
@@ -165,6 +182,8 @@ class PokedexMemoryCalibrator(
         val magic = bytes.getOrNull(offset + POKEDEX_NATIONAL_MAGIC_OFFSET) ?: return false
         if (magic != NATIONAL_MAGIC_ENABLED && magic != NATIONAL_MAGIC_DISABLED) return false
 
+        if (!validateSaveBlock2Header(bytes, offset - SAVEBLOCK2_TO_POKEDEX)) return false
+
         var seenHasAnyBitSet = false
         for (i in 0 until NUM_DEX_FLAG_BYTES) {
             val ownedByte = bytes[offset + POKEDEX_OWNED_OFFSET + i].toUByteValue()
@@ -173,6 +192,38 @@ class PokedexMemoryCalibrator(
             if (ownedByte and seenByte.inv() != 0) return false
         }
         return seenHasAnyBitSet
+    }
+
+    /**
+     * Cheap, single-snapshot plausibility checks on SaveBlock2's header fields (all fixed,
+     * known offsets from include/global.h) - applied before the pricier owned/seen subset
+     * scan, to cut down candidates that only coincidentally satisfy that constraint.
+     */
+    private fun validateSaveBlock2Header(bytes: ByteArray, saveBlock2Offset: Int): Boolean {
+        if (saveBlock2Offset < 0) return false
+
+        val gender = bytes.getOrNull(saveBlock2Offset + PLAYER_GENDER_OFFSET) ?: return false
+        if (gender.toUByteValue() !in 0..1) return false
+
+        val hours = readU16LE(bytes, saveBlock2Offset + PLAYTIME_HOURS_OFFSET)
+        if (hours > MAX_PLAUSIBLE_PLAYTIME_HOURS) return false
+
+        val minutes = bytes.getOrNull(saveBlock2Offset + PLAYTIME_MINUTES_OFFSET)?.toUByteValue() ?: return false
+        if (minutes >= WRAP_MINUTES_SECONDS) return false
+
+        val seconds = bytes.getOrNull(saveBlock2Offset + PLAYTIME_SECONDS_OFFSET)?.toUByteValue() ?: return false
+        if (seconds >= WRAP_MINUTES_SECONDS) return false
+
+        val vblanks = bytes.getOrNull(saveBlock2Offset + PLAYTIME_VBLANKS_OFFSET)?.toUByteValue() ?: return false
+        if (vblanks >= WRAP_MINUTES_SECONDS) return false
+
+        // Real names don't contain Gen3 text control codes (scroll/paragraph/newline).
+        for (i in 0 until PLAYER_NAME_LENGTH) {
+            val b = bytes.getOrNull(saveBlock2Offset + PLAYER_NAME_OFFSET + i)?.toUByteValue() ?: return false
+            if (b in 0xFA..0xFE) return false
+        }
+
+        return true
     }
 
     /**
@@ -201,6 +252,9 @@ class PokedexMemoryCalibrator(
             (bytes[offset + 1].toUByteValue() shl 8) or
             (bytes[offset + 2].toUByteValue() shl 16) or
             (bytes[offset + 3].toUByteValue() shl 24)
+
+    private fun readU16LE(bytes: ByteArray, offset: Int): Int =
+        (bytes[offset].toUByteValue()) or (bytes[offset + 1].toUByteValue() shl 8)
 
     private fun Byte.toUByteValue(): Int = this.toInt() and 0xFF
 
