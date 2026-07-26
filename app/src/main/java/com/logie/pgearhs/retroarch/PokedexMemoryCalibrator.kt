@@ -204,7 +204,10 @@ class PokedexMemoryCalibrator(
      */
     private fun resolveViaIwramPointer(candidates: List<Int>, snapshot: ByteArray): Result? {
         val bridge = RetroArchMemoryBridge(host, port, commandMode = RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
-        val iwram = bridge.readMemory(IWRAM_BASE, IWRAM_SIZE) ?: run {
+        // readRegion, not readMemory - a 32KB read as hex text in one UDP response would
+        // blow past the receive buffer and silently fail to parse, same as dumpEwram()
+        // needs chunking for its much larger 256KB read.
+        val iwram = bridge.readRegion(IWRAM_BASE, IWRAM_SIZE) ?: run {
             onDiagnostic("Calibration: couldn't read IWRAM to disambiguate candidates.")
             return null
         }
