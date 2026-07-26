@@ -4,13 +4,11 @@ package com.logie.pgearhs.retroarch
  * SaveBlock1/SaveBlock2 are runtime-allocated - there's no fixed compile-time address to
  * read from (no .map/.elf exists for this exact build). Two strategies, tried in order:
  *
- * 1. Known-pointer fast path: this hack is pokeemerald-based, and pret's public symbol
- *    table for vanilla pokeemerald (github.com/pret/pokeemerald, `symbols` branch) gives
- *    gSaveBlock2Ptr's own fixed IWRAM address as 0x03005D90 (a global pointer *variable*,
- *    not the struct itself - the struct it points to is dynamically allocated in EWRAM).
- *    If this hack kept the same global variable layout as vanilla pokeemerald (plausible
- *    for a decomp-based hack that hasn't restructured its globals), reading 4 bytes there
- *    gives the real runtime EWRAM address directly - no scanning needed at all.
+ * 1. Known-pointer fast path: tries a short list of candidate fixed IWRAM addresses for
+ *    gSaveBlock2Ptr itself (a global pointer *variable*, not the struct - the struct it
+ *    points to is dynamically allocated in EWRAM). See KNOWN_SAVEBLOCK2_PTR_ADDRS for what
+ *    each candidate is and its confidence level. If any resolves to a valid pokedex struct,
+ *    that's the real runtime EWRAM address directly - no scanning needed at all.
  * 2. Structural fallback: if that address doesn't resolve to something valid (the hack
  *    shifted its global layout), search EWRAM directly for the pokedex data itself using a
  *    constraint that's true regardless of what's been caught: every bit set in owned[]
@@ -51,9 +49,18 @@ class PokedexMemoryCalibrator(
 ) {
 
     companion object {
-        // pret/pokeemerald symbols (github.com/pret/pokeemerald, `symbols` branch), a
-        // public reference for vanilla Emerald - may or may not still hold for this hack.
-        private const val KNOWN_SAVEBLOCK2_PTR_ADDR = 0x03005D90
+        // Candidate addresses for gSaveBlock2Ptr's own IWRAM location, tried in order.
+        // - 0x03005D90: pret/pokeemerald symbols (github.com/pret/pokeemerald, `symbols`
+        //   branch), the public reference for vanilla Emerald. Confirmed NOT to hold for
+        //   this hack (every real debug report resolves it outside EWRAM).
+        // - 0x03003744: from actually building this hack's source (pokemonHnS-main, MODERN=1)
+        //   with the ARM GNU Toolchain and reading pokemonHnS.map. Caveat: the locally
+        //   built ROM does not byte-match the actual distributed ROM (~53% of bytes differ),
+        //   and the project's own README describes the released ROM as a .ups patch onto
+        //   vanilla Emerald rather than a from-source build of this exact tree - so this
+        //   address is an educated guess, not confirmed ground truth. Worth trying first
+        //   since it costs nothing if wrong (falls through to the structural scan below).
+        private val KNOWN_SAVEBLOCK2_PTR_ADDRS = listOf(0x03003744, 0x03005D90)
 
         private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
         private const val EWRAM_SIZE = RetroArchMemoryBridge.EWRAM_SIZE
@@ -133,19 +140,26 @@ class PokedexMemoryCalibrator(
         }
     }
 
-    /** Tries pret's known vanilla-pokeemerald gSaveBlock2Ptr address. Null = didn't pan out, fall through. */
+    /** Tries each candidate gSaveBlock2Ptr address in turn. Null = none panned out, fall through. */
     private fun tryKnownPointer(): Result? {
+        for (addr in KNOWN_SAVEBLOCK2_PTR_ADDRS) {
+            tryKnownPointerAt(addr)?.let { return it }
+        }
+        return null
+    }
+
+    private fun tryKnownPointerAt(knownAddr: Int): Result? {
         val bridge = RetroArchMemoryBridge(host, port, commandMode = RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
 
-        val ptrBytes = bridge.readMemory(KNOWN_SAVEBLOCK2_PTR_ADDR, 4) ?: run {
-            onDiagnostic("Calibration: couldn't read known gSaveBlock2Ptr address 0x${KNOWN_SAVEBLOCK2_PTR_ADDR.toString(16)}.")
+        val ptrBytes = bridge.readMemory(knownAddr, 4) ?: run {
+            onDiagnostic("Calibration: couldn't read candidate gSaveBlock2Ptr address 0x${knownAddr.toString(16)}.")
             return null
         }
         val saveBlock2Address = readU32LE(ptrBytes, 0)
-        onDiagnostic("Calibration: gSaveBlock2Ptr (known pokeemerald addr) = 0x${saveBlock2Address.toString(16)}")
+        onDiagnostic("Calibration: gSaveBlock2Ptr @0x${knownAddr.toString(16)} = 0x${saveBlock2Address.toString(16)}")
 
         if (saveBlock2Address < EWRAM_BASE || saveBlock2Address >= EWRAM_BASE + EWRAM_SIZE) {
-            onDiagnostic("Calibration: that's outside EWRAM - this hack's global layout doesn't match vanilla pokeemerald here.")
+            onDiagnostic("Calibration: that's outside EWRAM - not this hack's real gSaveBlock2Ptr location.")
             return null
         }
 
@@ -157,11 +171,11 @@ class PokedexMemoryCalibrator(
 
         val validated = validatePokedexStruct(structBytes, offset = 0)
         if (!validated) {
-            onDiagnostic("Calibration: known pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
+            onDiagnostic("Calibration: candidate pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
             return null
         }
 
-        return buildSuccess(structBytes, offset = 0, source = "known pointer")
+        return buildSuccess(structBytes, offset = 0, source = "known pointer 0x${knownAddr.toString(16)}")
     }
 
     private suspend fun attemptStructuralScan(mode: RetroArchMemoryBridge.CommandMode): Result {
