@@ -6,6 +6,8 @@ import android.media.PlaybackParams
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.ImageView
+import android.widget.Toast
+import com.logie.pgearhs.pokedex.PokedexActivity
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 import com.logie.pgearhs.ui.ButtonSelectionController
 import com.logie.pgearhs.ui.MenuBackgroundPrefs
@@ -34,13 +36,11 @@ class MainActivity : BaseImmersiveActivity() {
             playbackParams = PlaybackParams().setSpeed(2f)
         }
 
-        buttonSelection = ButtonSelectionController(
-            listOf(
-                findViewById<ImageView>(R.id.buttonMap),
-                findViewById<ImageView>(R.id.buttonCall),
-                findViewById<ImageView>(R.id.buttonSwitchOff)
-            )
-        )
+        val mapButton = findViewById<ImageView>(R.id.buttonMap)
+        val callButton = findViewById<ImageView>(R.id.buttonCall)
+        val switchOffButton = findViewById<ImageView>(R.id.buttonSwitchOff)
+
+        buttonSelection = ButtonSelectionController(listOf(mapButton, callButton, switchOffButton))
         buttonSelection.onSelectionChanged = {
             selectSound?.apply {
                 seekTo(0)
@@ -48,9 +48,23 @@ class MainActivity : BaseImmersiveActivity() {
             }
         }
 
+        val showComingSoon = { showComingSoonToast() }
+        mapButton.setOnClickListener { showComingSoon() }
+        callButton.setOnClickListener { showComingSoon() }
+        switchOffButton.setOnClickListener { showComingSoon() }
+
         findViewById<android.view.View>(R.id.settingsButton).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+
+        // Temporary - just a way to reach the Pokedex screen until it has a real home.
+        findViewById<android.view.View>(R.id.pokedexButton).setOnClickListener {
+            startActivity(Intent(this, PokedexActivity::class.java))
+        }
+    }
+
+    private fun showComingSoonToast() {
+        Toast.makeText(this, R.string.coming_soon_toast, Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
@@ -78,6 +92,10 @@ class MainActivity : BaseImmersiveActivity() {
             }
             KeyEvent.KEYCODE_DPAD_UP -> {
                 buttonSelection.moveSelection(-1)
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_ENTER -> {
+                showComingSoonToast()
                 return true
             }
         }

@@ -26,4 +26,6 @@
     <string name="pokedex_height_weight_format">%1$.1f m · %2$.1f kg</string>
     <string name="pokedex_abilities_label">Abilities</string>
     <string name="pokedex_base_stats_label">Base Stats</string>
+    <string name="pokedex_temp_button">Pokedex (temp)</string>
+    <string name="coming_soon_toast">Coming soon!</string>
 </resources>
