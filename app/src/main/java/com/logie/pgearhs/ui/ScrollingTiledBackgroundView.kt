@@ -11,19 +11,21 @@ import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.Choreographer
 import android.view.View
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * Draws a bitmap tiled edge-to-edge and continuously scrolling to the left.
+ * Draws a bitmap tiled edge-to-edge, animated according to [movementPattern].
  *
  * Motion is driven by Choreographer with real elapsed time between frames
- * (not a fixed per-frame step), so scroll speed stays correct at whatever
- * refresh rate the current display is running - 60Hz on the Thor's bottom
- * screen, 120Hz on the top one - while still updating every vsync for the
- * smoothest motion that screen can show.
+ * (not a fixed per-frame step), so speed stays correct at whatever refresh
+ * rate the current display is running - 60Hz on the Thor's bottom screen,
+ * 120Hz on the top one - while still updating every vsync for the smoothest
+ * motion that screen can show.
  *
  * The source bitmap should already be scaled to its final on-screen pixel
- * size (e.g. pre-upscaled 4x with nearest-neighbor) and loaded unscaled;
- * filtering is disabled here so the tile stays crisp instead of blurring.
+ * size (pre-upscaled with nearest-neighbor) and is loaded unscaled here;
+ * filtering is disabled so the tile stays crisp instead of blurring.
  */
 class ScrollingTiledBackgroundView @JvmOverloads constructor(
     context: Context,
@@ -31,8 +33,30 @@ class ScrollingTiledBackgroundView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    /** Scroll speed in dp/second; negative scrolls left. */
+    enum class MovementPattern {
+        LEFT,
+        FIGURE_EIGHT,
+        NONE
+    }
+
+    /** Scroll speed in dp/second for [MovementPattern.LEFT]. */
     var scrollSpeedDpPerSecond: Float = 24f
+
+    /** Half-width of the figure-8 loop in dp for [MovementPattern.FIGURE_EIGHT]. */
+    var figureEightAmplitudeDp: Float = 40f
+
+    /** Time in seconds to complete one full figure-8 loop. */
+    var figureEightPeriodSeconds: Float = 6f
+
+    var movementPattern: MovementPattern = MovementPattern.LEFT
+        set(value) {
+            val resuming = field == MovementPattern.NONE && value != MovementPattern.NONE
+            field = value
+            if (resuming && isRunning) {
+                lastFrameTimeNanos = 0L
+                Choreographer.getInstance().postFrameCallback(frameCallback)
+            }
+        }
 
     private val tileBitmap: Bitmap
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -40,7 +64,9 @@ class ScrollingTiledBackgroundView @JvmOverloads constructor(
         isDither = false
     }
     private val shaderMatrix = Matrix()
-    private var offsetPx = 0f
+    private var offsetX = 0f
+    private var offsetY = 0f
+    private var figureEightElapsedSeconds = 0f
     private var lastFrameTimeNanos = 0L
     private var isRunning = false
 
@@ -48,14 +74,32 @@ class ScrollingTiledBackgroundView @JvmOverloads constructor(
         override fun doFrame(frameTimeNanos: Long) {
             if (!isRunning) return
 
+            if (movementPattern == MovementPattern.NONE) {
+                // Nothing to animate - stop scheduling until the pattern changes again.
+                lastFrameTimeNanos = 0L
+                return
+            }
+
             if (lastFrameTimeNanos != 0L) {
                 val deltaSeconds = (frameTimeNanos - lastFrameTimeNanos) / 1_000_000_000f
-                val speedPxPerSecond = scrollSpeedDpPerSecond * resources.displayMetrics.density
-                offsetPx -= speedPxPerSecond * deltaSeconds
+                val density = resources.displayMetrics.density
 
-                val tileWidth = tileBitmap.width
-                if (tileWidth > 0) {
-                    offsetPx %= tileWidth
+                when (movementPattern) {
+                    MovementPattern.LEFT -> {
+                        val speedPxPerSecond = scrollSpeedDpPerSecond * density
+                        offsetX -= speedPxPerSecond * deltaSeconds
+                        val tileWidth = tileBitmap.width
+                        if (tileWidth > 0) offsetX %= tileWidth
+                    }
+                    MovementPattern.FIGURE_EIGHT -> {
+                        figureEightElapsedSeconds += deltaSeconds
+                        val angle = figureEightElapsedSeconds * (2f * Math.PI.toFloat() / figureEightPeriodSeconds)
+                        val amplitudePx = figureEightAmplitudeDp * density
+                        // Lemniscate-style path: traces a figure-8 as angle sweeps through 2*PI.
+                        offsetX = amplitudePx * sin(angle)
+                        offsetY = amplitudePx * sin(angle) * cos(angle)
+                    }
+                    MovementPattern.NONE -> Unit
                 }
             }
             lastFrameTimeNanos = frameTimeNanos
@@ -77,7 +121,7 @@ class ScrollingTiledBackgroundView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        shaderMatrix.setTranslate(offsetPx, 0f)
+        shaderMatrix.setTranslate(offsetX, offsetY)
         paint.shader?.setLocalMatrix(shaderMatrix)
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
     }

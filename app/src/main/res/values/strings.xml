@@ -5,4 +5,8 @@
     <string name="settings_title">Settings</string>
     <string name="prefer_top_display_label">Launch on top display</string>
     <string name="prefer_top_display_hint">Off by default: PokéGear opens on the bottom screen. Turn this on to launch on the top screen instead.</string>
+    <string name="menu_background_movement_label">Background dots movement</string>
+    <string name="menu_background_movement_left">Scroll left</string>
+    <string name="menu_background_movement_figure_eight">Figure 8</string>
+    <string name="menu_background_movement_none">None</string>
 </resources>

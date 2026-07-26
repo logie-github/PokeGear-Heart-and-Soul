@@ -50,4 +50,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/preferTopDisplayLabel" />
 
+    <TextView
+        android:id="@+id/menuBackgroundMovementLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/menu_background_movement_label"
+        android:textColor="@color/johtoOnBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preferTopDisplayHint" />
+
+    <RadioGroup
+        android:id="@+id/menuBackgroundMovementGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/menuBackgroundMovementLabel">
+
+        <RadioButton
+            android:id="@+id/movementOptionLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/johtoAccent"
+            android:text="@string/menu_background_movement_left"
+            android:textColor="@color/johtoOnBackground" />
+
+        <RadioButton
+            android:id="@+id/movementOptionFigureEight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/johtoAccent"
+            android:text="@string/menu_background_movement_figure_eight"
+            android:textColor="@color/johtoOnBackground" />
+
+        <RadioButton
+            android:id="@+id/movementOptionNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/johtoAccent"
+            android:text="@string/menu_background_movement_none"
+            android:textColor="@color/johtoOnBackground" />
+
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
