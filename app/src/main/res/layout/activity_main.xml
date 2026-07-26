@@ -26,8 +26,8 @@
 
     <com.logie.pgearhs.ui.SpriteAnimationView
         android:id="@+id/navIcon"
-        android:layout_width="108px"
-        android:layout_height="132px"
+        android:layout_width="90px"
+        android:layout_height="110px"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/navIconRightPaddingGuideline" />
 
