@@ -1,37 +1,25 @@
 package com.logie.pgearhs.retroarch
 
-import kotlinx.coroutines.delay
-
 /**
  * SaveBlock1/SaveBlock2 are runtime-allocated - there's no fixed compile-time address to
- * read from (no .map/.elf exists for this exact build). Instead of guessing, this finds
- * SaveBlock2 live by diffing two EWRAM snapshots a few seconds apart and looking for the
- * struct's own play-time counters, which increment passively just from the game running -
- * no player action needed. Once located, national-dex-enabled state and the owned/seen
- * bitfields are read directly out of the already-captured snapshot (no extra round trips).
+ * read from (no .map/.elf exists for this exact build). Instead of guessing an address, or
+ * indirectly hunting for a live counter (play time) and walking to the pokedex struct from
+ * there, this searches directly for the pokedex data itself using a structural constraint
+ * that's true regardless of what's actually been caught: every bit set in owned[] must also
+ * be set in seen[] (you can't catch something you've never seen), and owned[]/seen[]/
+ * nationalMagic sit at fixed, known distances from each other. That's specific enough to
+ * find in a single EWRAM dump, no diffing or waiting required.
  *
  * Relative offsets below come from this build's include/global.h, with one correction:
- *   struct SaveBlock2 { ... playTimeMinutes @0x10, playTimeSeconds @0x11, playTimeVBlanks
- *   @0x12 ... pokedex @0x18 { order, mode, nationalMagic @+0x02, ... owned[] @+0x10,
- *   seen[] @+0x44 (comment) } }
+ *   struct Pokedex { order, mode, nationalMagic @+0x02, ... owned[] @+0x10, seen[] @+0x44
+ *   (comment) }
  * The struct's own "0x44" offset comment for seen[] is stale: NUM_DEX_FLAG_BYTES =
  * ROUND_BITS_TO_BYTES(NUM_SPECIES) where NUM_SPECIES = SPECIES_EGG = 462 (species.h),
  * giving 58 bytes per bitfield, not the 52 the comment's offset implies - so seen[]'s real
  * offset is owned[]'s start (+0x10) plus 58 bytes = +0x4A, six bytes later than commented.
- * Reading from +0x44 shifts almost the whole seen[] bitfield by 6 bytes (48 bits) relative
- * to the real dex numbering - confirmed the hard way via a real debug report showing ~250
- * unrelated species incorrectly marked visible.
- *
- * This only locates SaveBlock2. The game's full national-dex check also cross-references
- * VAR_NATIONAL_DEX and FLAG_SYS_NATIONAL_DEX in SaveBlock1 (a separately-allocated struct,
- * not calibrated here) - nationalMagic alone is used as the signal, which the source itself
- * calls "the single most reliable poll point" even though the real game checks all three.
  *
  * [onDiagnostic] is an optional hook for logging step-by-step timing/candidate-count info
- * (wire it to DebugLog.add) - each 256KB dump is 64 chunked UDP round trips, which can take
- * a while over real Wi-Fi, so knowing how long it actually took (and how many candidates
- * the timing filter vs. the nationalMagic filter eliminated) is the difference between a
- * useful "not found" and a useless one on a real device.
+ * (wire it to DebugLog.add).
  */
 class PokedexMemoryCalibrator(
     private val bridge: RetroArchMemoryBridge,
@@ -39,29 +27,14 @@ class PokedexMemoryCalibrator(
 ) {
 
     companion object {
-        private const val PLAYER_NAME_OFFSET = 0x00 // SaveBlock2's very first field
-        private const val PLAYER_NAME_LENGTH = 7 // PLAYER_NAME_LENGTH, constants/global.h
-        private const val PLAYTIME_HOURS_OFFSET = 0x0E // u16, immediately before minutes
-        private const val PLAYTIME_MINUTES_OFFSET = 0x10
-        private const val PLAYTIME_VBLANKS_OFFSET = 0x12
-        private const val MAX_PLAUSIBLE_PLAYTIME_HOURS = 999
-        private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
         private const val NUM_DEX_FLAG_BYTES = 58 // ROUND_BITS_TO_BYTES(SPECIES_EGG=462)
         private const val POKEDEX_OWNED_OFFSET = 0x10
         private const val POKEDEX_SEEN_OFFSET = POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES // 0x4A, not the stale 0x44 comment
-        private const val DEX_BITFIELD_READ_BYTES = NUM_DEX_FLAG_BYTES
+        private const val NATIONAL_MAGIC_TO_OWNED = POKEDEX_OWNED_OFFSET - POKEDEX_NATIONAL_MAGIC_OFFSET
 
         private const val NATIONAL_MAGIC_ENABLED: Byte = 0xDA.toByte()
         private const val NATIONAL_MAGIC_DISABLED: Byte = 0x00
-
-        private const val CALIBRATION_WAIT_MS = 4000L
-        private const val WRAP_MINUTES = 60
-
-        // Slack added on top of measured dump durations, to absorb the fact that any given
-        // byte is sampled at some unknown point during a dump's 64 chunked reads, not
-        // exactly at a single instant.
-        private const val EXTRA_SLACK_SECONDS = 2
     }
 
     sealed class Result {
@@ -80,62 +53,31 @@ class PokedexMemoryCalibrator(
             return Result.Failure("Can't reach RetroArch - check host/port and that it's running.")
         }
 
-        val dumpAStart = System.currentTimeMillis()
-        val snapshotA = bridge.dumpEwram() ?: run {
-            onDiagnostic("Calibration: first EWRAM dump failed (chunked read error).")
-            return Result.Failure("First memory read failed.")
+        val dumpStart = System.currentTimeMillis()
+        val snapshot = bridge.dumpEwram() ?: run {
+            onDiagnostic("Calibration: EWRAM dump failed (chunked read error).")
+            return Result.Failure("Memory read failed.")
         }
-        val dumpADurationMs = System.currentTimeMillis() - dumpAStart
-        onDiagnostic("Calibration: first dump took ${dumpADurationMs}ms (${snapshotA.size} bytes).")
+        onDiagnostic("Calibration: dump took ${System.currentTimeMillis() - dumpStart}ms (${snapshot.size} bytes).")
 
-        delay(CALIBRATION_WAIT_MS)
+        val candidates = findPokedexCandidates(snapshot)
+        onDiagnostic("Calibration: ${candidates.size} candidate(s) had owned[] ⊆ seen[] with a valid nationalMagic byte.")
 
-        val dumpBStart = System.currentTimeMillis()
-        val snapshotB = bridge.dumpEwram() ?: run {
-            onDiagnostic("Calibration: second EWRAM dump failed (chunked read error).")
-            return Result.Failure("Second memory read failed.")
-        }
-        val dumpBDurationMs = System.currentTimeMillis() - dumpBStart
-        val elapsedSeconds = ((dumpBStart - dumpAStart) / 1000).toInt()
-        onDiagnostic(
-            "Calibration: second dump took ${dumpBDurationMs}ms (${snapshotB.size} bytes); " +
-                "~${elapsedSeconds}s between dumps."
-        )
-
-        val dumpSlackSeconds = ((dumpADurationMs + dumpBDurationMs) / 1000).toInt() + EXTRA_SLACK_SECONDS
-        val candidates = findSaveBlock2Candidates(snapshotA, snapshotB, elapsedSeconds, dumpSlackSeconds)
-        val validated = candidates.filter { pokedexOffset ->
-            val magic = snapshotB.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)
-            magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED
-        }
-        onDiagnostic(
-            "Calibration: ${candidates.size} raw candidate(s) matched the play-time+hours+name " +
-                "signature, ${validated.size} passed the nationalMagic check."
-        )
-        if (candidates.isNotEmpty() && validated.isEmpty()) {
-            val seenMagicBytes = candidates.joinToString(", ") { pokedexOffset ->
-                val magic = snapshotB.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)
-                "0x" + (magic?.toInt()?.and(0xFF) ?: -1).toString(16)
-            }
-            onDiagnostic("Calibration: rejected candidate(s) had nationalMagic byte(s): $seenMagicBytes")
-        }
-
-        return when (validated.size) {
+        return when (candidates.size) {
             0 -> Result.Failure(
-                "Couldn't find the save data in memory. Make sure a save is actually loaded " +
-                    "(past the title/intro screen) - menus and battles are fine, but play time " +
-                    "won't be ticking yet if you're still at the title screen."
+                "Couldn't find the registered-Pokemon data in memory. Make sure a save is " +
+                    "actually loaded (past the title/intro screen)."
             )
             1 -> {
-                val pokedexOffset = validated[0]
-                val nationalEnabled = snapshotB[pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET] == NATIONAL_MAGIC_ENABLED
-                val owned = snapshotB.copyOfRange(
+                val pokedexOffset = candidates[0]
+                val nationalEnabled = snapshot[pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET] == NATIONAL_MAGIC_ENABLED
+                val owned = snapshot.copyOfRange(
                     pokedexOffset + POKEDEX_OWNED_OFFSET,
-                    pokedexOffset + POKEDEX_OWNED_OFFSET + DEX_BITFIELD_READ_BYTES
+                    pokedexOffset + POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES
                 )
-                val seen = snapshotB.copyOfRange(
+                val seen = snapshot.copyOfRange(
                     pokedexOffset + POKEDEX_SEEN_OFFSET,
-                    pokedexOffset + POKEDEX_SEEN_OFFSET + DEX_BITFIELD_READ_BYTES
+                    pokedexOffset + POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES
                 )
                 onDiagnostic(
                     "Calibration: pokedex struct at dump offset 0x${pokedexOffset.toString(16)}, " +
@@ -145,82 +87,49 @@ class PokedexMemoryCalibrator(
                 Result.Success(nationalEnabled, owned, seen)
             }
             else -> Result.Failure(
-                "Found ${validated.size} possible matches in memory - too ambiguous to trust. Try again."
+                "Found ${candidates.size} possible matches in memory - too ambiguous to trust. Try again."
             )
         }
     }
 
     /**
-     * Scans both snapshots for a byte offset X where X=minutes, X+1=seconds, X+2=vblanks
-     * behave consistently with the real elapsed time between snapshots, then returns the
-     * corresponding candidate offset(s) of the *pokedex struct* (not SaveBlock2 itself).
+     * Scans the dump for a byte offset where nationalMagic is valid (0x00/0xDA) and the two
+     * 58-byte bitfields that follow satisfy owned[] ⊆ seen[] bit-for-bit. Returns pokedex
+     * struct offsets (i.e. nationalMagic's offset minus 0x02).
      */
-    private fun findSaveBlock2Candidates(
-        before: ByteArray,
-        after: ByteArray,
-        elapsedSeconds: Int,
-        slackSeconds: Int
-    ): List<Int> {
+    private fun findPokedexCandidates(snapshot: ByteArray): List<Int> {
         val candidates = mutableListOf<Int>()
-        val lastIndex = minOf(before.size, after.size) - (PLAYTIME_VBLANKS_OFFSET + 1)
+        val lastOwnedOffset = snapshot.size - 2 * NUM_DEX_FLAG_BYTES
 
-        for (i in PLAYTIME_MINUTES_OFFSET - PLAYTIME_HOURS_OFFSET until lastIndex) {
-            val minutesA = before[i].toUByteValue()
-            val secondsA = before[i + 1].toUByteValue()
-            val vblanksA = before[i + 2].toUByteValue()
-            val minutesB = after[i].toUByteValue()
-            val secondsB = after[i + 1].toUByteValue()
-            val vblanksB = after[i + 2].toUByteValue()
-
-            if (minutesA >= WRAP_MINUTES || minutesB >= WRAP_MINUTES) continue
-            if (secondsA >= WRAP_MINUTES || secondsB >= WRAP_MINUTES) continue
-            if (vblanksA == vblanksB) continue // must have visibly ticked over several seconds
-
-            val totalA = minutesA * WRAP_MINUTES + secondsA
-            val totalB = minutesB * WRAP_MINUTES + secondsB
-            val delta = (totalB - totalA + WRAP_MINUTES * WRAP_MINUTES) % (WRAP_MINUTES * WRAP_MINUTES)
-
-            // Allow slack for however long the dumps themselves took, since a given byte is
-            // sampled at some unknown point during a dump's chunked reads, plus rounding.
-            val minExpected = maxOf(0, elapsedSeconds - slackSeconds)
-            val maxExpected = elapsedSeconds + slackSeconds
-            if (delta < minExpected || delta > maxExpected) continue
-
-            // Cross-check playTimeHours (u16, immediately before minutes): must be a small,
-            // non-decreasing number - rules out coincidental matches elsewhere in RAM whose
-            // "minutes/seconds/vblanks"-shaped bytes just happened to satisfy the above.
-            val hoursOffset = i - (PLAYTIME_MINUTES_OFFSET - PLAYTIME_HOURS_OFFSET)
-            val hoursA = readU16LE(before, hoursOffset)
-            val hoursB = readU16LE(after, hoursOffset)
-            if (hoursA > MAX_PLAUSIBLE_PLAYTIME_HOURS || hoursB > MAX_PLAUSIBLE_PLAYTIME_HOURS) continue
-            if (hoursB < hoursA) continue
-
-            // Cross-check playerName (SaveBlock2's very first field): real names don't
-            // contain Gen3 text control codes (scroll/paragraph/newline, 0xFA-0xFE) - a
-            // coincidental match elsewhere in RAM is far more likely to hit these than 7
-            // bytes of an actual player name would.
-            val nameOffset = i - PLAYTIME_MINUTES_OFFSET + PLAYER_NAME_OFFSET
-            if (nameOffset < 0) continue
-            val looksLikeName = (0 until PLAYER_NAME_LENGTH).all { offset ->
-                val b = after[nameOffset + offset].toUByteValue()
-                b !in 0xFA..0xFE
+        var ownedOffset = NATIONAL_MAGIC_TO_OWNED
+        while (ownedOffset < lastOwnedOffset) {
+            val magic = snapshot[ownedOffset - NATIONAL_MAGIC_TO_OWNED]
+            if (magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED) {
+                val seenOffset = ownedOffset + NUM_DEX_FLAG_BYTES
+                var isSubset = true
+                var seenHasAnyBitSet = false
+                for (i in 0 until NUM_DEX_FLAG_BYTES) {
+                    val ownedByte = snapshot[ownedOffset + i].toUByteValue()
+                    val seenByte = snapshot[seenOffset + i].toUByteValue()
+                    if (seenByte != 0) seenHasAnyBitSet = true
+                    if (ownedByte and seenByte.inv() != 0) {
+                        isSubset = false
+                        break
+                    }
+                }
+                // Reject the trivial all-zero match - blank/unused memory regions satisfy
+                // "owned ⊆ seen" vacuously, so require at least one real seen species.
+                if (isSubset && seenHasAnyBitSet) {
+                    candidates.add(ownedOffset - POKEDEX_OWNED_OFFSET)
+                }
             }
-            if (!looksLikeName) continue
-
-            val pokedexOffset = i - PLAYTIME_MINUTES_OFFSET + SAVEBLOCK2_TO_POKEDEX
-            if (pokedexOffset < 0 || pokedexOffset + POKEDEX_SEEN_OFFSET + DEX_BITFIELD_READ_BYTES > after.size) continue
-
-            candidates.add(pokedexOffset)
+            ownedOffset++
         }
 
         return candidates
     }
 
     private fun Byte.toUByteValue(): Int = this.toInt() and 0xFF
-
-    /** GBA is little-endian ARM. */
-    private fun readU16LE(bytes: ByteArray, offset: Int): Int =
-        bytes[offset].toUByteValue() or (bytes[offset + 1].toUByteValue() shl 8)
 
     private fun ByteArray.countSetBits(): Int = sumOf { Integer.bitCount(it.toUByteValue()) }
 }
