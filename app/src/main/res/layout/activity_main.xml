@@ -17,6 +17,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navIconRightPaddingGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <com.logie.pgearhs.ui.SpriteAnimationView
+        android:id="@+id/navIcon"
+        android:layout_width="256px"
+        android:layout_height="256px"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navIconRightPaddingGuideline" />
+
     <TextView
         android:id="@+id/helloText"
         android:layout_width="wrap_content"
