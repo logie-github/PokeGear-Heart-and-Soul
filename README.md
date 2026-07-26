@@ -33,6 +33,21 @@ there via `ActivityOptions.setLaunchDisplayId()`.
 The preference is stored in `SharedPreferences` and defaults to the bottom
 display; toggle "Launch on top display" in Settings to change it.
 
+## Animation conventions
+
+All animation in the app should target a smooth 60fps floor (the Thor's top
+display runs up to 120Hz, so it can go higher, but nothing should drop below
+60). Custom animated views drive themselves off `Choreographer.postFrameCallback`
+and move by *elapsed real time between frames*, not by a fixed per-frame
+step - see `ui/ScrollingTiledBackgroundView.kt` for the reference
+implementation. This keeps motion speed correct regardless of which display
+(60Hz or 120Hz) the activity is currently on, while still updating every
+vsync for the smoothest motion that screen can show.
+
+Imported pixel-art assets are scaled with nearest-neighbor filtering (no
+blurring) and placed in `res/drawable-nodpi/` so Android's density system
+doesn't rescale them a second time.
+
 ## Building
 
 ```
