@@ -29,8 +29,7 @@ jobs:
         run: |
           BASE_VERSION=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts)
           test -n "$BASE_VERSION"
-          AUTO_TAG="v${BASE_VERSION}.${GITHUB_RUN_ID}"
-          echo "RELEASE_TAG=$AUTO_TAG" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=v${BASE_VERSION}" >> "$GITHUB_ENV"
 
       - name: Set signing path
         run: echo "PGEARHS_KEYSTORE_PATH=$RUNNER_TEMP/pgearhs-release.jks" >> "$GITHUB_ENV"
