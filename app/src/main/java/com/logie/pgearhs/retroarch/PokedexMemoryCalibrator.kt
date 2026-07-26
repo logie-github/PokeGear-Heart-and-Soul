@@ -19,14 +19,20 @@ import kotlinx.coroutines.delay
  * VAR_NATIONAL_DEX and FLAG_SYS_NATIONAL_DEX in SaveBlock1 (a separately-allocated struct,
  * not calibrated here) - nationalMagic alone is used as the signal, which the source itself
  * calls "the single most reliable poll point" even though the real game checks all three.
- * Not verified against a real running instance - the EWRAM base-address assumption
- * (0x02000000, matching mGBA's typical GBA memory map) is unconfirmed.
+ *
+ * [onDiagnostic] is an optional hook for logging step-by-step timing/candidate-count info
+ * (wire it to DebugLog.add) - each 256KB dump is 64 chunked UDP round trips, which can take
+ * a while over real Wi-Fi, so knowing how long it actually took (and how many candidates
+ * the timing filter vs. the nationalMagic filter eliminated) is the difference between a
+ * useful "not found" and a useless one on a real device.
  */
-class PokedexMemoryCalibrator(private val bridge: RetroArchMemoryBridge) {
+class PokedexMemoryCalibrator(
+    private val bridge: RetroArchMemoryBridge,
+    private val onDiagnostic: (String) -> Unit = {}
+) {
 
     companion object {
         private const val PLAYTIME_MINUTES_OFFSET = 0x10
-        private const val PLAYTIME_SECONDS_OFFSET = 0x11
         private const val PLAYTIME_VBLANKS_OFFSET = 0x12
         private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
@@ -39,6 +45,11 @@ class PokedexMemoryCalibrator(private val bridge: RetroArchMemoryBridge) {
 
         private const val CALIBRATION_WAIT_MS = 4000L
         private const val WRAP_MINUTES = 60
+
+        // Slack added on top of measured dump durations, to absorb the fact that any given
+        // byte is sampled at some unknown point during a dump's 64 chunked reads, not
+        // exactly at a single instant.
+        private const val EXTRA_SLACK_SECONDS = 2
     }
 
     sealed class Result {
@@ -53,20 +64,42 @@ class PokedexMemoryCalibrator(private val bridge: RetroArchMemoryBridge) {
 
     suspend fun calibrateAndRead(): Result {
         if (!bridge.isReachable()) {
+            onDiagnostic("Calibration: RetroArch unreachable (GET_STATUS failed).")
             return Result.Failure("Can't reach RetroArch - check host/port and that it's running.")
         }
 
-        val snapshotA = bridge.dumpEwram() ?: return Result.Failure("First memory read failed.")
-        val startA = System.currentTimeMillis()
-        delay(CALIBRATION_WAIT_MS)
-        val snapshotB = bridge.dumpEwram() ?: return Result.Failure("Second memory read failed.")
-        val elapsedSeconds = ((System.currentTimeMillis() - startA) / 1000).toInt()
+        val dumpAStart = System.currentTimeMillis()
+        val snapshotA = bridge.dumpEwram() ?: run {
+            onDiagnostic("Calibration: first EWRAM dump failed (chunked read error).")
+            return Result.Failure("First memory read failed.")
+        }
+        val dumpADurationMs = System.currentTimeMillis() - dumpAStart
+        onDiagnostic("Calibration: first dump took ${dumpADurationMs}ms (${snapshotA.size} bytes).")
 
-        val candidates = findSaveBlock2Candidates(snapshotA, snapshotB, elapsedSeconds)
+        delay(CALIBRATION_WAIT_MS)
+
+        val dumpBStart = System.currentTimeMillis()
+        val snapshotB = bridge.dumpEwram() ?: run {
+            onDiagnostic("Calibration: second EWRAM dump failed (chunked read error).")
+            return Result.Failure("Second memory read failed.")
+        }
+        val dumpBDurationMs = System.currentTimeMillis() - dumpBStart
+        val elapsedSeconds = ((dumpBStart - dumpAStart) / 1000).toInt()
+        onDiagnostic(
+            "Calibration: second dump took ${dumpBDurationMs}ms (${snapshotB.size} bytes); " +
+                "~${elapsedSeconds}s between dumps."
+        )
+
+        val dumpSlackSeconds = ((dumpADurationMs + dumpBDurationMs) / 1000).toInt() + EXTRA_SLACK_SECONDS
+        val candidates = findSaveBlock2Candidates(snapshotA, snapshotB, elapsedSeconds, dumpSlackSeconds)
         val validated = candidates.filter { pokedexOffset ->
             val magic = snapshotB.getOrNull(pokedexOffset + POKEDEX_NATIONAL_MAGIC_OFFSET)
             magic == NATIONAL_MAGIC_ENABLED || magic == NATIONAL_MAGIC_DISABLED
         }
+        onDiagnostic(
+            "Calibration: ${candidates.size} raw candidate(s) matched the play-time timing " +
+                "signature, ${validated.size} passed the nationalMagic check."
+        )
 
         return when (validated.size) {
             0 -> Result.Failure(
@@ -100,7 +133,8 @@ class PokedexMemoryCalibrator(private val bridge: RetroArchMemoryBridge) {
     private fun findSaveBlock2Candidates(
         before: ByteArray,
         after: ByteArray,
-        elapsedSeconds: Int
+        elapsedSeconds: Int,
+        slackSeconds: Int
     ): List<Int> {
         val candidates = mutableListOf<Int>()
         val lastIndex = minOf(before.size, after.size) - (PLAYTIME_VBLANKS_OFFSET + 1)
@@ -121,9 +155,10 @@ class PokedexMemoryCalibrator(private val bridge: RetroArchMemoryBridge) {
             val totalB = minutesB * WRAP_MINUTES + secondsB
             val delta = (totalB - totalA + WRAP_MINUTES * WRAP_MINUTES) % (WRAP_MINUTES * WRAP_MINUTES)
 
-            // Allow slack for the time the dumps themselves took plus rounding.
-            val minExpected = maxOf(0, elapsedSeconds - 3)
-            val maxExpected = elapsedSeconds + 6
+            // Allow slack for however long the dumps themselves took, since a given byte is
+            // sampled at some unknown point during a dump's chunked reads, plus rounding.
+            val minExpected = maxOf(0, elapsedSeconds - slackSeconds)
+            val maxExpected = elapsedSeconds + slackSeconds
             if (delta < minExpected || delta > maxExpected) continue
 
             val pokedexOffset = i - PLAYTIME_MINUTES_OFFSET + SAVEBLOCK2_TO_POKEDEX

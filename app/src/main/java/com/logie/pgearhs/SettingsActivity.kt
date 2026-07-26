@@ -144,7 +144,7 @@ class SettingsActivity : BaseImmersiveActivity() {
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
                 val bridge = RetroArchMemoryBridge(host, port)
-                PokedexMemoryCalibrator(bridge).calibrateAndRead()
+                PokedexMemoryCalibrator(bridge, onDiagnostic = DebugLog::add).calibrateAndRead()
             }
 
             when (result) {
