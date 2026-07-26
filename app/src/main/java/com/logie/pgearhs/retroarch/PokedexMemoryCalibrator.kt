@@ -207,14 +207,20 @@ class PokedexMemoryCalibrator(
 
         if (!validateSaveBlock2Header(bytes, offset - SAVEBLOCK2_TO_POKEDEX)) return false
 
+        var ownedBitCount = 0
         var seenBitCount = 0
         for (i in 0 until NUM_DEX_FLAG_BYTES) {
             val ownedByte = bytes[offset + POKEDEX_OWNED_OFFSET + i].toUByteValue()
             val seenByte = bytes[offset + POKEDEX_SEEN_OFFSET + i].toUByteValue()
+            ownedBitCount += Integer.bitCount(ownedByte)
             seenBitCount += Integer.bitCount(seenByte)
             if (ownedByte and seenByte.inv() != 0) return false
         }
-        return seenBitCount in 1..MAX_PLAUSIBLE_SEEN_COUNT
+        // Almost all coincidental matches have owned=0 (trivially satisfies the subset
+        // constraint regardless of seen[]) - requiring at least one caught species cuts out
+        // the vast majority of them, confirmed empirically: a real debug report showed
+        // ~7800 candidates, all but a handful with owned=0.
+        return ownedBitCount in 1..MAX_PLAUSIBLE_SEEN_COUNT && seenBitCount in ownedBitCount..MAX_PLAUSIBLE_SEEN_COUNT
     }
 
     /**
