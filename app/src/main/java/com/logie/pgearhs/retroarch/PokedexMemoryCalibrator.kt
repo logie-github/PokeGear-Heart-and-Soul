@@ -50,16 +50,24 @@ class PokedexMemoryCalibrator(
 
     companion object {
         // Candidate addresses for gSaveBlock2Ptr's own IWRAM location, tried in order.
+        // - 0x03003744: high confidence. Reproduced identically across 4 independent
+        //   from-source rebuilds - two GCC major versions (14.2.1, 13.2.1) AND a
+        //   self-built GCC 13.2.0 matching the exact devkitARM version this project's own
+        //   build log (log.txt) shows was used, AND two source revisions (the official
+        //   repo's main branch and the tagged Release-v1.2.1 the actual distribution comes
+        //   from - github.com/PokemonHnS-Development/pokemonHnS). All four converge on the
+        //   same address, and a real debug report (app 1.0.8) dereferencing it returned a
+        //   plausible in-range EWRAM address (0x0200e784), not garbage. It was previously
+        //   rejected as "not a valid pokedex struct" only because of a real bug: the code
+        //   read bytes starting at the pokedex struct itself rather than at SaveBlock2,
+        //   so validateSaveBlock2Header() could never see the header fields it checks
+        //   (negative offset -> its own guard clause rejected every candidate here
+        //   unconditionally, regardless of whether the address was right). Fixed below by
+        //   reading from saveBlock2Address instead of pokedexAddress.
         // - 0x03005D90: pret/pokeemerald symbols (github.com/pret/pokeemerald, `symbols`
         //   branch), the public reference for vanilla Emerald. Confirmed NOT to hold for
-        //   this hack (every real debug report resolves it outside EWRAM).
-        // - 0x03003744: from actually building this hack's source (pokemonHnS-main, MODERN=1)
-        //   with the ARM GNU Toolchain and reading pokemonHnS.map. Caveat: the locally
-        //   built ROM does not byte-match the actual distributed ROM (~53% of bytes differ),
-        //   and the project's own README describes the released ROM as a .ups patch onto
-        //   vanilla Emerald rather than a from-source build of this exact tree - so this
-        //   address is an educated guess, not confirmed ground truth. Worth trying first
-        //   since it costs nothing if wrong (falls through to the structural scan below).
+        //   this hack (every real debug report resolves it outside EWRAM) - kept as a
+        //   last-resort fallback since trying it costs one cheap extra UDP round trip.
         private val KNOWN_SAVEBLOCK2_PTR_ADDRS = listOf(0x03003744, 0x03005D90)
 
         private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
@@ -163,19 +171,27 @@ class PokedexMemoryCalibrator(
             return null
         }
 
-        val pokedexAddress = saveBlock2Address + SAVEBLOCK2_TO_POKEDEX
-        val structBytes = bridge.readMemory(pokedexAddress, POKEDEX_STRUCT_READ_BYTES) ?: run {
-            onDiagnostic("Calibration: pointer looked valid but reading the pokedex struct failed.")
+        // Read from saveBlock2Address itself, not pokedexAddress - validatePokedexStruct()
+        // checks SaveBlock2 header fields (playerName/gender/playtime) that live *before*
+        // the pokedex struct (at SaveBlock2+0x18), via validateSaveBlock2Header(bytes,
+        // offset - SAVEBLOCK2_TO_POKEDEX). Reading starting at pokedexAddress left those
+        // header bytes inaccessible (negative offset), so validateSaveBlock2Header's
+        // `if (saveBlock2Offset < 0) return false` guard rejected every candidate here
+        // unconditionally - this path could never succeed regardless of address, a bug
+        // independent of whether the known-pointer address itself is right.
+        val readLength = SAVEBLOCK2_TO_POKEDEX + POKEDEX_STRUCT_READ_BYTES
+        val block = bridge.readMemory(saveBlock2Address, readLength) ?: run {
+            onDiagnostic("Calibration: pointer looked valid but reading SaveBlock2 failed.")
             return null
         }
 
-        val validated = validatePokedexStruct(structBytes, offset = 0)
+        val validated = validatePokedexStruct(block, offset = SAVEBLOCK2_TO_POKEDEX)
         if (!validated) {
             onDiagnostic("Calibration: candidate pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
             return null
         }
 
-        return buildSuccess(structBytes, offset = 0, source = "known pointer 0x${knownAddr.toString(16)}")
+        return buildSuccess(block, offset = SAVEBLOCK2_TO_POKEDEX, source = "known pointer 0x${knownAddr.toString(16)}")
     }
 
     private suspend fun attemptStructuralScan(mode: RetroArchMemoryBridge.CommandMode): Result {
