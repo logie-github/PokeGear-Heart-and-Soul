@@ -36,6 +36,9 @@ class ButtonSelectionController(private val buttons: List<ImageView>) {
     var selectedIndex = 0
         private set
 
+    /** Invoked whenever the selection actually moves to a different button. */
+    var onSelectionChanged: (() -> Unit)? = null
+
     private var elapsedSeconds = 0f
     private var lastFrameTimeNanos = 0L
     private var isRunning = false
@@ -86,6 +89,8 @@ class ButtonSelectionController(private val buttons: List<ImageView>) {
 
         slideTo(buttons[oldIndex], 0f)
         slideTo(buttons[newIndex], -selectedSlidePx)
+
+        onSelectionChanged?.invoke()
     }
 
     private fun slideTo(button: ImageView, targetTranslationX: Float) {

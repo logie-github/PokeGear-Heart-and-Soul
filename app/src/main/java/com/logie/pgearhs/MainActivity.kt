@@ -1,6 +1,7 @@
 package com.logie.pgearhs
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.ImageView
@@ -13,6 +14,7 @@ class MainActivity : BaseImmersiveActivity() {
 
     private lateinit var menuBackgroundDots: ScrollingTiledBackgroundView
     private lateinit var buttonSelection: ButtonSelectionController
+    private var selectSound: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +27,7 @@ class MainActivity : BaseImmersiveActivity() {
         setContentView(R.layout.activity_main)
 
         menuBackgroundDots = findViewById(R.id.menuBackgroundDots)
+        selectSound = MediaPlayer.create(this, R.raw.se_select)
 
         buttonSelection = ButtonSelectionController(
             listOf(
@@ -33,6 +36,12 @@ class MainActivity : BaseImmersiveActivity() {
                 findViewById<ImageView>(R.id.buttonSwitchOff)
             )
         )
+        buttonSelection.onSelectionChanged = {
+            selectSound?.apply {
+                seekTo(0)
+                start()
+            }
+        }
 
         findViewById<android.view.View>(R.id.settingsButton).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -48,6 +57,12 @@ class MainActivity : BaseImmersiveActivity() {
     override fun onPause() {
         buttonSelection.stop()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        selectSound?.release()
+        selectSound = null
+        super.onDestroy()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
