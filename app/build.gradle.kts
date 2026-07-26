@@ -27,6 +27,10 @@ val hasReleaseSigning = listOf(
     releaseKeyPassword,
 ).all { it != null }
 
+val gitCommit = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+}.standardOutput.asText.get().trim()
+
 android {
     namespace = "com.logie.pgearhs"
     compileSdk = 35
@@ -38,7 +42,13 @@ android {
         versionCode = 1
         versionName = "0.1.0"
 
+        buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     signingConfigs {

@@ -13,6 +13,7 @@ object DebugReportFormatter {
     fun create(
         timestampMillis: Long,
         appVersion: String,
+        gitCommit: String,
         device: String,
         androidVersion: String,
         retroArchSyncStatus: String,
@@ -22,7 +23,7 @@ object DebugReportFormatter {
 
         val header = buildString {
             appendLine("Report ID: $id")
-            appendLine("App version: $appVersion")
+            appendLine("App version: $appVersion (build $gitCommit)")
             appendLine("Device: $device")
             appendLine("Android version: $androidVersion")
             appendLine("RetroArch sync: $retroArchSyncStatus")

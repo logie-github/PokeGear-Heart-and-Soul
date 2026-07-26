@@ -97,6 +97,7 @@ class SettingsActivity : BaseImmersiveActivity() {
         val report = DebugReportFormatter.create(
             timestampMillis = System.currentTimeMillis(),
             appVersion = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty(),
+            gitCommit = BuildConfig.GIT_COMMIT,
             device = "${Build.MANUFACTURER} ${Build.MODEL}",
             androidVersion = Build.VERSION.RELEASE ?: Build.VERSION.SDK_INT.toString(),
             retroArchSyncStatus = syncStatus,

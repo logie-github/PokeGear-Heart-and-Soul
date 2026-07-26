@@ -75,6 +75,13 @@ class PokedexMemoryCalibrator(
         private const val PLAYTIME_VBLANKS_OFFSET = 0x12
         private const val MAX_PLAUSIBLE_PLAYTIME_HOURS = 999
         private const val WRAP_MINUTES_SECONDS = 60
+
+        // Random noise satisfying "owned ⊆ seen" tends to have ~50% of bits set (~230 of
+        // 462); a real save this early has only a handful seen. This one check does more
+        // work than all the others combined.
+        private const val MAX_PLAUSIBLE_SEEN_COUNT = 100
+
+        private const val MAX_LOGGED_CANDIDATES = 100
     }
 
     sealed class Result {
@@ -153,7 +160,10 @@ class PokedexMemoryCalibrator(
         onDiagnostic("Calibration ($mode): dump took ${System.currentTimeMillis() - dumpStart}ms (${snapshot.size} bytes).")
 
         val candidates = findPokedexCandidates(snapshot)
-        onDiagnostic("Calibration ($mode): ${candidates.size} candidate(s) had owned[] ⊆ seen[] with a valid nationalMagic byte.")
+        onDiagnostic(
+            "Calibration ($mode): ${candidates.size} candidate(s) passed nationalMagic + header " +
+                "plausibility + owned[] ⊆ seen[] + seen count <= $MAX_PLAUSIBLE_SEEN_COUNT."
+        )
 
         return when (candidates.size) {
             0 -> Result.Failure(
@@ -161,10 +171,23 @@ class PokedexMemoryCalibrator(
                     "actually loaded (past the title/intro screen)."
             )
             1 -> buildSuccess(snapshot, offset = candidates[0], source = "$mode scan")
-            else -> Result.Failure(
-                "Found ${candidates.size} possible matches in memory - too ambiguous to trust. Try again."
-            )
+            else -> {
+                candidates.take(MAX_LOGGED_CANDIDATES).forEach { offset ->
+                    val owned = countSetBitsAt(snapshot, offset + POKEDEX_OWNED_OFFSET)
+                    val seen = countSetBitsAt(snapshot, offset + POKEDEX_SEEN_OFFSET)
+                    onDiagnostic("Calibration ($mode): candidate @0x${offset.toString(16)} - owned=$owned seen=$seen")
+                }
+                Result.Failure(
+                    "Found ${candidates.size} possible matches in memory - too ambiguous to trust. Try again."
+                )
+            }
         }
+    }
+
+    private fun countSetBitsAt(bytes: ByteArray, offset: Int): Int {
+        var total = 0
+        for (i in 0 until NUM_DEX_FLAG_BYTES) total += Integer.bitCount(bytes[offset + i].toUByteValue())
+        return total
     }
 
     private fun buildSuccess(bytes: ByteArray, offset: Int, source: String): Result.Success {
@@ -184,14 +207,14 @@ class PokedexMemoryCalibrator(
 
         if (!validateSaveBlock2Header(bytes, offset - SAVEBLOCK2_TO_POKEDEX)) return false
 
-        var seenHasAnyBitSet = false
+        var seenBitCount = 0
         for (i in 0 until NUM_DEX_FLAG_BYTES) {
             val ownedByte = bytes[offset + POKEDEX_OWNED_OFFSET + i].toUByteValue()
             val seenByte = bytes[offset + POKEDEX_SEEN_OFFSET + i].toUByteValue()
-            if (seenByte != 0) seenHasAnyBitSet = true
+            seenBitCount += Integer.bitCount(seenByte)
             if (ownedByte and seenByte.inv() != 0) return false
         }
-        return seenHasAnyBitSet
+        return seenBitCount in 1..MAX_PLAUSIBLE_SEEN_COUNT
     }
 
     /**
