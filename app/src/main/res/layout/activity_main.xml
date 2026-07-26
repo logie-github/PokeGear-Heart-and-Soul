@@ -17,16 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Gear outline, left-aligned, stretched to fit the full screen height, above the dots. -->
+    <!-- Gear outline, left-aligned, above the dots. Source has built-in padding sized to fit the screen at native scale, so it's placed at its natural size, not stretched. -->
     <ImageView
         android:id="@+id/gearOutline"
         android:layout_width="225px"
-        android:layout_height="0dp"
+        android:layout_height="800px"
         android:contentDescription="@null"
-        android:scaleType="fitXY"
         android:src="@drawable/gearoutline"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Header bar, drawn above the dots but underneath the header image and nav icon. -->
