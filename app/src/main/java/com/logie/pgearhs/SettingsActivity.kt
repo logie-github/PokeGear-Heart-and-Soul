@@ -16,7 +16,6 @@ import com.logie.pgearhs.debug.DebugReportFormatter
 import com.logie.pgearhs.retroarch.LiveDexState
 import com.logie.pgearhs.retroarch.PokedexMemoryCalibrator
 import com.logie.pgearhs.retroarch.RetroArchConnection
-import com.logie.pgearhs.retroarch.RetroArchMemoryBridge
 import com.logie.pgearhs.ui.AppRelease
 import com.logie.pgearhs.ui.AppUpdater
 import com.logie.pgearhs.ui.BaseImmersiveActivity
@@ -143,8 +142,7 @@ class SettingsActivity : BaseImmersiveActivity() {
 
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
-                val bridge = RetroArchMemoryBridge(host, port)
-                PokedexMemoryCalibrator(bridge, onDiagnostic = DebugLog::add).calibrateAndRead()
+                PokedexMemoryCalibrator(host, port, onDiagnostic = DebugLog::add).calibrateAndRead()
             }
 
             when (result) {

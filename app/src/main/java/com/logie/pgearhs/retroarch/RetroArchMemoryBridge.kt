@@ -10,18 +10,31 @@ import java.nio.charset.StandardCharsets
  * remote-control feature) to peek at a running core's memory. This is NOT RetroArch
  * netplay - see the pokemonresort-retroarch-udp project note for that distinction.
  *
- * GBA cores (mGBA, the common default) expose EWRAM via the real GBA CPU bus address,
- * starting at 0x02000000 for 0x40000 (256KB) bytes - that's the assumption baked into
- * [EWRAM_BASE]/[EWRAM_SIZE] below. Unverified against a real running instance.
+ * RetroArch exposes two different read commands, which can address memory differently
+ * depending on whether the running core implements the full libretro memory-map
+ * descriptor interface:
+ *   - READ_CORE_MEMORY: addresses via the core's memory map, i.e. the real GBA CPU bus
+ *     address for cores that implement it (EWRAM at 0x02000000).
+ *   - READ_CORE_RAM: addresses via the simpler retro_get_memory_data/size interface, a
+ *     flat 0-based offset into the core's system RAM buffer (EWRAM at 0x0).
+ * If the running core doesn't implement memory-map descriptors, READ_CORE_MEMORY can
+ * silently return the wrong region (no error, just not EWRAM) rather than failing
+ * outright - PokemonResort's Gen2/Gen3 support retries with the other command on failure
+ * for exactly this reason.
  */
 class RetroArchMemoryBridge(
     private val host: String,
     private val port: Int,
+    private val commandMode: CommandMode = CommandMode.CORE_MEMORY,
     private val timeoutMs: Int = 2000,
     private val retries: Int = 2
 ) {
+    enum class CommandMode(val readCommand: String, val ewramBase: Int) {
+        CORE_MEMORY("READ_CORE_MEMORY", 0x02000000),
+        CORE_RAM("READ_CORE_RAM", 0x00000000)
+    }
+
     companion object {
-        const val EWRAM_BASE = 0x02000000
         const val EWRAM_SIZE = 0x40000
         private const val CHUNK_SIZE = 4096
         private const val RECEIVE_BUFFER_SIZE = 16384
@@ -54,14 +67,14 @@ class RetroArchMemoryBridge(
 
     /** Reads [length] bytes starting at absolute [address]. Null on failure/no reply. */
     fun readMemory(address: Int, length: Int): ByteArray? {
-        val response = sendCommand("READ_CORE_MEMORY ${address.toString(16)} $length") ?: return null
+        val response = sendCommand("${commandMode.readCommand} ${address.toString(16)} $length") ?: return null
         return parseReadResponse(response)
     }
 
     private fun parseReadResponse(response: String): ByteArray? {
         val tokens = response.trim().split(Regex("\\s+"))
-        // Expected shape: "READ_CORE_MEMORY <addr> <hex bytes...>"
-        if (tokens.size < 3 || !tokens[0].equals("READ_CORE_MEMORY", ignoreCase = true)) return null
+        // Expected shape: "<READ_CORE_MEMORY|READ_CORE_RAM> <addr> <hex bytes...>"
+        if (tokens.size < 3 || !tokens[0].equals(commandMode.readCommand, ignoreCase = true)) return null
 
         val hexTokens = tokens.drop(2)
         val hex = hexTokens.joinToString("")
@@ -90,5 +103,5 @@ class RetroArchMemoryBridge(
         return result
     }
 
-    fun dumpEwram(): ByteArray? = readRegion(EWRAM_BASE, EWRAM_SIZE)
+    fun dumpEwram(): ByteArray? = readRegion(commandMode.ewramBase, EWRAM_SIZE)
 }

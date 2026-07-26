@@ -18,11 +18,18 @@ package com.logie.pgearhs.retroarch
  * giving 58 bytes per bitfield, not the 52 the comment's offset implies - so seen[]'s real
  * offset is owned[]'s start (+0x10) plus 58 bytes = +0x4A, six bytes later than commented.
  *
+ * Tries RetroArchMemoryBridge.CommandMode.CORE_MEMORY first, then falls back to CORE_RAM
+ * if nothing is found - these two commands can address memory differently depending on
+ * whether the running core implements full libretro memory-map descriptors (see
+ * RetroArchMemoryBridge's doc comment), and PokemonResort's Gen2/Gen3 support does the
+ * same retry for the same reason.
+ *
  * [onDiagnostic] is an optional hook for logging step-by-step timing/candidate-count info
  * (wire it to DebugLog.add).
  */
 class PokedexMemoryCalibrator(
-    private val bridge: RetroArchMemoryBridge,
+    private val host: String,
+    private val port: Int,
     private val onDiagnostic: (String) -> Unit = {}
 ) {
 
@@ -48,20 +55,39 @@ class PokedexMemoryCalibrator(
     }
 
     suspend fun calibrateAndRead(): Result {
-        if (!bridge.isReachable()) {
+        val probeBridge = RetroArchMemoryBridge(host, port)
+        if (!probeBridge.isReachable()) {
             onDiagnostic("Calibration: RetroArch unreachable (GET_STATUS failed).")
             return Result.Failure("Can't reach RetroArch - check host/port and that it's running.")
         }
 
+        val memoryResult = attemptWithMode(RetroArchMemoryBridge.CommandMode.CORE_MEMORY)
+        if (memoryResult is Result.Success) return memoryResult
+
+        onDiagnostic("Calibration: CORE_MEMORY found nothing usable, retrying with CORE_RAM…")
+        val ramResult = attemptWithMode(RetroArchMemoryBridge.CommandMode.CORE_RAM)
+        if (ramResult is Result.Success) return ramResult
+
+        // Prefer whichever failure is more specific than a bare "not found".
+        return if (memoryResult is Result.Failure && !memoryResult.reason.startsWith("Couldn't find")) {
+            memoryResult
+        } else {
+            ramResult
+        }
+    }
+
+    private suspend fun attemptWithMode(mode: RetroArchMemoryBridge.CommandMode): Result {
+        val bridge = RetroArchMemoryBridge(host, port, commandMode = mode)
+
         val dumpStart = System.currentTimeMillis()
         val snapshot = bridge.dumpEwram() ?: run {
-            onDiagnostic("Calibration: EWRAM dump failed (chunked read error).")
+            onDiagnostic("Calibration ($mode): EWRAM dump failed (chunked read error).")
             return Result.Failure("Memory read failed.")
         }
-        onDiagnostic("Calibration: dump took ${System.currentTimeMillis() - dumpStart}ms (${snapshot.size} bytes).")
+        onDiagnostic("Calibration ($mode): dump took ${System.currentTimeMillis() - dumpStart}ms (${snapshot.size} bytes).")
 
         val candidates = findPokedexCandidates(snapshot)
-        onDiagnostic("Calibration: ${candidates.size} candidate(s) had owned[] ⊆ seen[] with a valid nationalMagic byte.")
+        onDiagnostic("Calibration ($mode): ${candidates.size} candidate(s) had owned[] ⊆ seen[] with a valid nationalMagic byte.")
 
         return when (candidates.size) {
             0 -> Result.Failure(
@@ -80,7 +106,7 @@ class PokedexMemoryCalibrator(
                     pokedexOffset + POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES
                 )
                 onDiagnostic(
-                    "Calibration: pokedex struct at dump offset 0x${pokedexOffset.toString(16)}, " +
+                    "Calibration ($mode): pokedex struct at dump offset 0x${pokedexOffset.toString(16)}, " +
                         "nationalMagic=${if (nationalEnabled) "0xDA" else "0x00"}, " +
                         "owned bits set=${owned.countSetBits()}, seen bits set=${seen.countSetBits()}"
                 )
