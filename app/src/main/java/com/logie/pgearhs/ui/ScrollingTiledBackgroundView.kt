@@ -40,7 +40,7 @@ class ScrollingTiledBackgroundView @JvmOverloads constructor(
     }
 
     /** Scroll speed in dp/second for [MovementPattern.LEFT]. */
-    var scrollSpeedDpPerSecond: Float = 96f
+    var scrollSpeedDpPerSecond: Float = 76.8f
 
     /** Half-width of the figure-8 loop in dp for [MovementPattern.FIGURE_EIGHT]. */
     var figureEightAmplitudeDp: Float = 40f
