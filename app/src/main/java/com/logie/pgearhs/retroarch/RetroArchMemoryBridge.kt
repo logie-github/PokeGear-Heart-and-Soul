@@ -72,14 +72,41 @@ class RetroArchMemoryBridge(
     }
 
     /**
-     * Writes [bytes] starting at absolute [address]. RetroArch doesn't echo the written
-     * bytes back - a non-null reply to the WRITE_* command is the only confirmation
-     * available, so this can't verify the write actually landed the way [readMemory] can
-     * verify a read. Callers that need certainty should read the address back afterward.
+     * Writes [bytes] starting at absolute [address]. Returns whether RetroArch actually
+     * confirmed the write, not just whether a packet was sent.
+     *
+     * WRITE_CORE_MEMORY replies "WRITE_CORE_MEMORY <addr> <count>" where <count> is the
+     * number of bytes it actually wrote - a failed or truncated write still gets a non-null
+     * reply (often reporting -1 or 0), so treating "got any response" as success (the
+     * previous version of this method) silently reports success on writes that never
+     * happened. Confirmed via PokemonResort's RetroArchCoreMemoryReader, which has a working
+     * write path against the same protocol.
+     *
+     * WRITE_CORE_RAM, by contrast, gets no UDP reply at all (confirmed the same way) - fire
+     * the command and return true optimistically; a caller that needs certainty should read
+     * the address back afterward.
      */
     fun writeMemory(address: Int, bytes: ByteArray): Boolean {
-        val hex = bytes.joinToString("") { "%02x".format(it.toInt() and 0xFF) }
-        return sendCommand("${commandMode.writeCommand} ${address.toString(16)} $hex") != null
+        val hex = bytes.joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }
+        val command = "${commandMode.writeCommand} ${address.toString(16)} $hex"
+
+        if (commandMode == CommandMode.CORE_RAM) {
+            sendFireAndForget(command)
+            return true
+        }
+
+        val response = sendCommand(command) ?: return false
+        if (response.contains("ERROR", ignoreCase = true)) return false
+        val writtenCount = response.trim().split(Regex("\\s+")).lastOrNull()?.toIntOrNull()
+        return writtenCount == bytes.size
+    }
+
+    private fun sendFireAndForget(command: String) {
+        DatagramSocket().use { socket ->
+            val address = InetAddress.getByName(host)
+            val requestBytes = command.toByteArray(StandardCharsets.US_ASCII)
+            socket.send(DatagramPacket(requestBytes, requestBytes.size, address, port))
+        }
     }
 
     private fun parseReadResponse(response: String): ByteArray? {

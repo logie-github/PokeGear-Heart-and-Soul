@@ -91,7 +91,22 @@ class TrainerFlagsBridge(
             "Trainer flag reset: id=$trainerId flagId=0x${flagId.toString(16)} " +
                 "byte@0x${byteAddress.toString(16)} 0x${currentByte.toString(16)} -> 0x${clearedByte.toString(16)}"
         )
-        return bridge.writeMemory(byteAddress, byteArrayOf(clearedByte.toByte()))
+        if (!bridge.writeMemory(byteAddress, byteArrayOf(clearedByte.toByte()))) {
+            onDiagnostic("! Trainer flag reset for id=$trainerId: RetroArch did not confirm the write.")
+            return false
+        }
+
+        // Don't just trust the write confirmation - read the byte back, since a bug here
+        // (wrong offset, wrong bit) would otherwise report false success. See the
+        // RetroArchMemoryBridge.writeMemory doc comment for why the confirmation alone
+        // isn't proof either.
+        val verifyByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
+        val verified = verifyByte == clearedByte
+        onDiagnostic(
+            if (verified) "Trainer flag reset for id=$trainerId verified (byte now 0x${verifyByte?.toString(16)})."
+            else "! Trainer flag reset for id=$trainerId did not verify - byte reads 0x${verifyByte?.toString(16) ?: "?"}, expected 0x${clearedByte.toString(16)}."
+        )
+        return verified
     }
 
     private fun resolveSaveBlock1Address(bridge: RetroArchMemoryBridge): Int? {
