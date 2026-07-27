@@ -47,17 +47,8 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
-                val bridge = TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
-                // TEMPORARY - remove once TrainerFlagsBridge.FLAGS_OFFSET_IN_SAVEBLOCK1 is
-                // confirmed correct. Ground truth from the 2026-07-27 bug report: the full
-                // Sprout Tower roster (Chow/Nico/Edmond/Jin/Neal/Troy/Li) + Falkner + Joey
-                // are actually defeated; Kate and the Battle Frontier Palace Maven Spenser
-                // are not, despite showing as defeated.
-                bridge.calibrateFlagsOffset(
-                    knownDefeated = listOf(577, 222, 491, 803, 220, 6, 365, 19, 322),
-                    knownNotDefeated = listOf(753, 860)
-                )
-                bridge.readDefeatedTrainerIds(allTrainers.keys.toList())
+                TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
+                    .readDefeatedTrainerIds(allTrainers.keys.toList())
             }
 
             when (result) {
