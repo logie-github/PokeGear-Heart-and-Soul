@@ -56,5 +56,11 @@
             android:resizeableActivity="true"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density" />
 
+        <activity
+            android:name=".trainers.TrainerCallActivity"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density" />
+
     </application>
 </manifest>

@@ -46,4 +46,16 @@
     <string name="debug_log_close">Close</string>
     <string name="debug_log_report_ready">Debug report %1$s is ready. Submit the issue to send it.</string>
     <string name="debug_log_open_failed">Could not open GitHub report %1$s: %2$s</string>
+    <string name="trainer_call_status_idle">Not synced yet. Just needs a save loaded past the title screen.</string>
+    <string name="trainer_call_status_syncing">Checking who you\'ve beaten…</string>
+    <string name="trainer_call_status_failed">Could not locate save data in memory. Make sure the game is running, host/port are correct, and try again.</string>
+    <string name="trainer_call_status_empty">Nobody wants a rematch yet — go beat a trainer first.</string>
+    <string name="trainer_call_status_count">%1$d trainer(s) up for a rematch.</string>
+    <string name="trainer_call_rematch_title">Rematch!</string>
+    <string name="trainer_call_rematch_message">%1$s is ready to battle again. Reset them now?</string>
+    <string name="trainer_call_rematch_confirm">Call</string>
+    <string name="trainer_call_rematch_cancel">Not now</string>
+    <string name="trainer_call_rematch_working">Calling %1$s…</string>
+    <string name="trainer_call_rematch_success">Rematch set! %1$s will fight you again.</string>
+    <string name="trainer_call_rematch_failed">Couldn\'t reach %1$s. Check the RetroArch connection and try again.</string>
 </resources>

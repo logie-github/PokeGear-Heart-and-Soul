@@ -29,9 +29,9 @@ class RetroArchMemoryBridge(
     private val timeoutMs: Int = 2000,
     private val retries: Int = 2
 ) {
-    enum class CommandMode(val readCommand: String, val ewramBase: Int) {
-        CORE_MEMORY("READ_CORE_MEMORY", 0x02000000),
-        CORE_RAM("READ_CORE_RAM", 0x00000000)
+    enum class CommandMode(val readCommand: String, val writeCommand: String, val ewramBase: Int) {
+        CORE_MEMORY("READ_CORE_MEMORY", "WRITE_CORE_MEMORY", 0x02000000),
+        CORE_RAM("READ_CORE_RAM", "WRITE_CORE_RAM", 0x00000000)
     }
 
     companion object {
@@ -69,6 +69,17 @@ class RetroArchMemoryBridge(
     fun readMemory(address: Int, length: Int): ByteArray? {
         val response = sendCommand("${commandMode.readCommand} ${address.toString(16)} $length") ?: return null
         return parseReadResponse(response)
+    }
+
+    /**
+     * Writes [bytes] starting at absolute [address]. RetroArch doesn't echo the written
+     * bytes back - a non-null reply to the WRITE_* command is the only confirmation
+     * available, so this can't verify the write actually landed the way [readMemory] can
+     * verify a read. Callers that need certainty should read the address back afterward.
+     */
+    fun writeMemory(address: Int, bytes: ByteArray): Boolean {
+        val hex = bytes.joinToString("") { "%02x".format(it.toInt() and 0xFF) }
+        return sendCommand("${commandMode.writeCommand} ${address.toString(16)} $hex") != null
     }
 
     private fun parseReadResponse(response: String): ByteArray? {

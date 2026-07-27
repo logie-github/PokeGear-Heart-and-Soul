@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.widget.ImageView
 import android.widget.Toast
 import com.logie.pgearhs.pokedex.PokedexActivity
+import com.logie.pgearhs.trainers.TrainerCallActivity
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 import com.logie.pgearhs.ui.ButtonSelectionController
 import com.logie.pgearhs.ui.MenuBackgroundPrefs
@@ -17,6 +18,7 @@ class MainActivity : BaseImmersiveActivity() {
 
     private lateinit var menuBackgroundDots: ScrollingTiledBackgroundView
     private lateinit var buttonSelection: ButtonSelectionController
+    private lateinit var selectableButtons: List<ImageView>
     private var selectSound: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +42,8 @@ class MainActivity : BaseImmersiveActivity() {
         val callButton = findViewById<ImageView>(R.id.buttonCall)
         val switchOffButton = findViewById<ImageView>(R.id.buttonSwitchOff)
 
-        buttonSelection = ButtonSelectionController(listOf(mapButton, callButton, switchOffButton))
+        selectableButtons = listOf(mapButton, callButton, switchOffButton)
+        buttonSelection = ButtonSelectionController(selectableButtons)
         buttonSelection.onSelectionChanged = {
             selectSound?.apply {
                 seekTo(0)
@@ -50,7 +53,7 @@ class MainActivity : BaseImmersiveActivity() {
 
         val showComingSoon = { showComingSoonToast() }
         mapButton.setOnClickListener { showComingSoon() }
-        callButton.setOnClickListener { showComingSoon() }
+        callButton.setOnClickListener { startActivity(Intent(this, TrainerCallActivity::class.java)) }
         switchOffButton.setOnClickListener { showComingSoon() }
 
         findViewById<android.view.View>(R.id.settingsButton).setOnClickListener {
@@ -95,7 +98,7 @@ class MainActivity : BaseImmersiveActivity() {
                 return true
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_ENTER -> {
-                showComingSoonToast()
+                selectableButtons[buttonSelection.selectedIndex].performClick()
                 return true
             }
         }
