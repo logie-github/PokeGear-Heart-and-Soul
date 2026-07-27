@@ -93,6 +93,63 @@ class TrainerFlagsBridge(
         return bridge.writeMemory(byteAddress, byteArrayOf(clearedByte.toByte()))
     }
 
+    /**
+     * Temporary diagnostic aid, NOT for production use - remove once the real flags[]
+     * offset is confirmed and [FLAGS_OFFSET_IN_SAVEBLOCK1] is updated to match. Brute-force
+     * searches nearby byte offsets for the one where every id in [knownDefeated] reads bit=1
+     * and every id in [knownNotDefeated] reads bit=0 - the same technique that found the
+     * Pokedex owned[] offset bug (see PokedexMemoryCalibrator history). Logs candidate
+     * offsets via onDiagnostic; ideally exactly one comes back.
+     */
+    suspend fun calibrateFlagsOffset(
+        knownDefeated: List<Int>,
+        knownNotDefeated: List<Int>,
+        searchRadiusBytes: Int = 512
+    ) {
+        val bridge = RetroArchMemoryBridge(host, port)
+        val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: run {
+            onDiagnostic("Calibration: couldn't resolve SaveBlock1 address.")
+            return
+        }
+
+        val allFlagIds = (knownDefeated + knownNotDefeated).map { TRAINER_FLAGS_START + it }
+        val minByte = allFlagIds.min() / 8
+        val maxByte = allFlagIds.max() / 8
+
+        val readStart = FLAGS_OFFSET_IN_SAVEBLOCK1 + minByte - searchRadiusBytes
+        val readLength = (maxByte - minByte) + 1 + 2 * searchRadiusBytes
+        onDiagnostic(
+            "Calibration: reading $readLength bytes @SaveBlock1+0x${readStart.toString(16)} " +
+                "to search offsets 0x${(FLAGS_OFFSET_IN_SAVEBLOCK1 - searchRadiusBytes).toString(16)}.." +
+                "0x${(FLAGS_OFFSET_IN_SAVEBLOCK1 + searchRadiusBytes).toString(16)}"
+        )
+
+        val dump = bridge.readRegion(saveBlock1Address + readStart, readLength) ?: run {
+            onDiagnostic("Calibration: read failed.")
+            return
+        }
+
+        val candidates = mutableListOf<Int>()
+        for (candidateOffset in (FLAGS_OFFSET_IN_SAVEBLOCK1 - searchRadiusBytes)..(FLAGS_OFFSET_IN_SAVEBLOCK1 + searchRadiusBytes)) {
+            fun bitAt(trainerId: Int): Int? {
+                val flagId = TRAINER_FLAGS_START + trainerId
+                val byteIdx = candidateOffset + flagId / 8 - readStart
+                if (byteIdx !in dump.indices) return null
+                val byte = dump[byteIdx].toInt() and 0xFF
+                return (byte shr (flagId % 8)) and 1
+            }
+            val defeatedOk = knownDefeated.all { bitAt(it) == 1 }
+            val notDefeatedOk = knownNotDefeated.all { bitAt(it) == 0 }
+            if (defeatedOk && notDefeatedOk) candidates.add(candidateOffset)
+        }
+
+        onDiagnostic(
+            "Calibration: ${candidates.size} candidate offset(s) satisfy all " +
+                "${knownDefeated.size + knownNotDefeated.size} known true/false trainers" +
+                (if (candidates.isNotEmpty()) " -> ${candidates.joinToString { "0x" + it.toString(16) }}" else "")
+        )
+    }
+
     private fun resolveSaveBlock1Address(bridge: RetroArchMemoryBridge): Int? {
         cachedSaveBlock1Address?.let { return it }
 
