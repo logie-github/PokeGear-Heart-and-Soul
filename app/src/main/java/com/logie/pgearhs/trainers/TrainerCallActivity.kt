@@ -99,7 +99,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         val transcript = RematchCall.assemble(
             playerName = playerName,
             pokemonName = trainer.firstPokemon,
-            location = trainer.location
+            location = LocationPhrasing.naturalize(trainer.location)
         ).joinToString("\n\n")
 
         AlertDialog.Builder(this)

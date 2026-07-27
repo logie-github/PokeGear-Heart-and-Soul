@@ -23,9 +23,7 @@ object TrainerRepository {
                     id = obj.getInt("id"),
                     name = obj.getString("name"),
                     trainerClass = obj.getString("class"),
-                    location = obj.optString("location")
-                        .takeIf { it.isNotBlank() && !it.startsWith("Unplaced") }
-                        ?: "our usual spot",
+                    location = obj.getString("location"),
                     firstPokemon = obj.optString("firstPokemon").takeIf { it.isNotBlank() }
                 )
             )
