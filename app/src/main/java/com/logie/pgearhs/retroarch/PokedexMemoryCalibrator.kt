@@ -187,7 +187,16 @@ class PokedexMemoryCalibrator(
 
         logKnownPointerDiagnostics(block)
 
-        val validated = validatePokedexStruct(block, offset = SAVEBLOCK2_TO_POKEDEX)
+        // requireKnownMagic = false: this address is already trusted independently (real
+        // IWRAM pointer, from-source rebuild, and a header that validates + advances
+        // correctly across sessions - see the class doc comment), so the nationalMagic
+        // byte isn't needed as a discriminator here the way it is in the full EWRAM scan.
+        // Real debug reports show it consistently reading 0xc3 - not vanilla Emerald's
+        // 0xDA/0x00 - most likely because this hack uses a different anti-tamper constant,
+        // not because the struct is misaligned (everything else at this offset - header,
+        // zero-padding region, owned[] bit count advancing plausibly between sessions -
+        // lines up exactly where expected).
+        val validated = validatePokedexStruct(block, offset = SAVEBLOCK2_TO_POKEDEX, requireKnownMagic = false)
         if (!validated) {
             onDiagnostic("Calibration: candidate pointer resolved to EWRAM, but the data there isn't a valid pokedex struct.")
             return null
@@ -217,7 +226,7 @@ class PokedexMemoryCalibrator(
         val nameBytes = (0 until PLAYER_NAME_LENGTH).map { block.getOrNull(PLAYER_NAME_OFFSET + it)?.toUByteValue() }
         val headerOk = validateSaveBlock2Header(block, 0)
 
-        val dumpLen = minOf(block.size, SAVEBLOCK2_TO_POKEDEX + 24)
+        val dumpLen = block.size
         val hex = block.copyOfRange(0, dumpLen).joinToString(" ") { "%02x".format(it.toUByteValue()) }
 
         onDiagnostic(
@@ -351,9 +360,11 @@ class PokedexMemoryCalibrator(
         return Result.Success(nationalEnabled, owned, seen)
     }
 
-    private fun validatePokedexStruct(bytes: ByteArray, offset: Int): Boolean {
-        val magic = bytes.getOrNull(offset + POKEDEX_NATIONAL_MAGIC_OFFSET) ?: return false
-        if (magic != NATIONAL_MAGIC_ENABLED && magic != NATIONAL_MAGIC_DISABLED) return false
+    private fun validatePokedexStruct(bytes: ByteArray, offset: Int, requireKnownMagic: Boolean = true): Boolean {
+        if (requireKnownMagic) {
+            val magic = bytes.getOrNull(offset + POKEDEX_NATIONAL_MAGIC_OFFSET) ?: return false
+            if (magic != NATIONAL_MAGIC_ENABLED && magic != NATIONAL_MAGIC_DISABLED) return false
+        }
 
         if (!validateSaveBlock2Header(bytes, offset - SAVEBLOCK2_TO_POKEDEX)) return false
 
