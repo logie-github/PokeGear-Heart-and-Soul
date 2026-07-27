@@ -13,14 +13,16 @@ data class RematchPosition(val tableId: Int, val position: Int)
 
 object RematchPositionRepository {
 
-    private const val ASSET_FILE = "trainer_rematch_positions.json"
+    private const val POSITIONS_ASSET_FILE = "trainer_rematch_positions.json"
+    private const val ANCHORS_ASSET_FILE = "trainer_rematch_anchors.json"
 
-    private var cached: Map<Int, RematchPosition>? = null
+    private var cachedPositions: Map<Int, RematchPosition>? = null
+    private var cachedAnchors: Map<Int, Int>? = null
 
     fun loadAll(context: Context): Map<Int, RematchPosition> {
-        cached?.let { return it }
+        cachedPositions?.let { return it }
 
-        val json = context.assets.open(ASSET_FILE).bufferedReader().use { it.readText() }
+        val json = context.assets.open(POSITIONS_ASSET_FILE).bufferedReader().use { it.readText() }
         val array = JSONObject(json).getJSONArray("rematches")
 
         val map = mutableMapOf<Int, RematchPosition>()
@@ -29,7 +31,24 @@ object RematchPositionRepository {
             map[obj.getInt("id")] = RematchPosition(obj.getInt("tableId"), obj.getInt("position"))
         }
 
-        cached = map
+        cachedPositions = map
+        return map
+    }
+
+    /** tableId -> the trainerId that occupies chain position 0 (the original encounter). */
+    fun loadAnchors(context: Context): Map<Int, Int> {
+        cachedAnchors?.let { return it }
+
+        val json = context.assets.open(ANCHORS_ASSET_FILE).bufferedReader().use { it.readText() }
+        val array = JSONObject(json).getJSONArray("anchors")
+
+        val map = mutableMapOf<Int, Int>()
+        for (i in 0 until array.length()) {
+            val obj = array.getJSONObject(i)
+            map[obj.getInt("tableId")] = obj.getInt("id")
+        }
+
+        cachedAnchors = map
         return map
     }
 }

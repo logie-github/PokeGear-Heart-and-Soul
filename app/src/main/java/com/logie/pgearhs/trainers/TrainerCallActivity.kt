@@ -30,6 +30,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var allTrainers: Map<Int, Trainer>
     private lateinit var rematchPositions: Map<Int, RematchPosition>
+    private lateinit var rematchAnchors: Map<Int, Int>
     private var callable: List<Trainer> = emptyList()
     private var playerName: String = PLAYER_NAME_FALLBACK
 
@@ -43,6 +44,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
         allTrainers = TrainerRepository.loadAll(this).associateBy { it.id }
         rematchPositions = RematchPositionRepository.loadAll(this)
+        rematchAnchors = RematchPositionRepository.loadAnchors(this)
         adapter = TrainerCallAdapter(emptyList()) { trainer -> confirmRematch(trainer) }
         list.adapter = adapter
 
@@ -135,8 +137,9 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         lifecycleScope.launch {
             val success = withContext(Dispatchers.IO) {
                 val bridge = TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
-                if (rematchPosition != null) {
-                    bridge.setRematchReady(rematchPosition.tableId, rematchPosition.position)
+                val anchorId = rematchPosition?.let { rematchAnchors[it.tableId] }
+                if (rematchPosition != null && anchorId != null) {
+                    bridge.setRematchReady(rematchPosition.tableId, rematchPosition.position, anchorId)
                 } else {
                     bridge.resetTrainerFlag(trainer.id)
                 }

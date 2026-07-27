@@ -183,6 +183,39 @@ class TrainerFlagsBridge(
         return verified
     }
 
+    private fun setFlagBit(bridge: RetroArchMemoryBridge, saveBlock1Address: Int, flagId: Int, label: String): Boolean {
+        val byteAddress = saveBlock1Address + FLAGS_OFFSET_IN_SAVEBLOCK1 + (flagId / 8)
+        val bit = flagId and 7
+
+        val currentByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF) ?: run {
+            onDiagnostic("! Set failed for $label: couldn't read flag byte.")
+            return false
+        }
+        val setByte = currentByte or (1 shl bit)
+
+        if (currentByte == setByte) {
+            onDiagnostic("Set $label: flagId=0x${flagId.toString(16)} already set, nothing to do.")
+            return true
+        }
+
+        onDiagnostic(
+            "Set $label: flagId=0x${flagId.toString(16)} " +
+                "byte@0x${byteAddress.toString(16)} 0x${currentByte.toString(16)} -> 0x${setByte.toString(16)}"
+        )
+        if (!bridge.writeMemory(byteAddress, byteArrayOf(setByte.toByte()))) {
+            onDiagnostic("! Set for $label: RetroArch did not confirm the write.")
+            return false
+        }
+
+        val verifyByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
+        val verified = verifyByte == setByte
+        onDiagnostic(
+            if (verified) "Set for $label verified (byte now 0x${verifyByte?.toString(16)})."
+            else "! Set for $label did not verify - byte reads 0x${verifyByte?.toString(16) ?: "?"}, expected 0x${setByte.toString(16)}."
+        )
+        return verified
+    }
+
     /**
      * Flips the real rematch-ready switch instead of resetting the plain defeated flag -
      * see [TRAINER_REMATCHES_OFFSET_IN_SAVEBLOCK1]'s doc comment for the mechanism and the
@@ -190,10 +223,24 @@ class TrainerFlagsBridge(
      * of the 5-slot chain to make ready (1-4; position 0 is the original encounter and has
      * no "rematch" representation in this system - callers should fall back to
      * [resetTrainerFlag] for that case).
+     *
+     * Every talk-to-this-NPC script re-runs `trainerbattle_single <anchorTrainerId>` first,
+     * every single time, before it ever checks the rematch-ready switch - if the *anchor's*
+     * (chain position 0) defeated flag isn't set, that line triggers a full first-encounter
+     * battle regardless of what trainerRematches[] says, which is exactly what "still acts
+     * like we've never met" looks like. So this also makes sure the anchor's flag is set
+     * (not cleared - the opposite direction from [resetTrainerFlag]) before flipping the
+     * switch, in case it's currently off (e.g. a stale/never-actually-fought entry, or left
+     * over from testing the old reset-based approach on this same chain).
      */
-    suspend fun setRematchReady(tableId: Int, position: Int): Boolean {
+    suspend fun setRematchReady(tableId: Int, position: Int, anchorTrainerId: Int): Boolean {
         val bridge = RetroArchMemoryBridge(host, port)
         val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return false
+
+        val anchorFlagId = TRAINER_FLAGS_START + anchorTrainerId
+        val anchorOk = setFlagBit(bridge, saveBlock1Address, anchorFlagId, "anchor trainer flag for id=$anchorTrainerId")
+        if (!anchorOk) return false
+
         val byteAddress = saveBlock1Address + TRAINER_REMATCHES_OFFSET_IN_SAVEBLOCK1 + tableId
 
         val currentByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
