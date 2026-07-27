@@ -22,7 +22,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var allTrainers: Map<Int, Trainer>
-    private var defeated: List<Trainer> = emptyList()
+    private var callable: List<Trainer> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,16 +53,20 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
             when (result) {
                 is TrainerFlagsBridge.ReadResult.Success -> {
-                    defeated = result.defeatedTrainerIds
+                    val everDefeated = TrainerRegistry.recordDefeated(this@TrainerCallActivity, result.defeatedTrainerIds)
+                    callable = everDefeated
                         .mapNotNull { allTrainers[it] }
                         .sortedBy { it.displayName }
-                    adapter.submit(defeated)
-                    statusLabel.text = if (defeated.isEmpty()) {
+                    adapter.submit(callable)
+                    statusLabel.text = if (callable.isEmpty()) {
                         getString(R.string.trainer_call_status_empty)
                     } else {
-                        getString(R.string.trainer_call_status_count, defeated.size)
+                        getString(R.string.trainer_call_status_count, callable.size)
                     }
-                    DebugLog.add("Trainer call: sync succeeded, ${defeated.size} defeated.")
+                    DebugLog.add(
+                        "Trainer call: sync succeeded, ${result.defeatedTrainerIds.size} currently defeated, " +
+                            "${callable.size} callable overall."
+                    )
                 }
                 is TrainerFlagsBridge.ReadResult.Failure -> {
                     statusLabel.text = getString(R.string.trainer_call_status_failed)
@@ -93,15 +97,10 @@ class TrainerCallActivity : BaseImmersiveActivity() {
             }
 
             if (success) {
+                // Trainer stays in `callable` (and the persisted registry) - resetting their
+                // flag makes them fightable again, it doesn't un-register their number.
                 DebugLog.add("Trainer call: ${trainer.displayName} reset succeeded.")
                 Toast.makeText(this@TrainerCallActivity, getString(R.string.trainer_call_rematch_success, trainer.displayName), Toast.LENGTH_LONG).show()
-                defeated = defeated.filterNot { it.id == trainer.id }
-                adapter.submit(defeated)
-                statusLabel.text = if (defeated.isEmpty()) {
-                    getString(R.string.trainer_call_status_empty)
-                } else {
-                    getString(R.string.trainer_call_status_count, defeated.size)
-                }
             } else {
                 DebugLog.add("! Trainer call: ${trainer.displayName} reset failed.")
                 Toast.makeText(this@TrainerCallActivity, getString(R.string.trainer_call_rematch_failed, trainer.displayName), Toast.LENGTH_LONG).show()
