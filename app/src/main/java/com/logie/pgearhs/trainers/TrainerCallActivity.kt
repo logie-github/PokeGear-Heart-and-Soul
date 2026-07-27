@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.logie.pgearhs.R
 import com.logie.pgearhs.debug.DebugLog
+import com.logie.pgearhs.retroarch.PlayerProfileBridge
 import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.retroarch.TrainerFlagsBridge
 import com.logie.pgearhs.ui.BaseImmersiveActivity
@@ -20,16 +21,16 @@ import kotlinx.coroutines.withContext
 class TrainerCallActivity : BaseImmersiveActivity() {
 
     companion object {
-        // The app has no way to read the save's actual trainer name yet (Gen3 saves encode
-        // it with a custom character table, not ASCII) - a generic placeholder reads fine
-        // in every RematchCall line.
-        private const val PLAYER_NAME_PLACEHOLDER = "Trainer"
+        // Fallback if the live read fails (RetroArch unreachable, garbled bytes, etc.) -
+        // reads fine in every RematchCall line.
+        private const val PLAYER_NAME_FALLBACK = "Trainer"
     }
 
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var allTrainers: Map<Int, Trainer>
     private var callable: List<Trainer> = emptyList()
+    private var playerName: String = PLAYER_NAME_FALLBACK
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +54,15 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         DebugLog.add("Trainer call: syncing against $host:$port…")
 
         lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
+            val (result, name) = withContext(Dispatchers.IO) {
+                val flagsResult = TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
                     .readDefeatedTrainerIds(allTrainers.keys.toList())
+                val nameResult = PlayerProfileBridge(host, port, onDiagnostic = DebugLog::add).readPlayerName()
+                flagsResult to nameResult
+            }
+            if (name != null) {
+                playerName = name
+                DebugLog.add("Trainer call: player name read as \"$name\".")
             }
 
             when (result) {
@@ -90,7 +97,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
      */
     private fun confirmRematch(trainer: Trainer) {
         val transcript = RematchCall.assemble(
-            playerName = PLAYER_NAME_PLACEHOLDER,
+            playerName = playerName,
             pokemonName = trainer.firstPokemon,
             location = trainer.location
         ).joinToString("\n\n")
