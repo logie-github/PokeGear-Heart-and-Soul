@@ -31,6 +31,44 @@ class TrainerFlagsBridge(
 
         private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
         private const val EWRAM_SIZE = RetroArchMemoryBridge.EWRAM_SIZE
+
+        /**
+         * Some trainers are gated behind a second, dedicated flag on top of the generic
+         * per-trainer one above - mainly gym leaders and Elite Four members, whose map
+         * scripts check `goto_if_set FLAG_DEFEATED_<GYM>, ...Defeated` *before* ever
+         * reaching the trainerbattle call that checks the per-trainer flag. Clearing only
+         * the per-trainer flag leaves the script routing straight to the "already beaten"
+         * dialogue without a fight - confirmed 2026-07-27 when Falkner's reset reported
+         * success but didn't actually let him be rematched. Extracted from every map's
+         * scripts.inc in pokemonHnS-v121: every `goto_if_set FLAG_DEFEATED_...` line
+         * whose target block also contains a `trainerbattle` call for the same trainer
+         * (flag values from include/constants/flags.h; these are ordinary sub-0x4000
+         * flags, so they live in the same flags[] array as the per-trainer ones).
+         *
+         * Not exhaustive: multi-tier gyms whose flag check and battle trigger live in
+         * separate script blocks (e.g. Chuck/Pryce/Jasmine's interlocking 3-gym rotation)
+         * weren't resolvable by this static, single-block extraction and aren't covered.
+         */
+        private val MILESTONE_FLAG_BY_TRAINER_ID = mapOf(
+            19 to 0x4f0,  // Falkner (TRAINER_FALKNER_1) -> FLAG_DEFEATED_VIOLET_GYM
+            116 to 0xbf,  // Wai (TRAINER_WAI) -> FLAG_DEFEATED_GRUNT_SPACE_CENTER_1F
+            261 to 0x4fb, // Sidney (TRAINER_SIDNEY) -> FLAG_DEFEATED_ELITE_4_WILL
+            262 to 0x4fc, // Phoebe (TRAINER_PHOEBE) -> FLAG_DEFEATED_ELITE_4_KOGA
+            263 to 0x4fd, // Glacia (TRAINER_GLACIA) -> FLAG_DEFEATED_ELITE_4_BRUNO
+            264 to 0x4fe, // Kip/Drake (TRAINER_KIP) -> FLAG_DEFEATED_ELITE_4_KAREN
+            302 to 0x26f, // Lt. Surge (TRAINER_LTSURGE) -> FLAG_DEFEATED_VERMILION_GYM
+            303 to 0x270, // Erika (TRAINER_ERIKA) -> FLAG_DEFEATED_CELADON_GYM
+            304 to 0x271, // Sabrina (TRAINER_SABRINA) -> FLAG_DEFEATED_SAFFRON_GYM
+            305 to 0x272, // Janine (TRAINER_JANINE) -> FLAG_DEFEATED_FUCHSIA_GYM
+            306 to 0x273, // Blaine (TRAINER_BLAINE) -> FLAG_DEFEATED_CINNABAR_ISLAND_GYM
+            543 to 0x26d, // Brock (TRAINER_BROCK) -> FLAG_DEFEATED_PEWTER_GYM
+            544 to 0x26e, // Misty (TRAINER_MISTY) -> FLAG_DEFEATED_CERULEAN_GYM
+            595 to 0x274, // Blue (TRAINER_BLUE) -> FLAG_DEFEATED_VIRIDIAN_GYM
+            596 to 0x4f1, // Bugsy (TRAINER_BUGSY_1) -> FLAG_DEFEATED_AZALEA_TOWN_GYM
+            604 to 0x4f2, // Whitney (TRAINER_WHITNEY_1) -> FLAG_DEFEATED_GOLDENROD_CITY_GYM
+            608 to 0x4f3, // Morty (TRAINER_MORTY_1) -> FLAG_DEFEATED_ECRUTEAK_CITY_GYM
+            804 to 0x4f8  // Steven (TRAINER_STEVEN) -> FLAG_DEFEATED_RED
+        )
     }
 
     sealed class ReadResult {
@@ -72,27 +110,43 @@ class TrainerFlagsBridge(
         return ReadResult.Success(defeated)
     }
 
-    /** Clears trainerId's defeated flag so the game treats them as never fought. Returns success. */
+    /**
+     * Clears trainerId's defeated flag so the game treats them as never fought, plus their
+     * milestone flag if they have one (see [MILESTONE_FLAG_BY_TRAINER_ID] - required for
+     * gym leaders/Elite Four to actually be rematchable, not just for the per-trainer flag
+     * to read clear). Returns true only if every flag that needed clearing was confirmed.
+     */
     suspend fun resetTrainerFlag(trainerId: Int): Boolean {
         val bridge = RetroArchMemoryBridge(host, port)
         val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return false
 
         val flagId = TRAINER_FLAGS_START + trainerId
+        var success = clearFlagBit(bridge, saveBlock1Address, flagId, "trainer flag for id=$trainerId")
+
+        MILESTONE_FLAG_BY_TRAINER_ID[trainerId]?.let { milestoneFlagId ->
+            val milestoneOk = clearFlagBit(bridge, saveBlock1Address, milestoneFlagId, "milestone flag for id=$trainerId")
+            success = success && milestoneOk
+        }
+
+        return success
+    }
+
+    private fun clearFlagBit(bridge: RetroArchMemoryBridge, saveBlock1Address: Int, flagId: Int, label: String): Boolean {
         val byteAddress = saveBlock1Address + FLAGS_OFFSET_IN_SAVEBLOCK1 + (flagId / 8)
         val bit = flagId and 7
 
         val currentByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF) ?: run {
-            onDiagnostic("! Trainer flag reset failed: couldn't read flag byte for trainer $trainerId.")
+            onDiagnostic("! Reset failed for $label: couldn't read flag byte.")
             return false
         }
         val clearedByte = currentByte and (1 shl bit).inv() and 0xFF
 
         onDiagnostic(
-            "Trainer flag reset: id=$trainerId flagId=0x${flagId.toString(16)} " +
+            "Reset $label: flagId=0x${flagId.toString(16)} " +
                 "byte@0x${byteAddress.toString(16)} 0x${currentByte.toString(16)} -> 0x${clearedByte.toString(16)}"
         )
         if (!bridge.writeMemory(byteAddress, byteArrayOf(clearedByte.toByte()))) {
-            onDiagnostic("! Trainer flag reset for id=$trainerId: RetroArch did not confirm the write.")
+            onDiagnostic("! Reset for $label: RetroArch did not confirm the write.")
             return false
         }
 
@@ -103,8 +157,8 @@ class TrainerFlagsBridge(
         val verifyByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
         val verified = verifyByte == clearedByte
         onDiagnostic(
-            if (verified) "Trainer flag reset for id=$trainerId verified (byte now 0x${verifyByte?.toString(16)})."
-            else "! Trainer flag reset for id=$trainerId did not verify - byte reads 0x${verifyByte?.toString(16) ?: "?"}, expected 0x${clearedByte.toString(16)}."
+            if (verified) "Reset for $label verified (byte now 0x${verifyByte?.toString(16)})."
+            else "! Reset for $label did not verify - byte reads 0x${verifyByte?.toString(16) ?: "?"}, expected 0x${clearedByte.toString(16)}."
         )
         return verified
     }
