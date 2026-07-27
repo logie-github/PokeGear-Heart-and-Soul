@@ -81,8 +81,13 @@ class PokedexMemoryCalibrator(
         private const val SAVEBLOCK2_TO_POKEDEX = 0x18
         private const val POKEDEX_NATIONAL_MAGIC_OFFSET = 0x02
         private const val NUM_DEX_FLAG_BYTES = 58 // ROUND_BITS_TO_BYTES(SPECIES_EGG=462)
-        private const val POKEDEX_OWNED_OFFSET = 0x10
-        private const val POKEDEX_SEEN_OFFSET = POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES // 0x4A, not the stale 0x44 comment
+        // 0x14, not vanilla's 0x10 - confirmed 2026-07-27 from a real sync where every one
+        // of 7 owned species came back shifted by exactly 4 bytes/32 bits (same bit-in-byte,
+        // byteIndex+4) versus what the player actually caught. This hack's Pokedex struct
+        // has 4 extra bytes of something (not investigated) between unknown3 and owned[]
+        // that vanilla Emerald's include/global.h doesn't have.
+        private const val POKEDEX_OWNED_OFFSET = 0x14
+        private const val POKEDEX_SEEN_OFFSET = POKEDEX_OWNED_OFFSET + NUM_DEX_FLAG_BYTES
         private const val NATIONAL_MAGIC_TO_OWNED = POKEDEX_OWNED_OFFSET - POKEDEX_NATIONAL_MAGIC_OFFSET
         private const val POKEDEX_STRUCT_READ_BYTES = POKEDEX_SEEN_OFFSET + NUM_DEX_FLAG_BYTES
 
