@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/entryLabel"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/entryRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:paddingVertical="10dp"
-    android:paddingHorizontal="12dp"
-    android:textColor="@color/johtoOnBackground"
-    android:textSize="16sp" />
+    android:paddingHorizontal="12dp">
+
+    <ImageView
+        android:id="@+id/caughtBallIcon"
+        android:layout_width="35px"
+        android:layout_height="35px"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/caught_ball"
+        android:contentDescription="@null"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/entryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/johtoOnBackground"
+        android:textSize="16sp" />
+
+</LinearLayout>

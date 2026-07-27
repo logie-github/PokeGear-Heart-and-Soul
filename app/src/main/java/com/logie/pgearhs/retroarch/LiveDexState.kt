@@ -34,6 +34,9 @@ object LiveDexState {
     fun isVisible(nationalDexNumber: Int): Boolean =
         !isSynced || owned.contains(nationalDexNumber) || seen.contains(nationalDexNumber)
 
+    /** True only if the species has actually been caught, not just seen. */
+    fun isOwned(nationalDexNumber: Int): Boolean = owned.contains(nationalDexNumber)
+
     /** Bit n of a dex bitfield = species whose National Dex number is n+1. */
     private fun extractSetBits(bytes: ByteArray): Set<Int> {
         val result = mutableSetOf<Int>()

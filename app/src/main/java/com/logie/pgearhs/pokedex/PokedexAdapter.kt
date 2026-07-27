@@ -1,10 +1,13 @@
 package com.logie.pgearhs.pokedex
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.logie.pgearhs.R
+import com.logie.pgearhs.retroarch.LiveDexState
 
 class PokedexAdapter(
     private var entries: List<PokedexEntry>,
@@ -13,7 +16,10 @@ class PokedexAdapter(
     private val onRowClicked: (Int) -> Unit
 ) : RecyclerView.Adapter<PokedexAdapter.ViewHolder>() {
 
-    class ViewHolder(val label: TextView) : RecyclerView.ViewHolder(label)
+    class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
+        val caughtBallIcon: ImageView = row.findViewById(R.id.caughtBallIcon)
+        val label: TextView = row.findViewById(R.id.entryLabel)
+    }
 
     fun submit(newEntries: List<PokedexEntry>, newDexMode: DexMode) {
         entries = newEntries
@@ -29,20 +35,22 @@ class PokedexAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item_pokedex_entry, parent, false) as TextView
-        return ViewHolder(view)
+        val row = LayoutInflater.from(parent.context)
+            .inflate(R.layout.list_item_pokedex_entry, parent, false)
+        return ViewHolder(row)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val entry = entries[position]
         val number = if (dexMode == DexMode.NATIONAL) entry.nationalDexNumber else entry.regionalDexNumber
-        holder.label.text = "%03d %s".format(number, entry.displayName)
-        holder.label.isSelected = position == selectedIndex
-        holder.label.setBackgroundColor(
+        holder.label.text = "No%03d %s".format(number, entry.displayName)
+        holder.caughtBallIcon.visibility =
+            if (LiveDexState.isOwned(entry.nationalDexNumber)) View.VISIBLE else View.INVISIBLE
+        holder.itemView.isSelected = position == selectedIndex
+        holder.itemView.setBackgroundColor(
             if (position == selectedIndex) 0x33FFFFFF else 0x00000000
         )
-        holder.label.setOnClickListener { onRowClicked(position) }
+        holder.itemView.setOnClickListener { onRowClicked(position) }
     }
 
     override fun getItemCount(): Int = entries.size
