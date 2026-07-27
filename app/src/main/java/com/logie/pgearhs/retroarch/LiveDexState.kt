@@ -30,8 +30,8 @@ object LiveDexState {
         registeredCount = 0
     }
 
-    /** True if not synced (nothing to filter by yet) or the species has been owned/seen. */
-    fun isVisible(nationalDexNumber: Int): Boolean =
+    /** True if not synced (nothing known either way yet) or the species has been owned/seen. */
+    fun isSeen(nationalDexNumber: Int): Boolean =
         !isSynced || owned.contains(nationalDexNumber) || seen.contains(nationalDexNumber)
 
     /** True only if the species has actually been caught, not just seen. */

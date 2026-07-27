@@ -16,6 +16,10 @@ class PokedexAdapter(
     private val onRowClicked: (Int) -> Unit
 ) : RecyclerView.Adapter<PokedexAdapter.ViewHolder>() {
 
+    companion object {
+        private const val UNSEEN_NAME = "----------"
+    }
+
     class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
         val caughtBallIcon: ImageView = row.findViewById(R.id.caughtBallIcon)
         val label: TextView = row.findViewById(R.id.entryLabel)
@@ -43,7 +47,8 @@ class PokedexAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val entry = entries[position]
         val number = if (dexMode == DexMode.NATIONAL) entry.nationalDexNumber else entry.regionalDexNumber
-        holder.label.text = "No%03d %s".format(number, entry.displayName)
+        val name = if (LiveDexState.isSeen(entry.nationalDexNumber)) entry.displayName else UNSEEN_NAME
+        holder.label.text = "No%03d %s".format(number, name)
         holder.caughtBallIcon.visibility =
             if (LiveDexState.isOwned(entry.nationalDexNumber)) View.VISIBLE else View.INVISIBLE
         holder.itemView.isSelected = position == selectedIndex

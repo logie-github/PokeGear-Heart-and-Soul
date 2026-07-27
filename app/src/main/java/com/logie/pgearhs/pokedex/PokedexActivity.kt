@@ -125,12 +125,11 @@ class PokedexActivity : BaseImmersiveActivity() {
     }
 
     private fun loadEntriesForCurrentMode(): List<PokedexEntry> {
-        val all = if (dexMode == DexMode.NATIONAL) {
+        return if (dexMode == DexMode.NATIONAL) {
             PokedexRepository.byNationalDex(this)
         } else {
             PokedexRepository.byRegionalDex(this)
         }
-        return all.filter { LiveDexState.isVisible(it.nationalDexNumber) }
     }
 
     private fun updateSyncStatusLabel() {
