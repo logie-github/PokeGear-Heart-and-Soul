@@ -6,5 +6,7 @@
         <item name="colorAccent">@color/johtoAccent</item>
         <item name="android:windowBackground">@color/johtoBackground</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/johtoBackground</item>
+        <item name="android:fontFamily">@font/pokemon_emerald</item>
+        <item name="fontFamily">@font/pokemon_emerald</item>
     </style>
 </resources>

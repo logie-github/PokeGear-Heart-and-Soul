@@ -177,11 +177,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="24dp"
             android:text="@string/debug_log_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/retroArchSyncStatus" />
+
+        <TextView
+            android:id="@+id/creditsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/credits_label"
+            android:textColor="@color/johtoOnBackground"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/debugLogButton" />
+
+        <TextView
+            android:id="@+id/creditsFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.7"
+            android:autoLink="web"
+            android:text="@string/credits_font"
+            android:textColor="@color/johtoOnBackground"
+            android:textColorLink="@color/johtoAccent"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/creditsLabel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
