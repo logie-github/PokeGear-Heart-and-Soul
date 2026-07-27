@@ -62,6 +62,12 @@ class TrainerFlagsBridge(
         }
 
         onDiagnostic("Trainer flags: ${defeated.size} of ${knownTrainerIds.size} known trainers read as defeated.")
+        onDiagnostic("Trainer flags: defeated ids = ${defeated.sorted()}")
+        onDiagnostic(
+            "Trainer flags: raw dump @0x${(saveBlock1Address + FLAGS_OFFSET_IN_SAVEBLOCK1).toString(16)} " +
+                "(${flagsBlock.size} bytes) = " +
+                flagsBlock.joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }
+        )
         return ReadResult.Success(defeated)
     }
 
