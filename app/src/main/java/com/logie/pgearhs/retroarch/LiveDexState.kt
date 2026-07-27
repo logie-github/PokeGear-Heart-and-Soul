@@ -19,7 +19,7 @@ object LiveDexState {
         nationalDexEnabled = nationalEnabled
         owned = extractSetBits(ownedBytes)
         seen = extractSetBits(seenBytes)
-        registeredCount = (owned + seen).size
+        registeredCount = owned.size
         isSynced = true
     }
 
