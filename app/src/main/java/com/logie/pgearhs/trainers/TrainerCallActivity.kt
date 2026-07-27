@@ -19,6 +19,13 @@ import kotlinx.coroutines.withContext
 /** Lets the player pick any trainer they've already beaten and reset them for a rematch. */
 class TrainerCallActivity : BaseImmersiveActivity() {
 
+    companion object {
+        // The app has no way to read the save's actual trainer name yet (Gen3 saves encode
+        // it with a custom character table, not ASCII) - a generic placeholder reads fine
+        // in every RematchCall line.
+        private const val PLAYER_NAME_PLACEHOLDER = "Trainer"
+    }
+
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var allTrainers: Map<Int, Trainer>
@@ -76,10 +83,21 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         }
     }
 
+    /**
+     * Shows the trainer's side of the call - assembled by [RematchCall] (ported from
+     * LazarusDex's outgoing-call flow, ~/Documents/LazarusDex) from their lead Pokemon and
+     * battle location - before asking whether to actually reset them for a rematch.
+     */
     private fun confirmRematch(trainer: Trainer) {
+        val transcript = RematchCall.assemble(
+            playerName = PLAYER_NAME_PLACEHOLDER,
+            pokemonName = trainer.firstPokemon,
+            location = trainer.location
+        ).joinToString("\n\n")
+
         AlertDialog.Builder(this)
-            .setTitle(R.string.trainer_call_rematch_title)
-            .setMessage(getString(R.string.trainer_call_rematch_message, trainer.displayName))
+            .setTitle(trainer.displayName)
+            .setMessage(transcript)
             .setPositiveButton(R.string.trainer_call_rematch_confirm) { _, _ -> performRematch(trainer) }
             .setNegativeButton(R.string.trainer_call_rematch_cancel, null)
             .show()
