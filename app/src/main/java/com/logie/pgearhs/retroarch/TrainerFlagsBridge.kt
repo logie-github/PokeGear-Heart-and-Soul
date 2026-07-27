@@ -69,6 +69,26 @@ class TrainerFlagsBridge(
             608 to 0x4f3, // Morty (TRAINER_MORTY_1) -> FLAG_DEFEATED_ECRUTEAK_CITY_GYM
             804 to 0x4f8  // Steven (TRAINER_STEVEN) -> FLAG_DEFEATED_RED
         )
+
+        /**
+         * gSaveBlock1Ptr->trainerRematches[MAX_REMATCH_ENTRIES] (include/global.h) - the
+         * *real* native rematch-ready switch, entirely separate from the per-trainer
+         * defeated flag above. When trainerRematches[tableId] is nonzero, the trainer's map
+         * script shows dedicated rematch dialogue and battles that specific tier of their
+         * 5-member chain (gRematchTable/REMATCHES_COUNT in src/battle_setup.c), instead of
+         * [resetTrainerFlag] just replaying their original first-encounter script from
+         * scratch. See [setRematchReady].
+         *
+         * UNVERIFIED: this offset (documented as 0x9CA) is hypothesized at +0xF4, the exact
+         * same delta empirically found for flags[] (0x1270 -> 0x1364) - both fields sit
+         * after playerParty[PARTY_SIZE] in SaveBlock1, and the flags[] drift is most likely
+         * explained by struct Pokemon having grown to hold this hack's extra species/move
+         * data, which would shift everything downstream of playerParty[] by the same
+         * constant amount. Plausible, not confirmed the way flags[] eventually was - treat
+         * "shows the wrong dialogue" or "no effect" reports as evidence this needs its own
+         * calibration pass, same technique as TrainerFlagsBridge's flags[] fix.
+         */
+        private const val TRAINER_REMATCHES_OFFSET_IN_SAVEBLOCK1 = 0xABE
     }
 
     sealed class ReadResult {
@@ -159,6 +179,39 @@ class TrainerFlagsBridge(
         onDiagnostic(
             if (verified) "Reset for $label verified (byte now 0x${verifyByte?.toString(16)})."
             else "! Reset for $label did not verify - byte reads 0x${verifyByte?.toString(16) ?: "?"}, expected 0x${clearedByte.toString(16)}."
+        )
+        return verified
+    }
+
+    /**
+     * Flips the real rematch-ready switch instead of resetting the plain defeated flag -
+     * see [TRAINER_REMATCHES_OFFSET_IN_SAVEBLOCK1]'s doc comment for the mechanism and the
+     * caveat that this offset isn't independently confirmed yet. [position] is which member
+     * of the 5-slot chain to make ready (1-4; position 0 is the original encounter and has
+     * no "rematch" representation in this system - callers should fall back to
+     * [resetTrainerFlag] for that case).
+     */
+    suspend fun setRematchReady(tableId: Int, position: Int): Boolean {
+        val bridge = RetroArchMemoryBridge(host, port)
+        val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return false
+        val byteAddress = saveBlock1Address + TRAINER_REMATCHES_OFFSET_IN_SAVEBLOCK1 + tableId
+
+        val currentByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
+        onDiagnostic(
+            "Rematch-ready write: tableId=$tableId position=$position " +
+                "byte@0x${byteAddress.toString(16)} current=$currentByte -> $position"
+        )
+
+        if (!bridge.writeMemory(byteAddress, byteArrayOf(position.toByte()))) {
+            onDiagnostic("! Rematch-ready write for tableId=$tableId: RetroArch did not confirm the write.")
+            return false
+        }
+
+        val verifyByte = bridge.readMemory(byteAddress, 1)?.getOrNull(0)?.toInt()?.and(0xFF)
+        val verified = verifyByte == position
+        onDiagnostic(
+            if (verified) "Rematch-ready write for tableId=$tableId verified (byte now $verifyByte)."
+            else "! Rematch-ready write for tableId=$tableId did not verify - byte reads ${verifyByte ?: "?"}, expected $position."
         )
         return verified
     }

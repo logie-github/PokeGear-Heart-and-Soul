@@ -29,6 +29,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var allTrainers: Map<Int, Trainer>
+    private lateinit var rematchPositions: Map<Int, RematchPosition>
     private var callable: List<Trainer> = emptyList()
     private var playerName: String = PLAYER_NAME_FALLBACK
 
@@ -41,6 +42,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         list.layoutManager = LinearLayoutManager(this)
 
         allTrainers = TrainerRepository.loadAll(this).associateBy { it.id }
+        rematchPositions = RematchPositionRepository.loadAll(this)
         adapter = TrainerCallAdapter(emptyList()) { trainer -> confirmRematch(trainer) }
         list.adapter = adapter
 
@@ -114,11 +116,30 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         val host = RetroArchConnection.getHost(this)
         val port = RetroArchConnection.getPort(this)
         Toast.makeText(this, getString(R.string.trainer_call_rematch_working, trainer.displayName), Toast.LENGTH_SHORT).show()
-        DebugLog.add("Trainer call: resetting ${trainer.displayName} (id=${trainer.id})…")
+
+        // Prefer the real native rematch-ready switch (proper rematch dialogue, next tier
+        // of their team) over just resetting the plain defeated flag (which replays their
+        // original first-encounter script from scratch) - only available for trainers who
+        // are chain positions 1-4 in gRematchTable. Position 0 (their original encounter)
+        // and one-off trainers have no such switch, so fall back to resetTrainerFlag.
+        val rematchPosition = rematchPositions[trainer.id]
+        if (rematchPosition != null) {
+            DebugLog.add(
+                "Trainer call: flipping rematch-ready switch for ${trainer.displayName} " +
+                    "(id=${trainer.id}, tableId=${rematchPosition.tableId}, position=${rematchPosition.position})…"
+            )
+        } else {
+            DebugLog.add("Trainer call: resetting ${trainer.displayName} (id=${trainer.id})…")
+        }
 
         lifecycleScope.launch {
             val success = withContext(Dispatchers.IO) {
-                TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add).resetTrainerFlag(trainer.id)
+                val bridge = TrainerFlagsBridge(host, port, onDiagnostic = DebugLog::add)
+                if (rematchPosition != null) {
+                    bridge.setRematchReady(rematchPosition.tableId, rematchPosition.position)
+                } else {
+                    bridge.resetTrainerFlag(trainer.id)
+                }
             }
 
             if (success) {
