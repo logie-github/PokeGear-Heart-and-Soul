@@ -129,13 +129,36 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     }
 
     /**
-     * Plays the trainer's side of the call - assembled by [RematchCall] (ported from
-     * LazarusDex's outgoing-call flow, ~/Documents/LazarusDex) from their lead Pokemon and
-     * battle location - before asking whether to actually reset them for a rematch. Uses the
-     * in-game dialogue box or a plain popup depending on the "In-Game Text" Settings toggle
-     * ([TrainerCallPrefs]).
+     * Selecting a contact first asks "Call <name>?" - only on Yes does the call actually
+     * connect and play out ([placeCall]). Uses the in-game dialogue box or a plain popup
+     * depending on the "In-Game Text" Settings toggle ([TrainerCallPrefs]).
      */
     private fun confirmRematch(trainer: Trainer) {
+        val prompt = getString(R.string.trainer_call_prompt, trainer.displayName)
+
+        if (TrainerCallPrefs.isInGameTextEnabled(this)) {
+            dialogueBox.showText(listOf(prompt)) {
+                dialogueBox.showYesNo { callThem ->
+                    if (callThem) placeCall(trainer) else dialogueBox.hide()
+                }
+            }
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle(trainer.displayName)
+                .setMessage(prompt)
+                .setPositiveButton(R.string.trainer_call_rematch_confirm) { _, _ -> placeCall(trainer) }
+                .setNegativeButton(R.string.trainer_call_rematch_cancel, null)
+                .show()
+        }
+    }
+
+    /**
+     * Plays the trainer's side of the call - assembled by [RematchCall] (ported from
+     * LazarusDex's outgoing-call flow, ~/Documents/LazarusDex) from their lead Pokemon and
+     * battle location - then goes straight into resetting them; confirming the call itself
+     * (see [confirmRematch]) already is the "yes, I want this rematch" decision.
+     */
+    private fun placeCall(trainer: Trainer) {
         val lines = RematchCall.assemble(
             playerName = playerName,
             pokemonName = trainer.firstPokemon,
@@ -143,17 +166,13 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         )
 
         if (TrainerCallPrefs.isInGameTextEnabled(this)) {
-            dialogueBox.showText(lines) {
-                dialogueBox.showYesNo { rematch ->
-                    if (rematch) performRematch(trainer) else dialogueBox.hide()
-                }
-            }
+            dialogueBox.showText(lines) { performRematch(trainer) }
         } else {
             AlertDialog.Builder(this)
                 .setTitle(trainer.displayName)
                 .setMessage(lines.joinToString("\n\n"))
-                .setPositiveButton(R.string.trainer_call_rematch_confirm) { _, _ -> performRematch(trainer) }
-                .setNegativeButton(R.string.trainer_call_rematch_cancel, null)
+                .setPositiveButton(android.R.string.ok) { _, _ -> performRematch(trainer) }
+                .setCancelable(false)
                 .show()
         }
     }

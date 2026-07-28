@@ -51,6 +51,7 @@
     <string name="trainer_call_status_failed">Could not locate save data in memory. Make sure the game is running, host/port are correct, and try again.</string>
     <string name="trainer_call_status_empty">Nobody wants a rematch yet — go beat a trainer first.</string>
     <string name="trainer_call_status_count">%1$d trainer(s) up for a rematch.</string>
+    <string name="trainer_call_prompt">Call %1$s?</string>
     <string name="trainer_call_rematch_confirm">Call</string>
     <string name="trainer_call_rematch_cancel">Not now</string>
     <string name="trainer_call_rematch_working">Calling %1$s…</string>
