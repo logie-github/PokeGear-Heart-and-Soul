@@ -22,7 +22,12 @@ import com.logie.pgearhs.R
  */
 class PokemonDialogueBox(overlayRoot: View) {
 
-    private val root: View = overlayRoot.findViewById(R.id.dialogueOverlayRoot)
+    // overlayRoot IS the overlay's root view already - callers get it via
+    // findViewById(R.id.dialogueOverlay), and <include android:id="..."> overrides the
+    // included layout's own root id, so a *nested* findViewById(R.id.dialogueOverlayRoot)
+    // from here would search for an id that no longer exists in this tree and return null,
+    // crashing the instant a TextView field below tried to use it.
+    private val root: View = overlayRoot
     private val dialogueBox: View = overlayRoot.findViewById(R.id.dialogueBox)
     private val dialogueText: TextView = overlayRoot.findViewById(R.id.dialogueText)
     private val nextIndicator: View = overlayRoot.findViewById(R.id.dialogueNextIndicator)
@@ -146,12 +151,12 @@ class PokemonDialogueBox(overlayRoot: View) {
         // laid out until the visibility change takes effect on the next pass - fall back to
         // the same math the layout XML uses (80% of screen width, minus dialogueText's own
         // margins+padding) so the very first page wraps the same as every later one.
-        val width = dialogueText.width.takeIf { it > 0 } ?: run {
+        val width = (dialogueText.width.takeIf { it > 0 } ?: run {
             val density = dialogueText.resources.displayMetrics.density
             val screenWidthPx = dialogueText.resources.displayMetrics.widthPixels
             val horizontalInsetPx = (8 + 40) * density // 4dp+4dp margins, 20dp+20dp padding
             (screenWidthPx * 0.8f - horizontalInsetPx).toInt()
-        }
+        }).coerceAtLeast(1)
         val paint = TextPaint(dialogueText.paint)
 
         val layout = StaticLayout.Builder
