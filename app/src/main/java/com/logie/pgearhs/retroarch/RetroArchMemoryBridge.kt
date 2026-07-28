@@ -40,26 +40,38 @@ class RetroArchMemoryBridge(
         private const val RECEIVE_BUFFER_SIZE = 16384
     }
 
-    /** Raw command/response round-trip. Returns null if no reply was received. */
+    /**
+     * Raw command/response round-trip. Returns null if no reply was received *or* if
+     * anything else went wrong (unreachable network, DNS resolution, etc.) - only
+     * SocketTimeoutException used to be caught here, so any other transient network
+     * exception would propagate uncaught out of every caller. That's exactly the kind of
+     * thing that permanently kills a long-running retry loop like AppSyncManager's, since
+     * an uncaught exception in a launched coroutine just ends it silently - a single bad
+     * moment shouldn't be able to do that.
+     */
     fun sendCommand(command: String): String? {
-        DatagramSocket().use { socket ->
-            socket.soTimeout = timeoutMs
-            val address = InetAddress.getByName(host)
-            val requestBytes = command.toByteArray(StandardCharsets.US_ASCII)
-            val requestPacket = DatagramPacket(requestBytes, requestBytes.size, address, port)
+        return try {
+            DatagramSocket().use { socket ->
+                socket.soTimeout = timeoutMs
+                val address = InetAddress.getByName(host)
+                val requestBytes = command.toByteArray(StandardCharsets.US_ASCII)
+                val requestPacket = DatagramPacket(requestBytes, requestBytes.size, address, port)
 
-            repeat(retries + 1) {
-                try {
-                    socket.send(requestPacket)
-                    val buffer = ByteArray(RECEIVE_BUFFER_SIZE)
-                    val responsePacket = DatagramPacket(buffer, buffer.size)
-                    socket.receive(responsePacket)
-                    return String(buffer, 0, responsePacket.length, StandardCharsets.US_ASCII)
-                } catch (_: java.net.SocketTimeoutException) {
-                    // retry
+                repeat(retries + 1) {
+                    try {
+                        socket.send(requestPacket)
+                        val buffer = ByteArray(RECEIVE_BUFFER_SIZE)
+                        val responsePacket = DatagramPacket(buffer, buffer.size)
+                        socket.receive(responsePacket)
+                        return String(buffer, 0, responsePacket.length, StandardCharsets.US_ASCII)
+                    } catch (_: java.net.SocketTimeoutException) {
+                        // retry
+                    }
                 }
+                null
             }
-            return null
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -102,10 +114,14 @@ class RetroArchMemoryBridge(
     }
 
     private fun sendFireAndForget(command: String) {
-        DatagramSocket().use { socket ->
-            val address = InetAddress.getByName(host)
-            val requestBytes = command.toByteArray(StandardCharsets.US_ASCII)
-            socket.send(DatagramPacket(requestBytes, requestBytes.size, address, port))
+        try {
+            DatagramSocket().use { socket ->
+                val address = InetAddress.getByName(host)
+                val requestBytes = command.toByteArray(StandardCharsets.US_ASCII)
+                socket.send(DatagramPacket(requestBytes, requestBytes.size, address, port))
+            }
+        } catch (_: Exception) {
+            // Best-effort - CORE_RAM writes get no reply to confirm against anyway.
         }
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/johtoBackground">
@@ -215,6 +216,43 @@
             app:layout_constraintTop_toBottomOf="@id/retroArchSyncStatus" />
 
         <TextView
+            android:id="@+id/battleWinningsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/battle_winnings_label"
+            android:textColor="@color/johtoOnBackground"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/battleWinningsAmount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/debugLogButton" />
+
+        <TextView
+            android:id="@+id/battleWinningsAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/johtoAccent"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/battleWinningsLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/battleWinningsLabel"
+            tools:text="$1,200" />
+
+        <TextView
+            android:id="@+id/battleWinningsHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.7"
+            android:text="@string/battle_winnings_hint"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/battleWinningsLabel" />
+
+        <TextView
             android:id="@+id/creditsLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -224,7 +262,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/debugLogButton" />
+            app:layout_constraintTop_toBottomOf="@id/battleWinningsHint" />
 
         <TextView
             android:id="@+id/creditsFont"

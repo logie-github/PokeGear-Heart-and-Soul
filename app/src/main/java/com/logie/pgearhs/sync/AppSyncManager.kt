@@ -9,6 +9,7 @@ import com.logie.pgearhs.retroarch.RetroArchMemoryBridge
 import com.logie.pgearhs.retroarch.TrainerFlagsBridge
 import com.logie.pgearhs.trainers.TrainerRegistry
 import com.logie.pgearhs.trainers.TrainerRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,9 +42,20 @@ object AppSyncManager {
             DebugLog.add("App sync: waiting for RetroArch at $host:$port…")
 
             while (isActive) {
-                if (isReachable(host, port) && trySync(appContext, host, port)) {
-                    DebugLog.add("App sync: succeeded on launch.")
-                    break
+                try {
+                    if (isReachable(host, port) && trySync(appContext, host, port)) {
+                        DebugLog.add("App sync: succeeded on launch.")
+                        break
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // Must never let this loop die - RetroArchMemoryBridge now catches its
+                    // own network exceptions, but this is defense-in-depth against anything
+                    // else in the sync path (asset/JSON parsing, etc.) doing the same thing:
+                    // one bad attempt should just get logged and retried, not permanently end
+                    // "sync automatically on launch" for the rest of the session.
+                    DebugLog.add("! App sync attempt failed: ${e.javaClass.simpleName}: ${e.message}")
                 }
                 delay(POLL_INTERVAL_MS)
             }

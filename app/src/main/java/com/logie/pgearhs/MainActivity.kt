@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.logie.pgearhs.pokedex.PokedexActivity
 import com.logie.pgearhs.sync.AppSyncManager
+import com.logie.pgearhs.sync.BattleMoneyTracker
 import com.logie.pgearhs.trainers.TrainerCallActivity
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 import com.logie.pgearhs.ui.ButtonSelectionController
@@ -33,6 +34,7 @@ class MainActivity : BaseImmersiveActivity() {
         setContentView(R.layout.activity_main)
 
         AppSyncManager.startIfNeeded(this)
+        BattleMoneyTracker.startIfNeeded(this)
 
         menuBackgroundDots = findViewById(R.id.menuBackgroundDots)
         // The on-device MIDI synth doesn't honor this file's encoded tempo, playing it

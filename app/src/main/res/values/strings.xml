@@ -59,6 +59,9 @@
     <string name="trainer_call_rematch_failed">Couldn\'t reach %1$s. Check the RetroArch connection and try again.</string>
     <string name="in_game_text_label">In-Game Text</string>
     <string name="in_game_text_hint">Play trainer calls as an in-game style dialogue box instead of a plain popup.</string>
+    <string name="battle_winnings_label">Battle Winnings Tracked</string>
+    <string name="battle_winnings_hint">Total prize money seen won in battles since this feature was added (tallied by watching money change right after a win, in the background - not read from a fixed value the game stores).</string>
+    <string name="battle_winnings_amount">$%1$,d</string>
     <string name="credits_label">Credits</string>
     <string name="credits_font">The FontStruction “Pokemon Emerald” (https://fontstruct.com/fontstructions/show/1975556) by “aztecwarrior28” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).</string>
 </resources>

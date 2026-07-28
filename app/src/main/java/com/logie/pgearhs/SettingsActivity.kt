@@ -16,6 +16,7 @@ import com.logie.pgearhs.debug.DebugReportFormatter
 import com.logie.pgearhs.retroarch.LiveDexState
 import com.logie.pgearhs.retroarch.PokedexMemoryCalibrator
 import com.logie.pgearhs.retroarch.RetroArchConnection
+import com.logie.pgearhs.sync.BattleMoneyTracker
 import com.logie.pgearhs.ui.AppRelease
 import com.logie.pgearhs.ui.AppUpdater
 import com.logie.pgearhs.ui.BaseImmersiveActivity
@@ -69,6 +70,7 @@ class SettingsActivity : BaseImmersiveActivity() {
         }
 
         setUpRetroArchSync()
+        updateBattleWinnings()
 
         findViewById<android.widget.Button>(R.id.debugLogButton).setOnClickListener {
             showDebugLog()
@@ -177,9 +179,15 @@ class SettingsActivity : BaseImmersiveActivity() {
         }
     }
 
+    private fun updateBattleWinnings() {
+        findViewById<TextView>(R.id.battleWinningsAmount).text =
+            getString(R.string.battle_winnings_amount, BattleMoneyTracker.totalWinnings(this))
+    }
+
     override fun onResume() {
         super.onResume()
         installPendingUpdate()
+        updateBattleWinnings()
     }
 
     private fun checkForUpdates() {
