@@ -57,9 +57,12 @@ class BattleStateBridge(
         private const val ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2 = 0xBC
         private const val MAX_MONEY = 9_999_999
 
-        // Not yet confirmed against real ground truth (a known displayed in-game money
-        // amount) - see the class doc comment. Flips to true only once that's done.
-        const val MONEY_OFFSET_CONFIRMED = false
+        // Confirmed 2026-07-28: user watched the RetroArch on-screen debug notice (see
+        // RetroArchOsdPrefs) show the correct won amount across real battles, matching what
+        // the game actually paid out - the first real ground-truth confirmation of both
+        // money's offset (0x490) and encryptionKey's (0xBC). writeMoney() and
+        // BattleMoneyTracker's recording/deduction path were refusing to run until this.
+        const val MONEY_OFFSET_CONFIRMED = true
 
         private val EWRAM_BASE = RetroArchMemoryBridge.CommandMode.CORE_MEMORY.ewramBase
         private const val EWRAM_SIZE = RetroArchMemoryBridge.EWRAM_SIZE
