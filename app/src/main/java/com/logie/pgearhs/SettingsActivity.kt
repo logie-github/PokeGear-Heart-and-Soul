@@ -19,6 +19,7 @@ import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.ui.AppRelease
 import com.logie.pgearhs.ui.AppUpdater
 import com.logie.pgearhs.ui.BaseImmersiveActivity
+import com.logie.pgearhs.trainers.TrainerCallPrefs
 import com.logie.pgearhs.ui.MenuBackgroundPrefs
 import com.logie.pgearhs.ui.ScrollingTiledBackgroundView.MovementPattern
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,12 @@ class SettingsActivity : BaseImmersiveActivity() {
         preferTopSwitch.isChecked = DisplayRouter.isTopDisplayPreferred(this)
         preferTopSwitch.setOnCheckedChangeListener { _, isChecked ->
             DisplayRouter.setTopDisplayPreferred(this, isChecked)
+        }
+
+        val inGameTextSwitch = findViewById<SwitchMaterial>(R.id.inGameTextSwitch)
+        inGameTextSwitch.isChecked = TrainerCallPrefs.isInGameTextEnabled(this)
+        inGameTextSwitch.setOnCheckedChangeListener { _, isChecked ->
+            TrainerCallPrefs.setInGameTextEnabled(this, isChecked)
         }
 
         val movementGroup = findViewById<RadioGroup>(R.id.menuBackgroundMovementGroup)

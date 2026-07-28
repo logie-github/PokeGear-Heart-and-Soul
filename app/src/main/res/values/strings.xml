@@ -56,6 +56,8 @@
     <string name="trainer_call_rematch_working">Calling %1$s…</string>
     <string name="trainer_call_rematch_success">Rematch set! %1$s will fight you again.</string>
     <string name="trainer_call_rematch_failed">Couldn\'t reach %1$s. Check the RetroArch connection and try again.</string>
+    <string name="in_game_text_label">In-Game Text</string>
+    <string name="in_game_text_hint">Play trainer calls as an in-game style dialogue box instead of a plain popup.</string>
     <string name="credits_label">Credits</string>
     <string name="credits_font">The FontStruction “Pokemon Emerald” (https://fontstruct.com/fontstructions/show/1975556) by “aztecwarrior28” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).</string>
 </resources>

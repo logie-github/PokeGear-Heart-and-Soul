@@ -3,6 +3,8 @@ package com.logie.pgearhs.trainers
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -115,7 +117,9 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     /**
      * Plays the trainer's side of the call - assembled by [RematchCall] (ported from
      * LazarusDex's outgoing-call flow, ~/Documents/LazarusDex) from their lead Pokemon and
-     * battle location - through the dialogue box, then asks Yes/No before resetting them.
+     * battle location - before asking whether to actually reset them for a rematch. Uses the
+     * in-game dialogue box or a plain popup depending on the "In-Game Text" Settings toggle
+     * ([TrainerCallPrefs]).
      */
     private fun confirmRematch(trainer: Trainer) {
         val lines = RematchCall.assemble(
@@ -124,17 +128,32 @@ class TrainerCallActivity : BaseImmersiveActivity() {
             location = LocationPhrasing.naturalize(trainer.location)
         )
 
-        dialogueBox.showText(lines) {
-            dialogueBox.showYesNo { rematch ->
-                if (rematch) performRematch(trainer) else dialogueBox.hide()
+        if (TrainerCallPrefs.isInGameTextEnabled(this)) {
+            dialogueBox.showText(lines) {
+                dialogueBox.showYesNo { rematch ->
+                    if (rematch) performRematch(trainer) else dialogueBox.hide()
+                }
             }
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle(trainer.displayName)
+                .setMessage(lines.joinToString("\n\n"))
+                .setPositiveButton(R.string.trainer_call_rematch_confirm) { _, _ -> performRematch(trainer) }
+                .setNegativeButton(R.string.trainer_call_rematch_cancel, null)
+                .show()
         }
     }
 
     private fun performRematch(trainer: Trainer) {
         val host = RetroArchConnection.getHost(this)
         val port = RetroArchConnection.getPort(this)
-        dialogueBox.showText(listOf(getString(R.string.trainer_call_rematch_working, trainer.displayName))) {}
+        val useDialogueBox = TrainerCallPrefs.isInGameTextEnabled(this)
+        val workingMessage = getString(R.string.trainer_call_rematch_working, trainer.displayName)
+        if (useDialogueBox) {
+            dialogueBox.showText(listOf(workingMessage)) {}
+        } else {
+            Toast.makeText(this, workingMessage, Toast.LENGTH_SHORT).show()
+        }
 
         // Prefer the real native rematch-ready switch (proper rematch dialogue, next tier
         // of their team) over just resetting the plain defeated flag (which replays their
@@ -171,7 +190,11 @@ class TrainerCallActivity : BaseImmersiveActivity() {
                 DebugLog.add("! Trainer call: ${trainer.displayName} reset failed.")
                 getString(R.string.trainer_call_rematch_failed, trainer.displayName)
             }
-            dialogueBox.showText(listOf(resultLine)) { dialogueBox.hide() }
+            if (useDialogueBox) {
+                dialogueBox.showText(listOf(resultLine)) { dialogueBox.hide() }
+            } else {
+                Toast.makeText(this@TrainerCallActivity, resultLine, Toast.LENGTH_LONG).show()
+            }
         }
     }
 }
