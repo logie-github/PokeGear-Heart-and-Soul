@@ -23,20 +23,18 @@ package com.logie.pgearhs.retroarch
  * used for coins/item quantities/berry powder in this codebase - a raw read without XOR-ing
  * out the key will never look like a real balance. `readState()` now does that decryption.
  *
- * `MONEY_OFFSET_IN_SAVEBLOCK1` was previously guessed at 0x584 (documented 0x490 + the same
- * +0xF4 delta found for flags[]) - wrong, and never should have been assumed: that delta was
- * derived from flags[], which sits *after* several item/object-event arrays that are the
- * actual plausible growth points in this hack. `money` sits right after `playerParty[]`, and
- * walking pokemonHnS-v121's own `struct Pokemon`/`struct BoxPokemon`/substruct definitions by
- * hand confirms they're still exactly 100/80/12 bytes each - unchanged from vanilla - so
- * nothing upstream of `money` has grown. Its real offset should simply be the documented
- * 0x490, unshifted. (Also: `MAX_MONEY` in this hack's `src/money.c` is 9999999, not vanilla's
- * 999999 - one digit more headroom, accounted for in the plausibility checks below.)
+ * `MONEY_OFFSET_IN_SAVEBLOCK1` is a GUESS (currently 0x490, the plain documented offset,
+ * reasoned - not confirmed - from walking this hack's own `struct Pokemon`/`BoxPokemon`
+ * definitions and finding nothing upstream of `money` has grown in size). It's only used for
+ * the cheap one-glance value in `readState()`'s normal summary - it is explicitly NOT relied
+ * on for the actual calibration. That instead comes from `captureMoneySnapshot()`/
+ * `diffAgainstWin()`, which reads the ENTIRE SaveBlock1 region (all ~16KB it's allowed to
+ * span, per `include/save.h`'s sector reservation) and diffs it whole against itself
+ * before/after a real win, rather than trusting any offset guess to search near. That's the
+ * actual, verifiable way to find this - not more source-reading.
  *
- * Still guarded behind `MONEY_OFFSET_CONFIRMED = false` until a real live diff confirms it -
- * this reasoning is much stronger than the old guess, but "confirmed by reading the source"
- * and "confirmed against the live ROM" have burned this project before (see the Pokédex
- * `owned[]`/`flags[]` offset bugs), so `writeMoney()` still refuses to run until then.
+ * `writeMoney()` refuses to run at all while `MONEY_OFFSET_CONFIRMED = false` - flips only
+ * once a real live diff (not reasoning) has confirmed a specific offset.
  */
 class BattleStateBridge(
     private val host: String,
@@ -124,8 +122,13 @@ class BattleStateBridge(
     /** A raw snapshot of the money calibration window, for diffing before/after a win - see [diffAgainstWin]. */
     data class MoneySnapshot(val saveBlock1Address: Int, val windowStart: Int, val window: ByteArray, val encryptionKey: Int?)
 
-    private val moneyWindowStart = MONEY_OFFSET_IN_SAVEBLOCK1 - 0x100
-    private val moneyWindowSize = 0x200
+    // Not a window "near" the guessed offset - the whole of SaveBlock1, so calibration finds
+    // the real offset by scanning everything rather than trusting where MONEY_OFFSET_IN_SAVEBLOCK1
+    // *currently* guesses it is. src/save.c reserves SaveBlock1 across sectors 1-4
+    // (SECTOR_DATA_SIZE=4084 each, include/save.h) - 4084*4=16336 bytes is the real upper
+    // bound (statically asserted in save.c), rounded up here for margin.
+    private val moneyWindowStart = 0
+    private val moneyWindowSize = 0x4000
 
     private suspend fun readEncryptionKey(bridge: RetroArchMemoryBridge): Int? {
         val saveBlock2Address = resolveSaveBlock2Address(bridge) ?: return null
@@ -135,7 +138,7 @@ class BattleStateBridge(
     suspend fun captureMoneySnapshot(bridge: RetroArchMemoryBridge = RetroArchMemoryBridge(host, port)): MoneySnapshot? {
         val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return null
         val encryptionKey = readEncryptionKey(bridge)
-        val window = bridge.readMemory(saveBlock1Address + moneyWindowStart, moneyWindowSize) ?: return null
+        val window = bridge.readRegion(saveBlock1Address + moneyWindowStart, moneyWindowSize) ?: return null
         return MoneySnapshot(saveBlock1Address, moneyWindowStart, window, encryptionKey)
     }
 
