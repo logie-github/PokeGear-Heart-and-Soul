@@ -70,6 +70,7 @@ class SettingsActivity : BaseImmersiveActivity() {
         }
 
         setUpRetroArchSync()
+        updateSyncStatusLabel()
         updateBattleWinnings()
 
         findViewById<android.widget.Button>(R.id.debugLogButton).setOnClickListener {
@@ -179,6 +180,22 @@ class SettingsActivity : BaseImmersiveActivity() {
         }
     }
 
+    /**
+     * AppSyncManager syncs automatically in the background from app launch, but this screen's
+     * status label was only ever updated by the manual "Calibrate and sync now" button - so
+     * even when the background sync had already succeeded, opening Settings still showed the
+     * stale "Not synced yet" default text, making it look broken. Reflect LiveDexState's real
+     * state here instead of only reacting to the button.
+     */
+    private fun updateSyncStatusLabel() {
+        if (!LiveDexState.isSynced) return
+        findViewById<TextView>(R.id.retroArchSyncStatus).text = getString(
+            R.string.retroarch_sync_status_success,
+            if (LiveDexState.nationalDexEnabled) getString(R.string.pokedex_national) else getString(R.string.pokedex_regional),
+            LiveDexState.registeredCount
+        )
+    }
+
     private fun updateBattleWinnings() {
         findViewById<TextView>(R.id.battleWinningsAmount).text =
             getString(R.string.battle_winnings_amount, BattleMoneyTracker.totalWinnings(this))
@@ -189,6 +206,7 @@ class SettingsActivity : BaseImmersiveActivity() {
     override fun onResume() {
         super.onResume()
         installPendingUpdate()
+        updateSyncStatusLabel()
         updateBattleWinnings()
     }
 
