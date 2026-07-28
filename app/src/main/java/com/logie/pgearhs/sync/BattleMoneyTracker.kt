@@ -44,6 +44,22 @@ object BattleMoneyTracker {
     private var wasInBattle = false
     private var pollCount = 0
 
+    // gBattleOutcome stays at OUTCOME_WON indefinitely after a win - it's only ever
+    // overwritten when the *next* battle starts, never reset to 0 on its own (confirmed
+    // across real debug reports: idle polls minutes after a win still read outcome=1). A
+    // naive wasInBattle-true-to-false edge is NOT a safe "just won" signal on its own, then:
+    // if inBattle's bit so much as flickers true-then-false-again even once during the
+    // multi-second post-battle sequence (EXP gain, level-up, the money-reward screen, the
+    // walk back to the overworld), the stale outcome=1 makes it look like a brand new win
+    // every single time it flickers - and each one deducts another 25%. confirmedInBattle
+    // requires 2 consecutive "true" polls before counting as a real battle entry at all, and
+    // winClaimedForBattle can only be cleared by a *fresh* confirmed entry - together this
+    // guarantees at most one deduction per real battle, no matter how the underlying bits
+    // jitter afterward.
+    private var inBattleStreak = 0
+    private var confirmedInBattle = false
+    private var winClaimedForBattle = false
+
     fun startIfNeeded(context: Context) {
         if (started) return
         started = true
@@ -92,7 +108,16 @@ object BattleMoneyTracker {
         val verbose = (quietState.inBattle != wasInBattle) || pollCount % 30 == 1
         val state = if (verbose) bridge.readState(verbose = true) ?: quietState else quietState
 
-        if (state.inBattle && !wasInBattle) {
+        if (state.inBattle) {
+            inBattleStreak++
+        } else {
+            inBattleStreak = 0
+        }
+        val nowConfirmedInBattle = inBattleStreak >= 2
+        if (nowConfirmedInBattle && !confirmedInBattle) {
+            // A genuinely new battle, debounced against single-poll bit flicker - safe to
+            // let this battle's win be claimed again.
+            winClaimedForBattle = false
             notifyOsd(context, host, port, "PGearHS: entered battle")
         }
 
@@ -101,13 +126,15 @@ object BattleMoneyTracker {
         // even outside the rare verbose polls.
         DebugLog.add(
             "Battle money poll #$pollCount: inBattle=${state.inBattle} outcome=${state.outcome} " +
-                "money=${state.money} (lastKnown=$lastKnownMoney, wasInBattle=$wasInBattle)"
+                "money=${state.money} (lastKnown=$lastKnownMoney, confirmedInBattle=$confirmedInBattle, winClaimed=$winClaimedForBattle)"
         )
 
         var settledMoney = state.money
-        val justWon = wasInBattle && !state.inBattle && state.outcome == BattleStateBridge.OUTCOME_WON
+        val justWon = confirmedInBattle && !state.inBattle &&
+            state.outcome == BattleStateBridge.OUTCOME_WON && !winClaimedForBattle
 
         if (justWon) {
+            winClaimedForBattle = true
             notifyOsd(context, host, port, "PGearHS: won the battle")
         }
 
@@ -153,6 +180,7 @@ object BattleMoneyTracker {
         }
 
         wasInBattle = state.inBattle
+        confirmedInBattle = nowConfirmedInBattle
         // Keep both snapshots fresh only while not in battle, so they're always "money
         // right before the next battle starts" whenever one actually does.
         if (!state.inBattle) {
