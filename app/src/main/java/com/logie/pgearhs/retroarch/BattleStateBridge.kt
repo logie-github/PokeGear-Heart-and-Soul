@@ -39,28 +39,56 @@ class BattleStateBridge(
 
     data class BattleState(val inBattle: Boolean, val outcome: Int, val money: Int?)
 
-    suspend fun readState(): BattleState? {
+    /**
+     * [verbose] controls the expensive wide-window hex dumps (3 extra reads + 3 log lines) -
+     * callers polling frequently should only ask for these occasionally (a heartbeat, or on
+     * a state transition), or DebugLog's 300-entry cap fills before a real test (walk to a
+     * trainer, fight, win) finishes.
+     */
+    suspend fun readState(verbose: Boolean = true): BattleState? {
         val bridge = RetroArchMemoryBridge(host, port)
         if (!bridge.isReachable()) return null
 
-        val inBattleByte = bridge.readMemory(GMAIN_ADDR + IN_BATTLE_BYTE_OFFSET, 1)
-            ?.getOrNull(0)?.toInt()?.and(0xFF) ?: run {
+        // Wider window than just the single bitfield byte - these three addresses have
+        // never been confirmed against a live device, so if the interpreted values below
+        // look wrong, this gives enough surrounding bytes to re-derive the real offsets the
+        // same way flags[]'s offset was found.
+        val gMainWindow = bridge.readMemory(GMAIN_ADDR + IN_BATTLE_BYTE_OFFSET - 8, 24)
+        if (verbose) {
+            onDiagnostic(
+                "Battle state: gMain+0x${IN_BATTLE_BYTE_OFFSET.toString(16)} window (8 bytes before) = " +
+                    (gMainWindow?.hexDump() ?: "read failed")
+            )
+        }
+
+        val inBattleByte = gMainWindow?.getOrNull(8)?.toInt()?.and(0xFF) ?: run {
             onDiagnostic("Battle state: couldn't read gMain.inBattle.")
             return null
         }
         val inBattle = (inBattleByte shr IN_BATTLE_BIT) and 1 == 1
 
-        val outcome = bridge.readMemory(BATTLE_OUTCOME_ADDR, 1)?.getOrNull(0)?.toInt()?.and(0xFF) ?: run {
+        val outcomeWindow = bridge.readMemory(BATTLE_OUTCOME_ADDR - 4, 12)
+        if (verbose) {
+            onDiagnostic("Battle state: gBattleOutcome window (4 bytes before) = ${outcomeWindow?.hexDump() ?: "read failed"}")
+        }
+        val outcome = outcomeWindow?.getOrNull(4)?.toInt()?.and(0xFF) ?: run {
             onDiagnostic("Battle state: couldn't read gBattleOutcome.")
             return null
         }
 
         val money = resolveSaveBlock1Address(bridge)?.let { saveBlock1Address ->
-            bridge.readMemory(saveBlock1Address + MONEY_OFFSET_IN_SAVEBLOCK1, 4)?.let { readU32LE(it, 0) }
+            val moneyAddress = saveBlock1Address + MONEY_OFFSET_IN_SAVEBLOCK1
+            val moneyWindow = bridge.readMemory(moneyAddress - 16, 48)
+            if (verbose) {
+                onDiagnostic("Battle state: money window @0x${moneyAddress.toString(16)} (16 bytes before) = ${moneyWindow?.hexDump() ?: "read failed"}")
+            }
+            moneyWindow?.let { readU32LE(it, 16) }
         }
 
         return BattleState(inBattle, outcome, money)
     }
+
+    private fun ByteArray.hexDump(): String = joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }
 
     /** Overwrites the player's money with [newMoney]. Returns true only once read back and confirmed. */
     suspend fun writeMoney(newMoney: Int): Boolean {

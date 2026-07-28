@@ -39,6 +39,7 @@ object BattleMoneyTracker {
 
     private var lastKnownMoney: Int? = null
     private var wasInBattle = false
+    private var pollCount = 0
 
     fun startIfNeeded(context: Context) {
         if (started) return
@@ -69,8 +70,28 @@ object BattleMoneyTracker {
         prefs(context).getInt(KEY_SAVINGS, 0)
 
     private suspend fun poll(context: Context, host: String, port: Int) {
+        pollCount++
+        // Full hex-dump diagnostics (see BattleStateBridge) are expensive log-wise - only
+        // ask for them once every 10 polls while idle, but for every poll while a battle is
+        // actually in progress (wasInBattle carries over from the previous cycle), since
+        // that's the window that actually matters for confirming a win/money change. Doing
+        // this for every single poll would fill DebugLog's 300-entry cap in under 2 minutes,
+        // well before a real test (walk to a trainer, fight, win) finishes.
+        val verbose = wasInBattle || pollCount % 10 == 1
         val bridge = BattleStateBridge(host, port, onDiagnostic = DebugLog::add)
-        val state = bridge.readState() ?: return
+        val state = bridge.readState(verbose) ?: run {
+            DebugLog.add("Battle money: readState() returned null this poll (see diagnostics above).")
+            return
+        }
+
+        // Logged every poll, not just on notable events - this feature has no live
+        // confirmation yet (gMain/gBattleOutcome/money's offset are all unverified
+        // hypotheses), so a debug report needs to show the raw numbers every cycle to be
+        // useful at all, not just "it didn't detect a win."
+        DebugLog.add(
+            "Battle money poll #$pollCount: inBattle=${state.inBattle} outcome=${state.outcome} " +
+                "money=${state.money} (lastKnown=$lastKnownMoney, wasInBattle=$wasInBattle)"
+        )
 
         var settledMoney = state.money
         val justWon = wasInBattle && !state.inBattle && state.outcome == BattleStateBridge.OUTCOME_WON
