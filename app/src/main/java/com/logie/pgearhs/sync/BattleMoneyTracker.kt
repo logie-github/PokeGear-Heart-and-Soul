@@ -38,6 +38,7 @@ object BattleMoneyTracker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var lastKnownMoney: Int? = null
+    private var lastMoneySnapshot: BattleStateBridge.MoneySnapshot? = null
     private var wasInBattle = false
     private var pollCount = 0
 
@@ -103,6 +104,18 @@ object BattleMoneyTracker {
             // corrupt this app's own tracked totals with nonsense, so detection is logged
             // but nothing is persisted or sent to Mom until that's fixed.
             DebugLog.add("Battle money: win detected, but money offset isn't confirmed yet - not recording an amount.")
+            // Instead, auto-narrow which offset is really money without needing the user to
+            // state their exact balance anywhere: diff a snapshot from right before this
+            // battle against one taken right now, and flag whichever offset(s) went up by a
+            // plausible reward amount. Whatever survives this across a few real battles is
+            // the real offset.
+            val before = lastMoneySnapshot
+            val after = bridge.captureMoneySnapshot()
+            if (before != null && after != null) {
+                with(bridge) { before.diffAgainstWin(after) }
+            } else {
+                DebugLog.add("Battle money: couldn't diff for calibration (before=${before != null}, after=${after != null}).")
+            }
         } else if (justWon) {
             val before = lastKnownMoney
             val after = state.money
@@ -117,10 +130,11 @@ object BattleMoneyTracker {
         }
 
         wasInBattle = state.inBattle
-        // Keep the snapshot fresh only while not in battle, so it's always "money right
-        // before the next battle starts" whenever one actually does.
-        if (!state.inBattle && settledMoney != null) {
-            lastKnownMoney = settledMoney
+        // Keep both snapshots fresh only while not in battle, so they're always "money
+        // right before the next battle starts" whenever one actually does.
+        if (!state.inBattle) {
+            if (settledMoney != null) lastKnownMoney = settledMoney
+            bridge.captureMoneySnapshot()?.let { lastMoneySnapshot = it }
         }
     }
 

@@ -110,54 +110,88 @@ class BattleStateBridge(
         // XOR-decrypted against encryptionKey) so a future debug report can be matched
         // against a known real in-game money amount without more guesswork.
         if (verbose && !inBattle) {
-            dumpMoneyCalibrationWindow(bridge)
+            captureMoneySnapshot(bridge)?.let { dumpMoneyCalibrationWindow(it) }
         }
 
         return BattleState(inBattle, outcome, money)
     }
 
-    private suspend fun dumpMoneyCalibrationWindow(bridge: RetroArchMemoryBridge) {
-        val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return
+    /** A raw snapshot of the money calibration window, for diffing before/after a win - see [diffAgainstSnapshot]. */
+    data class MoneySnapshot(val saveBlock1Address: Int, val windowStart: Int, val window: ByteArray, val encryptionKey: Int?)
+
+    private val moneyWindowStart = MONEY_OFFSET_IN_SAVEBLOCK1 - 0x100
+    private val moneyWindowSize = 0x200
+
+    suspend fun captureMoneySnapshot(bridge: RetroArchMemoryBridge = RetroArchMemoryBridge(host, port)): MoneySnapshot? {
+        val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return null
         val saveBlock2Address = resolveSaveBlock2Address(bridge)
-        val encryptionKeyBytes = saveBlock2Address?.let {
-            bridge.readMemory(it + ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2, 4)
+        val encryptionKey = saveBlock2Address?.let {
+            bridge.readMemory(it + ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2, 4)?.let { bytes -> readU32LE(bytes, 0) }
         }
-        val encryptionKey = encryptionKeyBytes?.let { readU32LE(it, 0) }
-        onDiagnostic(
-            if (encryptionKey != null) "Money calibration: encryptionKey = 0x${encryptionKey.toString(16)}"
-            else "Money calibration: couldn't read encryptionKey (gSaveBlock2Ptr=${saveBlock2Address?.let { "0x${it.toString(16)}" } ?: "unresolved"})."
-        )
+        val window = bridge.readMemory(saveBlock1Address + moneyWindowStart, moneyWindowSize) ?: return null
+        return MoneySnapshot(saveBlock1Address, moneyWindowStart, window, encryptionKey)
+    }
 
-        val windowStart = MONEY_OFFSET_IN_SAVEBLOCK1 - 0x100
-        val windowSize = 0x200
-        val window = bridge.readMemory(saveBlock1Address + windowStart, windowSize)
-        if (window == null) {
-            onDiagnostic("Money calibration: window read failed.")
-            return
-        }
-        onDiagnostic(
-            "Money calibration: SaveBlock1+0x${windowStart.toString(16)}..0x${(windowStart + windowSize).toString(16)} = ${window.hexDump()}"
-        )
-
+    private fun MoneySnapshot.candidates(): List<Pair<Int, Int>> {
         // MAX_MONEY in vanilla Emerald-derived games is 999999 - flag anything (raw, or
-        // XOR-decrypted if we have a key) that could plausibly be a money value so the
-        // real offset can be spotted at a glance instead of hand-decoding hex.
-        val candidates = mutableListOf<String>()
-        for (i in 0 until windowSize - 3) {
+        // XOR-decrypted if we have a key) that could plausibly be a money value.
+        val out = mutableListOf<Pair<Int, Int>>()
+        for (i in 0 until window.size - 3) {
             val raw = readU32LE(window, i)
             val decrypted = encryptionKey?.let { raw xor it }
-            val plausible = (raw in 0..999_999) || (decrypted != null && decrypted in 0..999_999)
-            if (plausible) {
-                val addr = saveBlock1Address + windowStart + i
-                candidates.add(
-                    "0x${addr.toString(16)} (SaveBlock1+0x${(windowStart + i).toString(16)}): raw=$raw" +
-                        (decrypted?.let { " decrypted=$it" } ?: "")
-                )
-            }
+            val value = decrypted?.takeIf { it in 0..999_999 } ?: raw.takeIf { it in 0..999_999 }
+            if (value != null) out.add(i to value)
         }
+        return out
+    }
+
+    private fun dumpMoneyCalibrationWindow(snapshot: MoneySnapshot) {
+        onDiagnostic(
+            if (snapshot.encryptionKey != null) "Money calibration: encryptionKey = 0x${snapshot.encryptionKey.toString(16)}"
+            else "Money calibration: couldn't read encryptionKey."
+        )
+        onDiagnostic(
+            "Money calibration: SaveBlock1+0x${snapshot.windowStart.toString(16)}..0x${(snapshot.windowStart + snapshot.window.size).toString(16)} = ${snapshot.window.hexDump()}"
+        )
+        val candidates = snapshot.candidates()
         onDiagnostic(
             if (candidates.isEmpty()) "Money calibration: no plausible (0-999999) candidates in window."
-            else "Money calibration candidates:\n" + candidates.joinToString("\n")
+            else "Money calibration candidates:\n" + candidates.joinToString("\n") { (i, value) ->
+                "0x${(snapshot.saveBlock1Address + snapshot.windowStart + i).toString(16)} (SaveBlock1+0x${(snapshot.windowStart + i).toString(16)}): $value"
+            }
+        )
+    }
+
+    /**
+     * Compares a snapshot taken right before a battle against one taken right after a win,
+     * looking for an offset whose interpreted value (raw or decrypted, whichever was
+     * plausible) went UP by a plausible reward amount - without needing the user to state
+     * their exact money anywhere. Only logs candidates; still never writes anything.
+     */
+    fun MoneySnapshot.diffAgainstWin(after: MoneySnapshot) {
+        if (windowStart != after.windowStart || window.size != after.window.size) {
+            onDiagnostic("Money calibration: before/after window mismatch, can't diff.")
+            return
+        }
+        val beforeByOffset = candidates().toMap()
+        val afterByOffset = after.candidates().toMap()
+        val matches = beforeByOffset.keys.intersect(afterByOffset.keys).mapNotNull { i ->
+            val before = beforeByOffset.getValue(i)
+            val after = afterByOffset.getValue(i)
+            val delta = after - before
+            if (delta in 1..500_000) i to Triple(before, after, delta) else null
+        }
+        onDiagnostic(
+            if (matches.isEmpty()) {
+                "Money calibration: no offset increased by a plausible amount across the win " +
+                    "(before had ${beforeByOffset.size} candidate(s), after had ${afterByOffset.size})."
+            } else {
+                "Money calibration - offsets that increased plausibly across this win:\n" +
+                    matches.joinToString("\n") { (i, t) ->
+                        val (before, afterVal, delta) = t
+                        "0x${(saveBlock1Address + windowStart + i).toString(16)} (SaveBlock1+0x${(windowStart + i).toString(16)}): $before -> $afterVal (+$delta)"
+                    }
+            }
         )
     }
 
