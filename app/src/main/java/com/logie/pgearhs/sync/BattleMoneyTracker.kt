@@ -72,23 +72,27 @@ object BattleMoneyTracker {
 
     private suspend fun poll(context: Context, host: String, port: Int) {
         pollCount++
-        // Full hex-dump diagnostics (see BattleStateBridge) are expensive log-wise - only
-        // ask for them once every 10 polls while idle, but for every poll while a battle is
-        // actually in progress (wasInBattle carries over from the previous cycle), since
-        // that's the window that actually matters for confirming a win/money change. Doing
-        // this for every single poll would fill DebugLog's 300-entry cap in under 2 minutes,
-        // well before a real test (walk to a trainer, fight, win) finishes.
-        val verbose = wasInBattle || pollCount % 10 == 1
         val bridge = BattleStateBridge(host, port, onDiagnostic = DebugLog::add)
-        val state = bridge.readState(verbose) ?: run {
-            DebugLog.add("Battle money: readState() returned null this poll (see diagnostics above).")
+
+        // Read quietly first (no logging) so we know whether this poll is a state
+        // transition before deciding whether it's worth the log-text cost of a verbose
+        // re-read. v1.0.42 logged full hex-dump diagnostics on EVERY poll for the entire
+        // duration of a battle (wasInBattle stayed true continuously) plus a full 512-byte
+        // window dump every 10th idle poll - that much repeated text reliably filled both
+        // DebugLog's 300-entry cap and the 7000-char debug-report URL budget well before a
+        // real test (walk to a trainer, fight, win, send report) finished, silently trimming
+        // away the one moment (the win itself) that actually mattered. Only the transition
+        // polls (battle starting/ending) and an occasional heartbeat are worth the cost now.
+        val quietState = bridge.readState(verbose = false) ?: run {
+            DebugLog.add("Battle money: readState() returned null this poll.")
             return
         }
+        val verbose = (quietState.inBattle != wasInBattle) || pollCount % 30 == 1
+        val state = if (verbose) bridge.readState(verbose = true) ?: quietState else quietState
 
-        // Logged every poll, not just on notable events - this feature has no live
-        // confirmation yet (gMain/gBattleOutcome/money's offset are all unverified
-        // hypotheses), so a debug report needs to show the raw numbers every cycle to be
-        // useful at all, not just "it didn't detect a win."
+        // This one-line summary (not the verbose hex dumps above) is still logged every
+        // poll - cheap enough on its own, and useful to see the state leading up to a win
+        // even outside the rare verbose polls.
         DebugLog.add(
             "Battle money poll #$pollCount: inBattle=${state.inBattle} outcome=${state.outcome} " +
                 "money=${state.money} (lastKnown=$lastKnownMoney, wasInBattle=$wasInBattle)"

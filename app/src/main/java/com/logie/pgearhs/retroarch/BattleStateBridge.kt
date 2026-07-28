@@ -104,19 +104,10 @@ class BattleStateBridge(
             moneyWindow?.let { readU32LE(it, 16) }
         }
 
-        // The money offset/encryption are unconfirmed (see class doc comment) - only when
-        // out of battle (gSaveBlock1Ptr resolves to something different mid-battle, per
-        // issue #30) dump a wide window plus every candidate money reading (raw and
-        // XOR-decrypted against encryptionKey) so a future debug report can be matched
-        // against a known real in-game money amount without more guesswork.
-        if (verbose && !inBattle) {
-            captureMoneySnapshot(bridge)?.let { dumpMoneyCalibrationWindow(it) }
-        }
-
         return BattleState(inBattle, outcome, money)
     }
 
-    /** A raw snapshot of the money calibration window, for diffing before/after a win - see [diffAgainstSnapshot]. */
+    /** A raw snapshot of the money calibration window, for diffing before/after a win - see [diffAgainstWin]. */
     data class MoneySnapshot(val saveBlock1Address: Int, val windowStart: Int, val window: ByteArray, val encryptionKey: Int?)
 
     private val moneyWindowStart = MONEY_OFFSET_IN_SAVEBLOCK1 - 0x100
@@ -143,23 +134,6 @@ class BattleStateBridge(
             if (value != null) out.add(i to value)
         }
         return out
-    }
-
-    private fun dumpMoneyCalibrationWindow(snapshot: MoneySnapshot) {
-        onDiagnostic(
-            if (snapshot.encryptionKey != null) "Money calibration: encryptionKey = 0x${snapshot.encryptionKey.toString(16)}"
-            else "Money calibration: couldn't read encryptionKey."
-        )
-        onDiagnostic(
-            "Money calibration: SaveBlock1+0x${snapshot.windowStart.toString(16)}..0x${(snapshot.windowStart + snapshot.window.size).toString(16)} = ${snapshot.window.hexDump()}"
-        )
-        val candidates = snapshot.candidates()
-        onDiagnostic(
-            if (candidates.isEmpty()) "Money calibration: no plausible (0-999999) candidates in window."
-            else "Money calibration candidates:\n" + candidates.joinToString("\n") { (i, value) ->
-                "0x${(snapshot.saveBlock1Address + snapshot.windowStart + i).toString(16)} (SaveBlock1+0x${(snapshot.windowStart + i).toString(16)}): $value"
-            }
-        )
     }
 
     /**
@@ -202,7 +176,7 @@ class BattleStateBridge(
      * [MONEY_OFFSET_CONFIRMED] is false - issue #30 showed `MONEY_OFFSET_IN_SAVEBLOCK1`
      * currently lands on what looks like a repeating array, not a scalar field, so writing
      * there would risk corrupting some other, unrelated piece of save data instead of
-     * actually touching money. Once calibration (see `dumpMoneyCalibrationWindow`) finds
+     * actually touching money. Once calibration (see `diffAgainstWin`) finds
      * and confirms the real offset, flip that flag and this starts working.
      */
     suspend fun writeMoney(newMoney: Int): Boolean {
