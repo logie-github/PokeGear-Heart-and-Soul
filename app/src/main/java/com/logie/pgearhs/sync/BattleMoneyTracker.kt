@@ -96,7 +96,14 @@ object BattleMoneyTracker {
         var settledMoney = state.money
         val justWon = wasInBattle && !state.inBattle && state.outcome == BattleStateBridge.OUTCOME_WON
 
-        if (justWon) {
+        if (justWon && !BattleStateBridge.MONEY_OFFSET_CONFIRMED) {
+            // Money's real SaveBlock1 offset isn't confirmed yet (see BattleStateBridge's
+            // doc comment) - state.money is diagnostic-only garbage right now, not a real
+            // balance. Recording a "won" amount or touching savings from it would just
+            // corrupt this app's own tracked totals with nonsense, so detection is logged
+            // but nothing is persisted or sent to Mom until that's fixed.
+            DebugLog.add("Battle money: win detected, but money offset isn't confirmed yet - not recording an amount.")
+        } else if (justWon) {
             val before = lastKnownMoney
             val after = state.money
             if (before != null && after != null && after > before) {
