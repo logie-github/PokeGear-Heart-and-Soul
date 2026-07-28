@@ -59,6 +59,8 @@
     <string name="trainer_call_rematch_failed">Couldn\'t reach %1$s. Check the RetroArch connection and try again.</string>
     <string name="in_game_text_label">In-Game Text</string>
     <string name="in_game_text_hint">Play trainer calls as an in-game style dialogue box instead of a plain popup.</string>
+    <string name="retroarch_osd_label">RetroArch Battle Debug Messages</string>
+    <string name="retroarch_osd_hint">Show entered-battle, won-battle, and money-won as on-screen notifications in RetroArch itself, so battle detection can be watched live.</string>
     <string name="battle_winnings_label">Battle Winnings Tracked</string>
     <string name="battle_winnings_hint">Total prize money seen won in battles since this feature was added (tallied by watching money change right after a win, in the background - not read from a fixed value the game stores).</string>
     <string name="battle_winnings_amount">$%1$,d</string>

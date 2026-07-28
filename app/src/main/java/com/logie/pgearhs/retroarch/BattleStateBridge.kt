@@ -161,12 +161,15 @@ class BattleStateBridge(
      * Compares a snapshot taken right before a battle against one taken right after a win,
      * looking for an offset whose interpreted value (raw or decrypted, whichever was
      * plausible) went UP by a plausible reward amount - without needing the user to state
-     * their exact money anywhere. Only logs candidates; still never writes anything.
+     * their exact money anywhere. Logs every candidate, but returns just one delta (the
+     * currently-guessed `MONEY_OFFSET_IN_SAVEBLOCK1` if it's among the matches, else
+     * whichever matched first) for callers that want a quick on-screen number - still purely
+     * a debugging aid, this never writes anything.
      */
-    fun MoneySnapshot.diffAgainstWin(after: MoneySnapshot) {
+    fun MoneySnapshot.diffAgainstWin(after: MoneySnapshot): Int? {
         if (windowStart != after.windowStart || window.size != after.window.size) {
             onDiagnostic("Money calibration: before/after window mismatch, can't diff.")
-            return
+            return null
         }
         val beforeByOffset = candidates().toMap()
         val afterByOffset = after.candidates().toMap()
@@ -188,6 +191,11 @@ class BattleStateBridge(
                     }
             }
         )
+
+        if (matches.isEmpty()) return null
+        val preferredOffset = MONEY_OFFSET_IN_SAVEBLOCK1 - windowStart
+        val preferred = matches.firstOrNull { (i, _) -> i == preferredOffset }
+        return (preferred ?: matches.first()).second.third
     }
 
     private fun ByteArray.hexDump(): String = joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }

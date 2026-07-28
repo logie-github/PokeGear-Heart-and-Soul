@@ -5,6 +5,8 @@ import com.logie.pgearhs.R
 import com.logie.pgearhs.debug.DebugLog
 import com.logie.pgearhs.retroarch.BattleStateBridge
 import com.logie.pgearhs.retroarch.RetroArchConnection
+import com.logie.pgearhs.retroarch.RetroArchMemoryBridge
+import com.logie.pgearhs.retroarch.RetroArchOsdPrefs
 import com.logie.pgearhs.ui.GlobalDialogueNotices
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -90,6 +92,10 @@ object BattleMoneyTracker {
         val verbose = (quietState.inBattle != wasInBattle) || pollCount % 30 == 1
         val state = if (verbose) bridge.readState(verbose = true) ?: quietState else quietState
 
+        if (state.inBattle && !wasInBattle) {
+            notifyOsd(context, host, port, "PGearHS: entered battle")
+        }
+
         // This one-line summary (not the verbose hex dumps above) is still logged every
         // poll - cheap enough on its own, and useful to see the state leading up to a win
         // even outside the rare verbose polls.
@@ -100,6 +106,10 @@ object BattleMoneyTracker {
 
         var settledMoney = state.money
         val justWon = wasInBattle && !state.inBattle && state.outcome == BattleStateBridge.OUTCOME_WON
+
+        if (justWon) {
+            notifyOsd(context, host, port, "PGearHS: won the battle")
+        }
 
         if (justWon && !BattleStateBridge.MONEY_OFFSET_CONFIRMED) {
             // Money's real SaveBlock1 offset isn't confirmed yet (see BattleStateBridge's
@@ -116,7 +126,15 @@ object BattleMoneyTracker {
             val before = lastMoneySnapshot
             val after = bridge.captureMoneySnapshot()
             if (before != null && after != null) {
-                with(bridge) { before.diffAgainstWin(after) }
+                // Still unconfirmed, so this is purely a debugging aid, not a real payout -
+                // show it anyway so the offset's accuracy can be watched live in the
+                // emulator on every real win, not just dug out of a debug report afterward.
+                val quickDiff = with(bridge) { before.diffAgainstWin(after) }
+                notifyOsd(
+                    context, host, port,
+                    if (quickDiff != null) "PGearHS: won ~\$$quickDiff (unconfirmed offset)"
+                    else "PGearHS: won \$??? (offset not found this battle)"
+                )
             } else {
                 DebugLog.add("Battle money: couldn't diff for calibration (before=${before != null}, after=${after != null}).")
             }
@@ -127,6 +145,7 @@ object BattleMoneyTracker {
                 val won = after - before
                 val total = addWinnings(context, won)
                 DebugLog.add("Battle money: won $won this battle, total tracked $total.")
+                notifyOsd(context, host, port, "PGearHS: won \$$won")
                 settledMoney = sendToMom(context, bridge, won, after)
             } else {
                 DebugLog.add("Battle money: won, but couldn't compute the amount (before=$before, after=$after).")
@@ -176,4 +195,10 @@ object BattleMoneyTracker {
 
     private fun prefs(context: Context) =
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    /** Pushes [text] to RetroArch's own on-screen notification, if the user has that debug toggle on. */
+    private fun notifyOsd(context: Context, host: String, port: Int, text: String) {
+        if (!RetroArchOsdPrefs.isBattleOsdEnabled(context)) return
+        RetroArchMemoryBridge(host, port).showOsdMessage(text)
+    }
 }

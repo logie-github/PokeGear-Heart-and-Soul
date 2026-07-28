@@ -89,6 +89,39 @@
             app:layout_constraintTop_toBottomOf="@id/inGameTextLabel" />
 
         <TextView
+            android:id="@+id/retroArchOsdLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/retroarch_osd_label"
+            android:textColor="@color/johtoOnBackground"
+            app:layout_constraintEnd_toStartOf="@id/retroArchOsdSwitch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inGameTextHint" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/retroArchOsdSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/retroArchOsdLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/retroArchOsdLabel" />
+
+        <TextView
+            android:id="@+id/retroArchOsdHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.7"
+            android:text="@string/retroarch_osd_hint"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retroArchOsdLabel" />
+
+        <TextView
             android:id="@+id/menuBackgroundMovementLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -97,7 +130,7 @@
             android:textColor="@color/johtoOnBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inGameTextHint" />
+            app:layout_constraintTop_toBottomOf="@id/retroArchOsdHint" />
 
         <RadioGroup
             android:id="@+id/menuBackgroundMovementGroup"

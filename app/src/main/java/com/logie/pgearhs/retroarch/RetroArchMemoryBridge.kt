@@ -77,6 +77,17 @@ class RetroArchMemoryBridge(
 
     fun isReachable(): Boolean = sendCommand("GET_STATUS") != null
 
+    /**
+     * Pushes [text] onto RetroArch's own on-screen notification queue via `SHOW_MSG` - a
+     * real command in RetroArch's `command.h` action table (verified directly against
+     * RetroArch's source, not assumed from the similarly-named `command_show_osd_msg`
+     * handler function). Fire-and-forget like CORE_RAM writes: `command_show_osd_msg()`
+     * just pushes to the message queue and returns, with no reply packet sent back.
+     */
+    fun showOsdMessage(text: String) {
+        sendFireAndForget("SHOW_MSG $text")
+    }
+
     /** Reads [length] bytes starting at absolute [address]. Null on failure/no reply. */
     fun readMemory(address: Int, length: Int): ByteArray? {
         val response = sendCommand("${commandMode.readCommand} ${address.toString(16)} $length") ?: return null

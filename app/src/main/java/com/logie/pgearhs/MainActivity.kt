@@ -35,6 +35,7 @@ class MainActivity : BaseImmersiveActivity() {
 
         AppSyncManager.startIfNeeded(this)
         BattleMoneyTracker.startIfNeeded(this)
+        checkForUpdates(announceResult = false)
 
         menuBackgroundDots = findViewById(R.id.menuBackgroundDots)
         // The on-device MIDI synth doesn't honor this file's encoded tempo, playing it
