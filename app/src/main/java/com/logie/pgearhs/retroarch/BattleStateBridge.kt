@@ -23,18 +23,20 @@ package com.logie.pgearhs.retroarch
  * used for coins/item quantities/berry powder in this codebase - a raw read without XOR-ing
  * out the key will never look like a real balance. `readState()` now does that decryption.
  *
- * `MONEY_OFFSET_IN_SAVEBLOCK1` is a GUESS (currently 0x490, the plain documented offset,
- * reasoned - not confirmed - from walking this hack's own `struct Pokemon`/`BoxPokemon`
- * definitions and finding nothing upstream of `money` has grown in size). It's only used for
- * the cheap one-glance value in `readState()`'s normal summary - it is explicitly NOT relied
- * on for the actual calibration. That instead comes from `captureMoneySnapshot()`/
- * `diffAgainstWin()`, which reads the ENTIRE SaveBlock1 region (all ~16KB it's allowed to
- * span, per `include/save.h`'s sector reservation) and diffs it whole against itself
- * before/after a real win, rather than trusting any offset guess to search near. That's the
- * actual, verifiable way to find this - not more source-reading.
+ * Both `MONEY_OFFSET_IN_SAVEBLOCK1` (0x490) and `ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2` (0xBC)
+ * are now taken directly from disassembling `pokemonHnS-v121/pokemonHnS.elf` - the actual
+ * compiled build matching the Release-v1.2.1 tag this ROM comes from - not reasoned from
+ * struct definitions. `GetMoney`/`SetMoney`/`AddMoney`/`RemoveMoney` all load the key via
+ * `movs r3, #188` (`0xBC`) before XOR-ing; `Cmd_getmoneyreward`'s actual payout computes
+ * `gSaveBlock1Ptr + (0x92 << 3)` = `+0x490` before calling `RemoveMoney`. The previous
+ * `0xAC` guess for the key (the plain vanilla-documented offset) was simply wrong - that's
+ * why every prior decrypt attempt produced garbage even once `money`'s own offset (0x490)
+ * turned out to be right all along. This is what "where can you find it" should have been
+ * from the start: read what the compiler actually emitted, not what the header comments say.
  *
- * `writeMoney()` refuses to run at all while `MONEY_OFFSET_CONFIRMED = false` - flips only
- * once a real live diff (not reasoning) has confirmed a specific offset.
+ * `writeMoney()` still refuses to run while `MONEY_OFFSET_CONFIRMED = false` - this is real
+ * evidence, not a guess, but it hasn't been seen decrypting to a plausible number on the
+ * live device yet. Flip once that's actually observed in a report.
  */
 class BattleStateBridge(
     private val host: String,
@@ -52,7 +54,7 @@ class BattleStateBridge(
         private const val SAVEBLOCK1_PTR_ADDR = 0x03003740
         private const val SAVEBLOCK2_PTR_ADDR = 0x03003744
         private const val MONEY_OFFSET_IN_SAVEBLOCK1 = 0x490
-        private const val ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2 = 0xAC
+        private const val ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2 = 0xBC
         private const val MAX_MONEY = 9_999_999
 
         // Not yet confirmed against real ground truth (a known displayed in-game money
