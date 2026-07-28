@@ -50,7 +50,17 @@ class PokemonDialogueBox(overlayRoot: View) {
 
     val isVisible: Boolean get() = mode != Mode.HIDDEN
 
+    /**
+     * Fires whenever [isVisible] changes. The overlay covers the whole screen and swallows
+     * touches while visible, but the trainer list *underneath* it can still hold d-pad focus
+     * and intercept DPAD_CENTER before this box's own key handling ever sees it, re-triggering
+     * a list item's click mid-call and clobbering whichever trainer's dialogue was showing -
+     * hosts should block the list's focusability while this is true (see TrainerCallActivity).
+     */
+    var onVisibilityChanged: ((Boolean) -> Unit)? = null
+
     init {
+        root.setOnClickListener { onAdvance() }
         dialogueBox.setOnClickListener { onAdvance() }
     }
 
@@ -59,30 +69,38 @@ class PokemonDialogueBox(overlayRoot: View) {
         pages = messages.flatMap { paginate(it) }.ifEmpty { listOf("") }
         pageIndex = 0
         onTextFinished = onFinished
-        mode = Mode.TEXT
+        setMode(Mode.TEXT)
         root.visibility = View.VISIBLE
         dialogueBox.visibility = View.VISIBLE
         yesNoBox.visibility = View.GONE
+        dialogueBox.requestFocus()
         renderPage()
     }
 
     /** Shows the Yes/No prompt over the dialogue box; [onChosen] fires with true for Yes. */
     fun showYesNo(onChosen: (Boolean) -> Unit) {
-        mode = Mode.YES_NO
+        setMode(Mode.YES_NO)
         onYesNoChosen = onChosen
         yesSelected = true
         nextIndicator.visibility = View.INVISIBLE
         stopBlink()
         yesNoBox.visibility = View.VISIBLE
+        root.requestFocus()
         updateYesNoHighlight()
     }
 
     fun hide() {
-        mode = Mode.HIDDEN
+        setMode(Mode.HIDDEN)
         stopBlink()
         root.visibility = View.GONE
         dialogueBox.visibility = View.GONE
         yesNoBox.visibility = View.GONE
+    }
+
+    private fun setMode(newMode: Mode) {
+        val wasVisible = isVisible
+        mode = newMode
+        if (wasVisible != isVisible) onVisibilityChanged?.invoke(isVisible)
     }
 
     /** Wire to A/DPAD_CENTER/ENTER and to touch taps on the box. */

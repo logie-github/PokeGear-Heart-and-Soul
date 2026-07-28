@@ -2,6 +2,7 @@ package com.logie.pgearhs.trainers
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +32,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
     private lateinit var dialogueBox: PokemonDialogueBox
+    private lateinit var trainerList: RecyclerView
     private lateinit var allTrainers: Map<Int, Trainer>
     private lateinit var rematchPositions: Map<Int, RematchPosition>
     private lateinit var rematchAnchors: Map<Int, Int>
@@ -43,14 +45,26 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
         statusLabel = findViewById(R.id.trainerCallStatus)
         dialogueBox = PokemonDialogueBox(findViewById(R.id.dialogueOverlay))
-        val list = findViewById<RecyclerView>(R.id.trainerCallList)
-        list.layoutManager = LinearLayoutManager(this)
+
+        trainerList = findViewById(R.id.trainerCallList)
+        trainerList.layoutManager = LinearLayoutManager(this)
+
+        // While the dialogue box is up, the list must not be able to hold focus or intercept
+        // DPAD_CENTER - otherwise a still-focused row underneath re-triggers its own click
+        // mid-call, clobbering whichever trainer's dialogue was showing with a different one.
+        dialogueBox.onVisibilityChanged = { visible ->
+            trainerList.descendantFocusability = if (visible) {
+                ViewGroup.FOCUS_BLOCK_DESCENDANTS
+            } else {
+                ViewGroup.FOCUS_AFTER_DESCENDANTS
+            }
+        }
 
         allTrainers = TrainerRepository.loadAll(this).associateBy { it.id }
         rematchPositions = RematchPositionRepository.loadAll(this)
         rematchAnchors = RematchPositionRepository.loadAnchors(this)
         adapter = TrainerCallAdapter(emptyList()) { trainer -> confirmRematch(trainer) }
-        list.adapter = adapter
+        trainerList.adapter = adapter
 
         syncDefeatedTrainers()
     }
