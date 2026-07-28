@@ -1,7 +1,6 @@
 package com.logie.pgearhs.trainers
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -15,7 +14,6 @@ import com.logie.pgearhs.retroarch.PlayerProfileBridge
 import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.retroarch.TrainerFlagsBridge
 import com.logie.pgearhs.ui.BaseImmersiveActivity
-import com.logie.pgearhs.ui.PokemonDialogueBox
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,7 +29,6 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
-    private lateinit var dialogueBox: PokemonDialogueBox
     private lateinit var trainerList: RecyclerView
     private lateinit var allTrainers: Map<Int, Trainer>
     private lateinit var rematchPositions: Map<Int, RematchPosition>
@@ -44,7 +41,6 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         setContentView(R.layout.activity_trainer_call)
 
         statusLabel = findViewById(R.id.trainerCallStatus)
-        dialogueBox = PokemonDialogueBox(findViewById(R.id.dialogueOverlay))
 
         trainerList = findViewById(R.id.trainerCallList)
         trainerList.layoutManager = LinearLayoutManager(this)
@@ -67,22 +63,6 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         trainerList.adapter = adapter
 
         syncDefeatedTrainers()
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (dialogueBox.isVisible) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_ENTER -> {
-                    dialogueBox.onAdvance()
-                    return true
-                }
-                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    dialogueBox.onNavigate(if (keyCode == KeyEvent.KEYCODE_DPAD_UP) -1 else 1)
-                    return true
-                }
-            }
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     private fun syncDefeatedTrainers() {

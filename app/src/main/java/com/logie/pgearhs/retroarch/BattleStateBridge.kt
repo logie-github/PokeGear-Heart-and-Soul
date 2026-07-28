@@ -62,6 +62,32 @@ class BattleStateBridge(
         return BattleState(inBattle, outcome, money)
     }
 
+    /** Overwrites the player's money with [newMoney]. Returns true only once read back and confirmed. */
+    suspend fun writeMoney(newMoney: Int): Boolean {
+        val bridge = RetroArchMemoryBridge(host, port)
+        val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return false
+        val moneyAddress = saveBlock1Address + MONEY_OFFSET_IN_SAVEBLOCK1
+
+        val bytes = byteArrayOf(
+            (newMoney and 0xFF).toByte(),
+            ((newMoney shr 8) and 0xFF).toByte(),
+            ((newMoney shr 16) and 0xFF).toByte(),
+            ((newMoney shr 24) and 0xFF).toByte()
+        )
+        if (!bridge.writeMemory(moneyAddress, bytes)) {
+            onDiagnostic("! Money write to 0x${moneyAddress.toString(16)} not confirmed by RetroArch.")
+            return false
+        }
+
+        val verified = bridge.readMemory(moneyAddress, 4)?.let { readU32LE(it, 0) }
+        val ok = verified == newMoney
+        onDiagnostic(
+            if (ok) "Money write verified (now $verified)."
+            else "! Money write did not verify - reads $verified, expected $newMoney."
+        )
+        return ok
+    }
+
     private fun resolveSaveBlock1Address(bridge: RetroArchMemoryBridge): Int? {
         val ptrBytes = bridge.readMemory(SAVEBLOCK1_PTR_ADDR, 4) ?: return null
         val address = readU32LE(ptrBytes, 0)

@@ -182,6 +182,8 @@ class SettingsActivity : BaseImmersiveActivity() {
     private fun updateBattleWinnings() {
         findViewById<TextView>(R.id.battleWinningsAmount).text =
             getString(R.string.battle_winnings_amount, BattleMoneyTracker.totalWinnings(this))
+        findViewById<TextView>(R.id.savingsAmount).text =
+            getString(R.string.savings_amount, BattleMoneyTracker.savings(this))
     }
 
     override fun onResume() {

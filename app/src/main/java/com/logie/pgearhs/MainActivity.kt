@@ -93,6 +93,10 @@ class MainActivity : BaseImmersiveActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        // Base class handles the dialogue box (e.g. a background money-transfer notice)
+        // first, when it's showing - only fall through to this screen's own key handling
+        // once it says the key wasn't its concern.
+        if (super.onKeyDown(keyCode, event)) return true
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 buttonSelection.moveSelection(1)
@@ -107,6 +111,6 @@ class MainActivity : BaseImmersiveActivity() {
                 return true
             }
         }
-        return super.onKeyDown(keyCode, event)
+        return false
     }
 }

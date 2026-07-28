@@ -253,6 +253,43 @@
             app:layout_constraintTop_toBottomOf="@id/battleWinningsLabel" />
 
         <TextView
+            android:id="@+id/savingsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/savings_label"
+            android:textColor="@color/johtoOnBackground"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/savingsAmount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/battleWinningsHint" />
+
+        <TextView
+            android:id="@+id/savingsAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/johtoAccent"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/savingsLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/savingsLabel"
+            tools:text="$300" />
+
+        <TextView
+            android:id="@+id/savingsHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.7"
+            android:text="@string/savings_hint"
+            android:textColor="@color/johtoOnBackground"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/savingsLabel" />
+
+        <TextView
             android:id="@+id/creditsLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -262,7 +299,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/battleWinningsHint" />
+            app:layout_constraintTop_toBottomOf="@id/savingsHint" />
 
         <TextView
             android:id="@+id/creditsFont"
