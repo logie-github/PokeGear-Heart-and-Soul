@@ -8,4 +8,10 @@
     <color name="pgBarWhite">#FFFFFF</color>
     <color name="pgBarGray">#AAAAAA</color>
     <color name="pgBarDarkGray">#555555</color>
+    <color name="dialogueBoxBorder">#505050</color>
+    <color name="dialogueBoxInsetRing">#B8B8B8</color>
+    <color name="dialogueBoxFill">#FFFFFF</color>
+    <color name="dialogueBoxText">#202020</color>
+    <color name="dialogueBoxTextShadow">#D0D0D0</color>
+    <color name="dialogueBoxOptionSelected">#CC3B30</color>
 </resources>

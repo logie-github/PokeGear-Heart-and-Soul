@@ -1,9 +1,8 @@
 package com.logie.pgearhs.trainers
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +12,7 @@ import com.logie.pgearhs.retroarch.PlayerProfileBridge
 import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.retroarch.TrainerFlagsBridge
 import com.logie.pgearhs.ui.BaseImmersiveActivity
+import com.logie.pgearhs.ui.PokemonDialogueBox
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,6 +28,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
     private lateinit var statusLabel: TextView
     private lateinit var adapter: TrainerCallAdapter
+    private lateinit var dialogueBox: PokemonDialogueBox
     private lateinit var allTrainers: Map<Int, Trainer>
     private lateinit var rematchPositions: Map<Int, RematchPosition>
     private lateinit var rematchAnchors: Map<Int, Int>
@@ -39,6 +40,7 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         setContentView(R.layout.activity_trainer_call)
 
         statusLabel = findViewById(R.id.trainerCallStatus)
+        dialogueBox = PokemonDialogueBox(findViewById(R.id.dialogueOverlay))
         val list = findViewById<RecyclerView>(R.id.trainerCallList)
         list.layoutManager = LinearLayoutManager(this)
 
@@ -49,6 +51,22 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         list.adapter = adapter
 
         syncDefeatedTrainers()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (dialogueBox.isVisible) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_ENTER -> {
+                    dialogueBox.onAdvance()
+                    return true
+                }
+                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    dialogueBox.onNavigate(if (keyCode == KeyEvent.KEYCODE_DPAD_UP) -1 else 1)
+                    return true
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun syncDefeatedTrainers() {
@@ -95,29 +113,28 @@ class TrainerCallActivity : BaseImmersiveActivity() {
     }
 
     /**
-     * Shows the trainer's side of the call - assembled by [RematchCall] (ported from
+     * Plays the trainer's side of the call - assembled by [RematchCall] (ported from
      * LazarusDex's outgoing-call flow, ~/Documents/LazarusDex) from their lead Pokemon and
-     * battle location - before asking whether to actually reset them for a rematch.
+     * battle location - through the dialogue box, then asks Yes/No before resetting them.
      */
     private fun confirmRematch(trainer: Trainer) {
-        val transcript = RematchCall.assemble(
+        val lines = RematchCall.assemble(
             playerName = playerName,
             pokemonName = trainer.firstPokemon,
             location = LocationPhrasing.naturalize(trainer.location)
-        ).joinToString("\n\n")
+        )
 
-        AlertDialog.Builder(this)
-            .setTitle(trainer.displayName)
-            .setMessage(transcript)
-            .setPositiveButton(R.string.trainer_call_rematch_confirm) { _, _ -> performRematch(trainer) }
-            .setNegativeButton(R.string.trainer_call_rematch_cancel, null)
-            .show()
+        dialogueBox.showText(lines) {
+            dialogueBox.showYesNo { rematch ->
+                if (rematch) performRematch(trainer) else dialogueBox.hide()
+            }
+        }
     }
 
     private fun performRematch(trainer: Trainer) {
         val host = RetroArchConnection.getHost(this)
         val port = RetroArchConnection.getPort(this)
-        Toast.makeText(this, getString(R.string.trainer_call_rematch_working, trainer.displayName), Toast.LENGTH_SHORT).show()
+        dialogueBox.showText(listOf(getString(R.string.trainer_call_rematch_working, trainer.displayName))) {}
 
         // Prefer the real native rematch-ready switch (proper rematch dialogue, next tier
         // of their team) over just resetting the plain defeated flag (which replays their
@@ -145,15 +162,16 @@ class TrainerCallActivity : BaseImmersiveActivity() {
                 }
             }
 
-            if (success) {
+            val resultLine = if (success) {
                 // Trainer stays in `callable` (and the persisted registry) - resetting their
                 // flag makes them fightable again, it doesn't un-register their number.
                 DebugLog.add("Trainer call: ${trainer.displayName} reset succeeded.")
-                Toast.makeText(this@TrainerCallActivity, getString(R.string.trainer_call_rematch_success, trainer.displayName), Toast.LENGTH_LONG).show()
+                getString(R.string.trainer_call_rematch_success, trainer.displayName)
             } else {
                 DebugLog.add("! Trainer call: ${trainer.displayName} reset failed.")
-                Toast.makeText(this@TrainerCallActivity, getString(R.string.trainer_call_rematch_failed, trainer.displayName), Toast.LENGTH_LONG).show()
+                getString(R.string.trainer_call_rematch_failed, trainer.displayName)
             }
+            dialogueBox.showText(listOf(resultLine)) { dialogueBox.hide() }
         }
     }
 }
