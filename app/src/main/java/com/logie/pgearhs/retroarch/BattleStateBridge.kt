@@ -21,14 +21,22 @@ package com.logie.pgearhs.retroarch
  * money is NOT a plain scalar read - `src/money.c` XORs it against
  * `gSaveBlock2Ptr->encryptionKey` on every access (`GetMoney`/`SetMoney`), the same pattern
  * used for coins/item quantities/berry powder in this codebase - a raw read without XOR-ing
- * out the key will never look like a real balance. On top of that, `MONEY_OFFSET_IN_SAVEBLOCK1`
- * (hypothesized 0x584, i.e. documented 0x490 + the same +0xF4 delta found for flags[]) is
- * ALSO still unconfirmed, and issue #30's raw dump at that address shows a suspicious,
- * tightly-repeating 4-byte pattern across 44+ bytes - not what a single scalar field
- * surrounded by unrelated struct fields should look like. Given both are unverified, `readState()`
- * does NOT trust the interpreted `money`/`moneyOffsetConfirmed=false` value for anything beyond
- * diagnostics yet, and `writeMoney()` refuses to run at all (see its doc comment) - writing to
- * an unconfirmed offset risks corrupting some other, unrelated save field instead of money.
+ * out the key will never look like a real balance. `readState()` now does that decryption.
+ *
+ * `MONEY_OFFSET_IN_SAVEBLOCK1` was previously guessed at 0x584 (documented 0x490 + the same
+ * +0xF4 delta found for flags[]) - wrong, and never should have been assumed: that delta was
+ * derived from flags[], which sits *after* several item/object-event arrays that are the
+ * actual plausible growth points in this hack. `money` sits right after `playerParty[]`, and
+ * walking pokemonHnS-v121's own `struct Pokemon`/`struct BoxPokemon`/substruct definitions by
+ * hand confirms they're still exactly 100/80/12 bytes each - unchanged from vanilla - so
+ * nothing upstream of `money` has grown. Its real offset should simply be the documented
+ * 0x490, unshifted. (Also: `MAX_MONEY` in this hack's `src/money.c` is 9999999, not vanilla's
+ * 999999 - one digit more headroom, accounted for in the plausibility checks below.)
+ *
+ * Still guarded behind `MONEY_OFFSET_CONFIRMED = false` until a real live diff confirms it -
+ * this reasoning is much stronger than the old guess, but "confirmed by reading the source"
+ * and "confirmed against the live ROM" have burned this project before (see the Pokédex
+ * `owned[]`/`flags[]` offset bugs), so `writeMoney()` still refuses to run until then.
  */
 class BattleStateBridge(
     private val host: String,
@@ -45,8 +53,9 @@ class BattleStateBridge(
 
         private const val SAVEBLOCK1_PTR_ADDR = 0x03003740
         private const val SAVEBLOCK2_PTR_ADDR = 0x03003744
-        private const val MONEY_OFFSET_IN_SAVEBLOCK1 = 0x584
+        private const val MONEY_OFFSET_IN_SAVEBLOCK1 = 0x490
         private const val ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2 = 0xAC
+        private const val MAX_MONEY = 9_999_999
 
         // Not yet confirmed against real ground truth (a known displayed in-game money
         // amount) - see the class doc comment. Flips to true only once that's done.
@@ -101,7 +110,12 @@ class BattleStateBridge(
             if (verbose) {
                 onDiagnostic("Battle state: money window @0x${moneyAddress.toString(16)} (16 bytes before) = ${moneyWindow?.hexDump() ?: "read failed"}")
             }
-            moneyWindow?.let { readU32LE(it, 16) }
+            val raw = moneyWindow?.let { readU32LE(it, 16) }
+            val encryptionKey = readEncryptionKey(bridge)
+            if (verbose) {
+                onDiagnostic("Battle state: encryptionKey = ${encryptionKey?.let { "0x${it.toString(16)}" } ?: "read failed"}, money raw=$raw decrypted=${encryptionKey?.let { raw?.xor(it) }}")
+            }
+            raw?.let { r -> encryptionKey?.let { r xor it } ?: r }
         }
 
         return BattleState(inBattle, outcome, money)
@@ -113,24 +127,26 @@ class BattleStateBridge(
     private val moneyWindowStart = MONEY_OFFSET_IN_SAVEBLOCK1 - 0x100
     private val moneyWindowSize = 0x200
 
+    private suspend fun readEncryptionKey(bridge: RetroArchMemoryBridge): Int? {
+        val saveBlock2Address = resolveSaveBlock2Address(bridge) ?: return null
+        return bridge.readMemory(saveBlock2Address + ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2, 4)?.let { readU32LE(it, 0) }
+    }
+
     suspend fun captureMoneySnapshot(bridge: RetroArchMemoryBridge = RetroArchMemoryBridge(host, port)): MoneySnapshot? {
         val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return null
-        val saveBlock2Address = resolveSaveBlock2Address(bridge)
-        val encryptionKey = saveBlock2Address?.let {
-            bridge.readMemory(it + ENCRYPTION_KEY_OFFSET_IN_SAVEBLOCK2, 4)?.let { bytes -> readU32LE(bytes, 0) }
-        }
+        val encryptionKey = readEncryptionKey(bridge)
         val window = bridge.readMemory(saveBlock1Address + moneyWindowStart, moneyWindowSize) ?: return null
         return MoneySnapshot(saveBlock1Address, moneyWindowStart, window, encryptionKey)
     }
 
     private fun MoneySnapshot.candidates(): List<Pair<Int, Int>> {
-        // MAX_MONEY in vanilla Emerald-derived games is 999999 - flag anything (raw, or
-        // XOR-decrypted if we have a key) that could plausibly be a money value.
+        // Flag anything (raw, or XOR-decrypted if we have a key) that could plausibly be a
+        // money value - this hack's MAX_MONEY is 9999999 (src/money.c), not vanilla's 999999.
         val out = mutableListOf<Pair<Int, Int>>()
         for (i in 0 until window.size - 3) {
             val raw = readU32LE(window, i)
             val decrypted = encryptionKey?.let { raw xor it }
-            val value = decrypted?.takeIf { it in 0..999_999 } ?: raw.takeIf { it in 0..999_999 }
+            val value = decrypted?.takeIf { it in 0..MAX_MONEY } ?: raw.takeIf { it in 0..MAX_MONEY }
             if (value != null) out.add(i to value)
         }
         return out
@@ -153,7 +169,7 @@ class BattleStateBridge(
             val before = beforeByOffset.getValue(i)
             val after = afterByOffset.getValue(i)
             val delta = after - before
-            if (delta in 1..500_000) i to Triple(before, after, delta) else null
+            if (delta in 1..MAX_MONEY) i to Triple(before, after, delta) else null
         }
         onDiagnostic(
             if (matches.isEmpty()) {
@@ -172,12 +188,10 @@ class BattleStateBridge(
     private fun ByteArray.hexDump(): String = joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }
 
     /**
-     * Overwrites the player's money with [newMoney]. Refuses unconditionally while
-     * [MONEY_OFFSET_CONFIRMED] is false - issue #30 showed `MONEY_OFFSET_IN_SAVEBLOCK1`
-     * currently lands on what looks like a repeating array, not a scalar field, so writing
-     * there would risk corrupting some other, unrelated piece of save data instead of
-     * actually touching money. Once calibration (see `diffAgainstWin`) finds
-     * and confirms the real offset, flip that flag and this starts working.
+     * Overwrites the player's money with [newMoney] (encrypting it the same way the game
+     * does before writing). Refuses unconditionally while [MONEY_OFFSET_CONFIRMED] is false -
+     * see the class doc comment for why the offset is now well-reasoned but still not
+     * live-confirmed. Once a real diff (see `diffAgainstWin`) confirms it, flip that flag.
      */
     suspend fun writeMoney(newMoney: Int): Boolean {
         if (!MONEY_OFFSET_CONFIRMED) {
@@ -187,20 +201,25 @@ class BattleStateBridge(
 
         val bridge = RetroArchMemoryBridge(host, port)
         val saveBlock1Address = resolveSaveBlock1Address(bridge) ?: return false
+        val encryptionKey = readEncryptionKey(bridge) ?: run {
+            onDiagnostic("! Money write skipped - couldn't read encryptionKey to encrypt the new value.")
+            return false
+        }
         val moneyAddress = saveBlock1Address + MONEY_OFFSET_IN_SAVEBLOCK1
+        val encrypted = newMoney xor encryptionKey
 
         val bytes = byteArrayOf(
-            (newMoney and 0xFF).toByte(),
-            ((newMoney shr 8) and 0xFF).toByte(),
-            ((newMoney shr 16) and 0xFF).toByte(),
-            ((newMoney shr 24) and 0xFF).toByte()
+            (encrypted and 0xFF).toByte(),
+            ((encrypted shr 8) and 0xFF).toByte(),
+            ((encrypted shr 16) and 0xFF).toByte(),
+            ((encrypted shr 24) and 0xFF).toByte()
         )
         if (!bridge.writeMemory(moneyAddress, bytes)) {
             onDiagnostic("! Money write to 0x${moneyAddress.toString(16)} not confirmed by RetroArch.")
             return false
         }
 
-        val verified = bridge.readMemory(moneyAddress, 4)?.let { readU32LE(it, 0) }
+        val verified = bridge.readMemory(moneyAddress, 4)?.let { readU32LE(it, 0) xor encryptionKey }
         val ok = verified == newMoney
         onDiagnostic(
             if (ok) "Money write verified (now $verified)."
