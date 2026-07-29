@@ -6,16 +6,16 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 /**
  * Recreates the real GBA Pokédex screen's coordinate space: every child is placed using the
  * *exact* native 240x160 pixel coordinates read out of pokedex_plus_hgss.c (the same numbers
- * the HTML prototype used), and this ViewGroup itself always keeps a strict 3:2 aspect ratio,
- * scaled up as large as it can fit its parent - centering/letterboxing rather than stretching
- * or reflowing, exactly like a real emulator displaying a GBA screen on a differently-shaped
- * device. This is what makes box placement match the real game instead of being "reflowed."
+ * the HTML prototype used). Rather than letterboxing to preserve the GBA's native 3:2 aspect
+ * (which leaves black bars on a differently-shaped screen), this fills its container edge to
+ * edge: X and Y each get their own scale factor, so the whole layout stretches to exactly match
+ * the device's actual screen ratio instead of leaving empty space.
  */
 class GbaScreenLayout @JvmOverloads constructor(
     context: Context,
@@ -28,8 +28,10 @@ class GbaScreenLayout @JvmOverloads constructor(
         const val NATIVE_H = 160
     }
 
-    /** Current native-px -> real-px scale factor, valid after layout. */
-    var scale: Float = 1f
+    /** Current native-px -> real-px scale factors, valid after layout. */
+    var nativeScaleX: Float = 1f
+        private set
+    var nativeScaleY: Float = 1f
         private set
 
     class LayoutParams(
@@ -48,22 +50,20 @@ class GbaScreenLayout @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val availW = MeasureSpec.getSize(widthMeasureSpec)
         val availH = MeasureSpec.getSize(heightMeasureSpec)
-        val byWidth = availW.toFloat() / NATIVE_W
-        val byHeight = if (availH > 0) availH.toFloat() / NATIVE_H else byWidth
-        scale = if (availH > 0) min(byWidth, byHeight) else byWidth
+        nativeScaleX = availW.toFloat() / NATIVE_W
+        nativeScaleY = if (availH > 0) availH.toFloat() / NATIVE_H else nativeScaleX
+        val textScale = sqrt(nativeScaleX * nativeScaleY)
 
-        val myWidth = (NATIVE_W * scale).roundToInt()
-        val myHeight = (NATIVE_H * scale).roundToInt()
-        setMeasuredDimension(myWidth, myHeight)
+        setMeasuredDimension(availW, availH)
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             val lp = child.layoutParams as? LayoutParams ?: continue
             if (lp.nativeTextSizePx > 0f && child is TextView) {
-                child.setTextSize(TypedValue.COMPLEX_UNIT_PX, lp.nativeTextSizePx * scale)
+                child.setTextSize(TypedValue.COMPLEX_UNIT_PX, lp.nativeTextSizePx * textScale)
             }
-            val childWidthSpec = MeasureSpec.makeMeasureSpec((lp.nativeWidth * scale).roundToInt(), MeasureSpec.EXACTLY)
-            val childHeightSpec = MeasureSpec.makeMeasureSpec((lp.nativeHeight * scale).roundToInt(), MeasureSpec.EXACTLY)
+            val childWidthSpec = MeasureSpec.makeMeasureSpec((lp.nativeWidth * nativeScaleX).roundToInt(), MeasureSpec.EXACTLY)
+            val childHeightSpec = MeasureSpec.makeMeasureSpec((lp.nativeHeight * nativeScaleY).roundToInt(), MeasureSpec.EXACTLY)
             child.measure(childWidthSpec, childHeightSpec)
         }
     }
@@ -72,8 +72,8 @@ class GbaScreenLayout @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             val lp = child.layoutParams as? LayoutParams ?: continue
-            val left = (lp.nativeLeft * scale).roundToInt()
-            val top = (lp.nativeTop * scale).roundToInt()
+            val left = (lp.nativeLeft * nativeScaleX).roundToInt()
+            val top = (lp.nativeTop * nativeScaleY).roundToInt()
             child.layout(left, top, left + child.measuredWidth, top + child.measuredHeight)
         }
     }

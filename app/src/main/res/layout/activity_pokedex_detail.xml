@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The whole screen is built in Kotlin at exact native 240x160 GBA coordinates inside
-     GbaScreenLayout (see PokedexDetailActivity) - this file just letterboxes it. -->
+     GbaScreenLayout (see PokedexDetailActivity), which stretches to fill this container
+     exactly - no letterboxing/black bars, X and Y scale independently to match whatever
+     the device's actual screen ratio is. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="@color/pokedexPaper">
 
     <com.logie.pgearhs.pokedex.GbaScreenLayout
         android:id="@+id/gbaScreen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_height="match_parent" />
 </FrameLayout>
