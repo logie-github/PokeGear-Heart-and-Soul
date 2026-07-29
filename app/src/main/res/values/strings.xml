@@ -72,7 +72,7 @@
     <string name="savings_hint">Money sent to MOM out of battle winnings (25 percent, rounded to the nearest $10) - tracked here, not visible in-game.</string>
     <string name="mom_gifts_label">Mom\'s Gifts</string>
     <string name="mom_gifts_amount">%1$d/%2$d one-time items, %3$d pending delivery</string>
-    <string name="mom_gifts_hint">Once savings reach certain amounts, MOM buys items and berries and sends them straight to your bag.</string>
+    <string name="mom_gifts_hint">Once savings reach certain amounts, MOM buys items and berries and sends them straight to your PC.</string>
     <string name="savings_amount">$%1$,d</string>
     <string name="credits_label">Credits</string>
     <string name="credits_font">The FontStruction “Pokemon Emerald” (https://fontstruct.com/fontstructions/show/1975556) by “aztecwarrior28” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).</string>

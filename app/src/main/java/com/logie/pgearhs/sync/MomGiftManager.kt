@@ -11,7 +11,8 @@ import com.logie.pgearhs.ui.GlobalDialogueNotices
 /**
  * When the player's savings (see BattleMoneyTracker - money sent to Mom out of battle
  * winnings) reach certain thresholds, Mom buys a gift and it's delivered straight to the
- * player's bag - modeled on the real "Mom's savings" mechanic from later Pokemon games, but
+ * player's PC item storage (see MomGiftBridge - a genuinely separate array from the bag in
+ * this hack) - modeled on the real "Mom's savings" mechanic from later Pokemon games, but
  * entirely app-invented here (this hack has no native equivalent - checked, nothing in the
  * decomp source references a delivery man, savings account, or gift system at all).
  *
@@ -29,8 +30,8 @@ import com.logie.pgearhs.ui.GlobalDialogueNotices
  * (nonexistent-here) Gen4 type-resist berries originally described.
  *
  * A gift is "granted" (queued) as soon as its threshold is crossed, but only "delivered"
- * (actually written into the bag) once RetroArch is reachable and the target pocket has
- * room - see PENDING_CAP below for why granting and delivering are different moments.
+ * (actually written into PC storage) once RetroArch is reachable and there's room - see
+ * ONCE_ITEM_PENDING_CAP below for why granting and delivering are different moments.
  */
 object MomGiftManager {
     private const val PREFS_NAME = "pgearhs_settings"
@@ -48,7 +49,7 @@ object MomGiftManager {
     private const val ONCE_ITEM_PENDING_CAP = 5
 
     data class OnceItem(val key: String, val thresholdDollars: Int, val itemId: Int, val displayName: String)
-    data class PendingGift(val itemId: Int, val quantity: Int, val displayName: String, val pocket: MomGiftBridge.Pocket)
+    data class PendingGift(val itemId: Int, val quantity: Int, val displayName: String)
 
     // Item ids from pokemonHnS-v121/include/constants/items.h (this hack's actual compiled
     // list, not vanilla Emerald's - checked directly, not assumed).
@@ -109,7 +110,7 @@ object MomGiftManager {
                 continue
             }
             purchased += item.key
-            pending += PendingGift(item.itemId, 1, item.displayName, MomGiftBridge.Pocket.ITEMS)
+            pending += PendingGift(item.itemId, 1, item.displayName)
             newlyGranted += item.displayName
         }
 
@@ -118,7 +119,7 @@ object MomGiftManager {
             if (!coincidesWithOnceItem) {
                 val berryId = BERRY_NAMES_BY_ID.keys.random()
                 val berryName = BERRY_NAMES_BY_ID.getValue(berryId)
-                pending += PendingGift(berryId, 5, berryName, MomGiftBridge.Pocket.BERRIES)
+                pending += PendingGift(berryId, 5, berryName)
                 newlyGranted += "$berryName x5"
             }
             nextBerryMultiple += BERRY_THRESHOLD_STEP
@@ -152,25 +153,25 @@ object MomGiftManager {
     }
 
     /**
-     * Debug-only: delivers one test Potion straight to the bag right now and fires the exact
-     * same "MOM sent you a %s!" dialogue and OSD notice a real gift would - doesn't touch
-     * threshold/purchased/pending state at all, so it can't consume a real once-only item or
-     * throw off progress tracking. For verifying the delivery write path actually lands
-     * correctly in the bag without needing to grind savings up to a real threshold.
+     * Debug-only: delivers one test Potion straight to PC storage right now and fires the
+     * exact same "MOM sent you a %s!" dialogue and OSD notice a real gift would - doesn't
+     * touch threshold/purchased/pending state at all, so it can't consume a real once-only
+     * item or throw off progress tracking. For verifying the delivery write path actually
+     * lands correctly without needing to grind savings up to a real threshold.
      */
     suspend fun forceTestDelivery(context: Context, host: String, port: Int): Boolean {
         val bridge = MomGiftBridge(host, port, onDiagnostic = DebugLog::add)
-        val testGift = PendingGift(ITEM_POTION, 1, "Potion (test)", MomGiftBridge.Pocket.ITEMS)
+        val testGift = PendingGift(ITEM_POTION, 1, "Potion (test)")
         return deliverAndNotify(context, host, port, bridge, testGift)
     }
 
     private suspend fun deliverAndNotify(
         context: Context, host: String, port: Int, bridge: MomGiftBridge, gift: PendingGift
     ): Boolean {
-        val delivered = bridge.addItem(gift.itemId, gift.quantity, gift.pocket)
+        val delivered = bridge.addToPC(gift.itemId, gift.quantity)
         if (delivered) {
             DebugLog.add("Mom gift: delivered ${gift.displayName} x${gift.quantity}.")
-            notifyOsd(context, host, port, "PGearHS: ${gift.displayName} added to your bag!")
+            notifyOsd(context, host, port, "PGearHS: ${gift.displayName} added to your PC!")
             GlobalDialogueNotices.notify(
                 context,
                 listOf(context.getString(R.string.mom_gift_delivered, gift.displayName))
@@ -206,16 +207,15 @@ object MomGiftManager {
         if (raw.isBlank()) return emptyList()
         return raw.split(";").mapNotNull { entry ->
             val parts = entry.split(",")
-            if (parts.size != 4) return@mapNotNull null
+            if (parts.size != 3) return@mapNotNull null
             val itemId = parts[0].toIntOrNull() ?: return@mapNotNull null
             val quantity = parts[1].toIntOrNull() ?: return@mapNotNull null
-            val pocket = runCatching { MomGiftBridge.Pocket.valueOf(parts[3]) }.getOrNull() ?: return@mapNotNull null
-            PendingGift(itemId, quantity, parts[2], pocket)
+            PendingGift(itemId, quantity, parts[2])
         }
     }
 
     private fun savePendingItems(context: Context, items: List<PendingGift>) {
-        val encoded = items.joinToString(";") { "${it.itemId},${it.quantity},${it.displayName},${it.pocket.name}" }
+        val encoded = items.joinToString(";") { "${it.itemId},${it.quantity},${it.displayName}" }
         prefs(context).edit().putString(KEY_PENDING_ITEMS, encoded).apply()
     }
 
