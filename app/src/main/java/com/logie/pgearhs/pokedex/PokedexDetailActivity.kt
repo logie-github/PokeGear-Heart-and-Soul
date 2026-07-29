@@ -191,13 +191,6 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         return v
     }
 
-    private fun addCard(x: Int, y: Int, w: Int, h: Int): View {
-        val v = View(this).apply { setBackgroundResource(R.drawable.pokedex_card_bg) }
-        gba.addNative(v, x, y, w, h)
-        contentViews.add(v)
-        return v
-    }
-
     private fun typeIconBitmap(type: String): Bitmap? = try {
         assets.open("types/${type.lowercase()}.png").use { BitmapFactory.decodeStream(it) }
     } catch (e: java.io.IOException) {
@@ -282,18 +275,20 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         addText(51, baseY + rowH * 3, WRAP, 6, total.toString(), TEXT_SMALL)
     }
 
-    // ===================== AREA (no reference screenshot - reasonable card in real chrome) ===
+    // ===================== AREA (real johto_region_map.png; no marker - no real per-species
+    // route/coordinate data exists in this decomp's dex JSON to place one honestly) ===========
 
     private fun populateArea() {
         setBackground("pokedex_chrome/tabbar_strip_fill.png")
-        addCard(30, 45, 180, 60)
-        addText(30, 52, 180, 10, "📍", TEXT_MAIN * 2f, gravity = Gravity.CENTER_HORIZONTAL)
+        addAsset(72, 16, 96, 96, "pokedex_chrome/johto_region_map.png")
         val message = entry.habitat?.let { getString(R.string.pokedex_area_habitat_format, it) }
             ?: getString(R.string.pokedex_area_no_wild, entry.displayName)
-        addText(36, 70, 168, 30, message, TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 4)
+        addText(4, 116, 232, 44, message, TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 4)
     }
 
-    // ===================== EVO (no reference screenshot - reasonable card in real chrome) ====
+    // ===================== EVO - real HGSS_tilemap_evo_screen.bin chrome; the real content box
+    // is x=2,y=54,w=235,h=92 (measured off the decoded tilemap). The thin box above it (y=17-50)
+    // has no confirmed real text source in this decomp, so it's left blank rather than guessed. ==
 
     private fun evoMethodLabel(method: String, param: Int): String = when (method) {
         "LEVEL" -> getString(R.string.pokedex_evo_method_level, param)
@@ -306,11 +301,10 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     }
 
     private fun populateEvo() {
-        setBackground("pokedex_chrome/tabbar_strip_fill.png")
-        addCard(6, 40, 228, 70)
+        setBackground("pokedex_chrome/evo_bg.png")
 
         if (entry.evolvesFrom.isEmpty() && entry.evolvesTo.isEmpty()) {
-            addText(16, 65, 208, 20, getString(R.string.pokedex_evo_no_data, entry.displayName), TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 3)
+            addText(2, 90, 235, 20, getString(R.string.pokedex_evo_no_data, entry.displayName), TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 3)
             return
         }
 
@@ -325,46 +319,60 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             chain.add(Triple("node", it.speciesId, it.species))
         }
 
-        val slotWidth = 228 / chain.size
+        val boxX = 2; val boxY = 54; val boxW = 235; val boxH = 92
+        val slotWidth = boxW / chain.size
+        val iconTop = boxY + (boxH - 24) / 2 - 6
         chain.forEachIndexed { i, (kind, speciesId, label) ->
-            val x = 6 + i * slotWidth
+            val x = boxX + i * slotWidth
             if (kind == "node" && speciesId != null) {
                 val target = allEntries.firstOrNull { it.speciesId == speciesId }
                 if (target != null) {
-                    val icon = addIdleIcon(x + slotWidth / 2 - 12, 50, 24, 24, target.assetFolder)
+                    val icon = addIdleIcon(x + slotWidth / 2 - 12, iconTop, 24, 24, target.assetFolder)
                     if (target.speciesId != entry.speciesId) {
                         icon.setOnClickListener {
                             startActivity(Intent(this, PokedexDetailActivity::class.java).putExtra(EXTRA_SPECIES_ID, target.speciesId))
                         }
                     }
                 }
-                addText(x, 78, slotWidth, 8, label ?: "", TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, bold = speciesId == entry.speciesId)
+                addText(x, iconTop + 28, slotWidth, 8, label ?: "", TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, bold = speciesId == entry.speciesId)
             } else {
-                addText(x, 58, slotWidth, 16, "→\n${label ?: ""}", TEXT_SMALL - 1f, gravity = Gravity.CENTER_HORIZONTAL, lines = 2)
+                addText(x, iconTop - 4, slotWidth, 16, "→\n${label ?: ""}", TEXT_SMALL - 1f, gravity = Gravity.CENTER_HORIZONTAL, lines = 2)
             }
         }
     }
 
-    // ===================== CRY (real sprite/text anchors + a live meter+waveform) ===========
+    // ===================== CRY - real HGSS_tilemap_cry_screen.bin chrome + the real
+    // cry_meter.png/cry_meter_needle.png sprites (not a hand-drawn gauge). Box positions measured
+    // off the decoded tilemap: waveform 16,24,64,64 (left box); meter 144,24,80,64 (right box,
+    // matches cry_meter.png's real 80x64 size exactly). Sprite/text anchors are the real
+    // MON_PAGE_X/Y (48,56) and PrintInfoScreenText/PrintCryScreenSpeciesName calls (82,33/82,49). =
 
     private fun populateCry() {
-        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+        setBackground("pokedex_chrome/cry_bg.png")
 
         addBitmap(48, 56, 64, 64, assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) })
         addText(82, 33, WRAP, 8, getString(R.string.pokedex_cry_of), TEXT_MAIN, bold = true)
         addText(82, 49, WRAP, 8, entry.displayName, TEXT_MAIN, bold = true)
 
         val scope = CryScopeView(this)
-        gba.addNative(scope, 8, 122, 224, 36)
+        gba.addNative(scope, 16, 24, 64, 64)
         contentViews.add(scope)
         cryScope = scope
+
+        addAsset(144, 24, 80, 64, "pokedex_chrome/cry_meter.png")
+        val needle = addAsset(160, 34, 48, 48, "pokedex_chrome/cry_meter_needle.png")
+        needle.post {
+            needle.pivotX = needle.width / 2f
+            needle.pivotY = needle.height.toFloat()
+        }
+        scope.onNeedleAngle = { angle -> needle.rotation = angle }
 
         val cryAssetPath = "cries/${entry.assetFolder}.wav"
         val available = try { assets.open(cryAssetPath).close(); true } catch (e: java.io.IOException) { false }
         if (!available) return
 
         scope.loadWav(this, cryAssetPath)
-        scope.setOnClickListener {
+        val playAction: () -> Unit = {
             cryPlayer?.release()
             val afd = assets.openFd(cryAssetPath)
             val mp = MediaPlayer().apply {
@@ -376,14 +384,16 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             cryPlayer = mp
             scope.attachPlayer(mp)
         }
+        scope.setOnClickListener { playAction() }
+        needle.setOnClickListener { playAction() }
         // Auto-play once on entering the tab, like the real CRY screen does.
-        scope.performClick()
+        playAction()
     }
 
     // ===================== SIZE (real Task_LoadSizeScreen anchors: mon (88,56), trainer (152,56)) =
 
     private fun populateSize() {
-        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+        setBackground("pokedex_chrome/size_bg.png")
 
         addText(
             0, 121, GbaScreenLayout.NATIVE_W, 8,
