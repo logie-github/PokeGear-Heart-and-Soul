@@ -3,7 +3,6 @@ package com.logie.pgearhs.pokedex
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +26,8 @@ class PokedexActivity : BaseImmersiveActivity() {
     private lateinit var previewNumber: TextView
     private lateinit var previewType: TextView
     private lateinit var syncStatusLabel: TextView
-    private lateinit var nationalButton: Button
-    private lateinit var regionalButton: Button
+    private lateinit var nationalButton: TextView
+    private lateinit var regionalButton: TextView
 
     private var dexMode = DexMode.NATIONAL
     private var entries: List<PokedexEntry> = emptyList()

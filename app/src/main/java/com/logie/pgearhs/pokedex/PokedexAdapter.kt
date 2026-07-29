@@ -1,5 +1,8 @@
 package com.logie.pgearhs.pokedex
 
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +24,7 @@ class PokedexAdapter(
     }
 
     class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
+        val monIcon: ImageView = row.findViewById(R.id.monIcon)
         val caughtBallIcon: ImageView = row.findViewById(R.id.caughtBallIcon)
         val label: TextView = row.findViewById(R.id.entryLabel)
     }
@@ -47,14 +51,25 @@ class PokedexAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val entry = entries[position]
         val number = if (dexMode == DexMode.NATIONAL) entry.nationalDexNumber else entry.regionalDexNumber
-        val name = if (LiveDexState.isSeen(entry.nationalDexNumber)) entry.displayName else UNSEEN_NAME
+        val seen = LiveDexState.isSeen(entry.nationalDexNumber)
+        val name = if (seen) entry.displayName else UNSEEN_NAME
         holder.label.text = "No%03d %s".format(number, name)
         holder.caughtBallIcon.visibility =
             if (LiveDexState.isOwned(entry.nationalDexNumber)) View.VISIBLE else View.INVISIBLE
-        holder.itemView.isSelected = position == selectedIndex
-        holder.itemView.setBackgroundColor(
-            if (position == selectedIndex) 0x33FFFFFF else 0x00000000
-        )
+
+        if (seen) {
+            val bmp = holder.itemView.context.assets
+                .open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) }
+            holder.monIcon.setImageBitmap(bmp)
+            (holder.monIcon.drawable as? BitmapDrawable)?.isFilterBitmap = false
+            holder.monIcon.visibility = View.VISIBLE
+        } else {
+            holder.monIcon.visibility = View.INVISIBLE
+        }
+
+        val selected = position == selectedIndex
+        holder.itemView.isSelected = selected
+        holder.label.setTextColor(if (selected) Color.WHITE else holder.label.context.getColor(R.color.pokedexInk))
         holder.itemView.setOnClickListener { onRowClicked(position) }
     }
 

@@ -1,45 +1,74 @@
 package com.logie.pgearhs.pokedex
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.widget.GridLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.logie.pgearhs.R
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 
 /**
- * The real HGSS Pokédex detail screen: INFO / AREA / STATS / EVO / CRY / SIZE tabs,
- * reusing the exact tab set from pokedex_plus_hgss.c. Reached from PokedexActivity's list.
+ * The real HGSS Pokédex detail screen, rebuilt at the actual native 240x160 GBA coordinates
+ * (see pokedex_plus_hgss.c) inside a [GbaScreenLayout], instead of a reflowed phone-style UI.
+ * INFO and STATS reuse the decomp's real composited screenshots as backgrounds with content
+ * placed at the exact pixel offsets pokedex_plus_hgss.c uses (PrintInfoScreenText / the sprite,
+ * type-icon and stat-row coordinates). SIZE reuses Task_LoadSizeScreen's real sprite anchors
+ * (88,56)/(152,56) and title position. AREA/EVO/CRY have no equivalent reference screenshot in
+ * this decomp, so their *content* is a best-effort card in the same coordinate space and chrome -
+ * the tab bar and background grid are still the real, shared asset.
  */
 class PokedexDetailActivity : BaseImmersiveActivity() {
 
     companion object {
         const val EXTRA_SPECIES_ID = "species_id"
+
+        // Real HGSS text sizes at native GBA resolution (matches the pixel-accurate HTML
+        // prototype's .txt / .txt.small / .desc rules, themselves read off the real chrome).
+        private const val TEXT_MAIN = 6.3f
+        private const val TEXT_SMALL = 4.3f
+        private const val TEXT_DESC = 5.3f
+
+        private val COLOR_WHITE = Color.WHITE
+        private val COLOR_DARK = Color.parseColor("#4A4A52")
     }
 
     private enum class Tab { INFO, AREA, STATS, EVO, CRY, SIZE }
 
+    // Real tab hit-zones: INFO (x=0,w=40) and STATS (x=76,w=46) come directly from the tabbtn
+    // rects in pokedex_plus_hgss.c / the HTML port; AREA/EVO/CRY/SIZE are reconstructed from the
+    // gaps between those two confirmed anchors and the real tab bar's pixel boundaries.
+    private val tabRanges = linkedMapOf(
+        Tab.INFO to (0 to 40),
+        Tab.AREA to (40 to 76),
+        Tab.STATS to (76 to 122),
+        Tab.EVO to (122 to 156),
+        Tab.CRY to (156 to 190),
+        Tab.SIZE to (190 to 224)
+    )
+
+    private lateinit var gba: GbaScreenLayout
+    private lateinit var bgImage: ImageView
     private lateinit var entry: PokedexEntry
     private var allEntries: List<PokedexEntry> = emptyList()
-    private var cryPlayer: MediaPlayer? = null
 
-    private lateinit var tabViews: Map<Tab, TextView>
-    private lateinit var contentViews: Map<Tab, View>
+    private var cryPlayer: MediaPlayer? = null
+    private var cryScope: CryScopeView? = null
+    private val contentViews = mutableListOf<View>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokedex_detail)
+        gba = findViewById(R.id.gbaScreen)
 
         val speciesId = intent.getIntExtra(EXTRA_SPECIES_ID, -1)
         allEntries = PokedexRepository.loadAll(this)
@@ -48,153 +77,174 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             return
         }
 
-        tabViews = mapOf(
-            Tab.INFO to findViewById(R.id.tabInfo),
-            Tab.AREA to findViewById(R.id.tabArea),
-            Tab.STATS to findViewById(R.id.tabStats),
-            Tab.EVO to findViewById(R.id.tabEvo),
-            Tab.CRY to findViewById(R.id.tabCry),
-            Tab.SIZE to findViewById(R.id.tabSize)
-        )
-        contentViews = mapOf(
-            Tab.INFO to findViewById(R.id.infoTabContent),
-            Tab.AREA to findViewById(R.id.areaTabContent),
-            Tab.STATS to findViewById(R.id.statsTabContent),
-            Tab.EVO to findViewById(R.id.evoTabContent),
-            Tab.CRY to findViewById(R.id.cryTabContent),
-            Tab.SIZE to findViewById(R.id.sizeTabContent)
-        )
-        tabViews.forEach { (tab, view) -> view.setOnClickListener { showTab(tab) } }
+        bgImage = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_XY }
+        gba.addNative(bgImage, 0, 0, GbaScreenLayout.NATIVE_W, GbaScreenLayout.NATIVE_H)
 
-        populateInfo()
-        populateArea()
-        populateStats()
-        populateEvo()
-        populateCry()
-        populateSize()
+        for ((tab, range) in tabRanges) {
+            val hitZone = View(this).apply { setOnClickListener { showTab(tab) } }
+            gba.addNative(hitZone, range.first, 0, range.second - range.first, 16)
+        }
 
         showTab(Tab.INFO)
     }
 
-    private fun showTab(tab: Tab) {
-        contentViews.forEach { (t, view) -> view.visibility = if (t == tab) View.VISIBLE else View.GONE }
-        tabViews.forEach { (t, view) ->
-            if (t == tab) {
-                view.setBackgroundResource(R.drawable.pokedex_tab_active_bg)
-                view.setTextColor(getColorCompat(R.color.pokedexRedDeep))
-            } else {
-                view.background = null
-                view.setTextColor(getColorCompat(R.color.pokedexPink))
-            }
+    // ===================== shared helpers =====================
+
+    private fun setBackground(assetPath: String) {
+        val bmp = assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
+        bgImage.setImageBitmap(bmp)
+        (bgImage.drawable as? BitmapDrawable)?.isFilterBitmap = false
+    }
+
+    private fun clearContent() {
+        contentViews.forEach { gba.removeView(it) }
+        contentViews.clear()
+        cryScope?.stop()
+        cryScope = null
+        cryPlayer?.release()
+        cryPlayer = null
+    }
+
+    private fun addText(
+        x: Int, y: Int, w: Int, h: Int, text: String, nativeSize: Float,
+        color: Int = COLOR_DARK, bold: Boolean = false, gravity: Int = Gravity.START, lines: Int = 1
+    ): TextView {
+        val tv = TextView(this).apply {
+            this.text = text
+            setTextColor(color)
+            if (bold) setTypeface(typeface, Typeface.BOLD)
+            this.gravity = gravity
+            includeFontPadding = false
+            setPadding(0, 0, 0, 0)
+            if (lines > 1) setLines(lines)
         }
+        gba.addNative(tv, x, y, w, h, nativeSize)
+        contentViews.add(tv)
+        return tv
     }
 
-    private fun getColorCompat(id: Int) = ContextCompat.getColor(this, id)
-
-    private fun loadSpeciesBitmap(assetFolder: String, file: String) =
-        assets.open("pokemon/$assetFolder/$file").use { BitmapFactory.decodeStream(it) }
-
-    private fun crispImageView(imageView: ImageView) {
-        (imageView.drawable as? BitmapDrawable)?.isFilterBitmap = false
-    }
-
-    private fun addTypeChip(container: LinearLayout, type: String, widthDp: Int, heightDp: Int, marginEndDp: Int) {
-        val density = resources.displayMetrics.density
+    private fun addBitmap(x: Int, y: Int, w: Int, h: Int, bitmap: Bitmap): ImageView {
         val iv = ImageView(this).apply {
-            layoutParams = LinearLayout.LayoutParams((widthDp * density).toInt(), (heightDp * density).toInt()).apply {
-                marginEnd = (marginEndDp * density).toInt()
-            }
             scaleType = ImageView.ScaleType.FIT_XY
-            contentDescription = type
+            setImageBitmap(bitmap)
         }
-        try {
-            val bmp = assets.open("types/${type.lowercase()}.png").use { BitmapFactory.decodeStream(it) }
-            iv.setImageBitmap(bmp)
-            crispImageView(iv)
-        } catch (e: java.io.IOException) {
-            return
-        }
-        container.addView(iv)
+        gba.addNative(iv, x, y, w, h)
+        (iv.drawable as? BitmapDrawable)?.isFilterBitmap = false
+        contentViews.add(iv)
+        return iv
     }
 
-    // ===================== INFO =====================
+    private fun addAsset(x: Int, y: Int, w: Int, h: Int, assetPath: String): ImageView =
+        addBitmap(x, y, w, h, assets.open(assetPath).use { BitmapFactory.decodeStream(it) })
+
+    private fun addIdleIcon(x: Int, y: Int, w: Int, h: Int, assetFolder: String): IdleIconView {
+        val v = IdleIconView(this)
+        gba.addNative(v, x, y, w, h)
+        contentViews.add(v)
+        v.loadSpecies(assetFolder)
+        return v
+    }
+
+    private fun addCard(x: Int, y: Int, w: Int, h: Int): View {
+        val v = View(this).apply { setBackgroundResource(R.drawable.pokedex_card_bg) }
+        gba.addNative(v, x, y, w, h)
+        contentViews.add(v)
+        return v
+    }
+
+    private fun typeIconBitmap(type: String): Bitmap? = try {
+        assets.open("types/${type.lowercase()}.png").use { BitmapFactory.decodeStream(it) }
+    } catch (e: java.io.IOException) {
+        null
+    }
+
+    // ===================== tab switching =====================
+
+    private fun showTab(tab: Tab) {
+        clearContent()
+        when (tab) {
+            Tab.INFO -> populateInfo()
+            Tab.AREA -> populateArea()
+            Tab.STATS -> populateStats()
+            Tab.EVO -> populateEvo()
+            Tab.CRY -> populateCry()
+            Tab.SIZE -> populateSize()
+        }
+    }
+
+    // ===================== INFO (real pokedex_chrome/info_bg.png + real coords) =====================
 
     private fun populateInfo() {
-        val spriteView = findViewById<ImageView>(R.id.detailSprite)
-        spriteView.setImageBitmap(loadSpeciesBitmap(entry.assetFolder, "front.png"))
-        crispImageView(spriteView)
+        setBackground("pokedex_chrome/info_bg.png")
 
-        findViewById<TextView>(R.id.detailIdHeader).text =
-            getString(R.string.pokedex_id_header_format, entry.nationalDexNumber, entry.displayName)
-        findViewById<TextView>(R.id.detailCategory).text =
-            getString(R.string.pokedex_category_format, entry.category.lowercase().replaceFirstChar(Char::uppercase))
-        findViewById<TextView>(R.id.detailHeightWeight).text =
-            getString(R.string.pokedex_height_weight_format, entry.heightM, entry.weightKg)
+        addBitmap(16, 24, 64, 64, assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) })
+        try {
+            addAsset(120, 56, 16, 16, "pokemon/${entry.assetFolder}/footprint.png")
+        } catch (e: java.io.IOException) { /* not every species has a footprint asset */ }
 
-        val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
-        chips.removeAllViews()
-        entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
-
-        findViewById<TextView>(R.id.detailAbilities).text = entry.abilities.joinToString(", ") {
-            it.lowercase().replace('_', ' ').replaceFirstChar(Char::uppercase)
+        entry.types.forEachIndexed { i, type ->
+            typeIconBitmap(type)?.let { addBitmap(147 + i * 33, 48, 32, 16, it) }
         }
-        // The source text renders the species' own name in ALL CAPS mid-sentence
-        // (a leftover of the original game's text formatting); swap in the normal
-        // title-cased name for readability without touching the rest of the text.
-        findViewById<TextView>(R.id.detailPokedexEntry).text =
-            entry.pokedexEntry.replace(entry.name, entry.displayName)
+
+        addText(123, 15, 70, 8, getString(R.string.pokedex_number_format, entry.nationalDexNumber), TEXT_MAIN, COLOR_WHITE, bold = true)
+        addText(157, 15, 80, 8, entry.displayName, TEXT_MAIN, COLOR_WHITE, bold = true)
+        addText(123, 30, 110, 6, getString(R.string.pokedex_category_format, entry.category.lowercase().replaceFirstChar(Char::uppercase)), TEXT_SMALL)
+
+        addText(155, 63, 20, 6, "HT", TEXT_SMALL)
+        addText(180, 63, 40, 6, "%.1fm".format(entry.heightM), TEXT_SMALL)
+        addText(155, 76, 20, 6, "WT", TEXT_SMALL)
+        addText(180, 76, 40, 6, "%.1fkg".format(entry.weightKg), TEXT_SMALL)
+
+        addText(
+            4, 92, 232, 64,
+            entry.pokedexEntry.replace(entry.name, entry.displayName),
+            TEXT_DESC, gravity = Gravity.CENTER_HORIZONTAL, lines = 5
+        )
     }
 
-    // ===================== AREA =====================
-
-    private fun populateArea() {
-        findViewById<TextView>(R.id.areaMessage).text = entry.habitat?.let {
-            getString(R.string.pokedex_area_habitat_format, it)
-        } ?: getString(R.string.pokedex_area_no_wild, entry.displayName)
-    }
-
-    // ===================== STATS =====================
+    // ===================== STATS (real pokedex_chrome/stats_bg.png + real coords) =====================
 
     private fun populateStats() {
-        findViewById<IdleIconView>(R.id.statsIcon).loadSpecies(entry.assetFolder)
-        findViewById<TextView>(R.id.statsName).text = entry.displayName
+        setBackground("pokedex_chrome/stats_bg.png")
 
-        val chips = findViewById<LinearLayout>(R.id.statsTypeChips)
-        chips.removeAllViews()
-        entry.types.forEach { addTypeChip(chips, it, widthDp = 30, heightDp = 15, marginEndDp = 4) }
-
-        val statOrder = listOf(
-            "hp" to "HP", "attack" to "Attack", "defense" to "Defense",
-            "spAttack" to "Sp. Atk", "spDefense" to "Sp. Def", "speed" to "Speed"
-        )
-        val grid = findViewById<GridLayout>(R.id.statsGrid)
-        grid.removeAllViews()
-        val density = resources.displayMetrics.density
-        var total = 0
-        for ((key, label) in statOrder) {
-            val value = entry.baseStats[key] ?: continue
-            total += value
-            val labelView = TextView(this).apply {
-                text = label
-                setTextColor(getColorCompat(R.color.pokedexInkDim))
-                textSize = 12f
-                layoutParams = GridLayout.LayoutParams().apply { setMargins(0, 0, (8 * density).toInt(), (6 * density).toInt()) }
-            }
-            val valueView = TextView(this).apply {
-                text = value.toString()
-                setTextColor(getColorCompat(R.color.pokedexInk))
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
-                textSize = 12f
-                gravity = Gravity.END
-                layoutParams = GridLayout.LayoutParams().apply { setMargins(0, 0, (16 * density).toInt(), (6 * density).toInt()) }
-            }
-            grid.addView(labelView)
-            grid.addView(valueView)
+        addIdleIcon(4, 4, 32, 32, entry.assetFolder)
+        addText(44, 6, 90, 6, entry.displayName, TEXT_SMALL, bold = true)
+        entry.types.forEachIndexed { i, type ->
+            typeIconBitmap(type)?.let { addBitmap(8 + i * 34, 30, 32, 16, it) }
         }
-        findViewById<TextView>(R.id.statsTotal).text = total.toString()
+
+        val rows = listOf(
+            Triple("HP", 8, 23) to "hp", Triple("SPEED", 51, 78) to "speed",
+            Triple("ATTACK", 8, 23) to "attack", Triple("SP.ATK", 51, 78) to "spAttack",
+            Triple("DEFENSE", 8, 23) to "defense", Triple("SP.DEF", 51, 78) to "spDefense"
+        )
+        val baseY = 53
+        val rowH = 11
+        var total = 0
+        rows.forEachIndexed { idx, (labelInfo, key) ->
+            val (label, lx, vx) = labelInfo
+            val y = baseY + rowH * (idx / 2)
+            val value = entry.baseStats[key] ?: 0
+            total += value
+            addText(lx, y, 26, 6, label, TEXT_SMALL)
+            addText(vx, y, 16, 6, value.toString(), TEXT_SMALL, gravity = Gravity.END)
+        }
+        addText(8, baseY + rowH * 3, 30, 6, "TOTAL", TEXT_SMALL)
+        addText(51, baseY + rowH * 3, 20, 6, total.toString(), TEXT_SMALL)
     }
 
-    // ===================== EVO =====================
+    // ===================== AREA (no reference screenshot - reasonable card in real chrome) ===
+
+    private fun populateArea() {
+        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+        addCard(30, 45, 180, 60)
+        addText(30, 52, 180, 10, "📍", TEXT_MAIN * 2f, gravity = Gravity.CENTER_HORIZONTAL)
+        val message = entry.habitat?.let { getString(R.string.pokedex_area_habitat_format, it) }
+            ?: getString(R.string.pokedex_area_no_wild, entry.displayName)
+        addText(36, 70, 168, 30, message, TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 4)
+    }
+
+    // ===================== EVO (no reference screenshot - reasonable card in real chrome) ====
 
     private fun evoMethodLabel(method: String, param: Int): String = when (method) {
         "LEVEL" -> getString(R.string.pokedex_evo_method_level, param)
@@ -206,146 +256,108 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         else -> method.lowercase().replace('_', ' ')
     }
 
-    private fun buildEvoNode(container: LinearLayout, speciesId: Int, speciesName: String, current: Boolean) {
-        val density = resources.displayMetrics.density
-        val target = allEntries.firstOrNull { it.speciesId == speciesId }
-        val node = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            val pad = (4 * density).toInt()
-            setPadding(pad, pad, pad, pad)
-            if (current) setBackgroundResource(R.drawable.pokedex_tab_active_bg)
-        }
-        val icon = IdleIconView(this).apply {
-            layoutParams = LinearLayout.LayoutParams((40 * density).toInt(), (40 * density).toInt())
-        }
-        target?.let { icon.loadSpecies(it.assetFolder) }
-        val label = TextView(this).apply {
-            text = speciesName.lowercase().replaceFirstChar(Char::uppercase)
-            textSize = 11f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
-            setTextColor(getColorCompat(R.color.pokedexInk))
-        }
-        node.addView(icon)
-        node.addView(label)
-        if (!current && target != null) {
-            node.setOnClickListener {
-                startActivity(Intent(this, PokedexDetailActivity::class.java).putExtra(EXTRA_SPECIES_ID, target.speciesId))
-            }
-        }
-        container.addView(node)
-    }
-
-    private fun buildEvoArrow(container: LinearLayout, label: String) {
-        val density = resources.displayMetrics.density
-        val arrow = TextView(this).apply {
-            text = "→\n$label"
-            textSize = 10f
-            gravity = Gravity.CENTER
-            setTextColor(getColorCompat(R.color.pokedexInkDim))
-            setPadding((6 * density).toInt(), 0, (6 * density).toInt(), 0)
-        }
-        container.addView(arrow)
-    }
-
     private fun populateEvo() {
-        val container = findViewById<LinearLayout>(R.id.evoChainContainer)
-        val emptyMessage = findViewById<TextView>(R.id.evoEmptyMessage)
-        container.removeAllViews()
+        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+        addCard(6, 40, 228, 70)
 
         if (entry.evolvesFrom.isEmpty() && entry.evolvesTo.isEmpty()) {
-            emptyMessage.visibility = View.VISIBLE
-            emptyMessage.text = getString(R.string.pokedex_evo_no_data, entry.displayName)
+            addText(16, 65, 208, 20, getString(R.string.pokedex_evo_no_data, entry.displayName), TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 3)
             return
         }
-        emptyMessage.visibility = View.GONE
 
-        entry.evolvesFrom.forEach { e ->
-            buildEvoNode(container, e.speciesId, e.species, current = false)
-            buildEvoArrow(container, evoMethodLabel(e.method, e.param))
+        val nodes = mutableListOf<Pair<Int, String>>() // speciesId, name; current entry included
+        val chain = mutableListOf<Triple<String, Int?, String?>>() // kind("node"/"arrow"), speciesId, label
+        entry.evolvesFrom.forEach {
+            chain.add(Triple("node", it.speciesId, it.species))
+            chain.add(Triple("arrow", null, evoMethodLabel(it.method, it.param)))
         }
-        buildEvoNode(container, entry.speciesId, entry.name, current = true)
-        entry.evolvesTo.forEach { e ->
-            buildEvoArrow(container, evoMethodLabel(e.method, e.param))
-            buildEvoNode(container, e.speciesId, e.species, current = false)
+        chain.add(Triple("node", entry.speciesId, entry.name))
+        entry.evolvesTo.forEach {
+            chain.add(Triple("arrow", null, evoMethodLabel(it.method, it.param)))
+            chain.add(Triple("node", it.speciesId, it.species))
+        }
+
+        val slotWidth = 228 / chain.size
+        chain.forEachIndexed { i, (kind, speciesId, label) ->
+            val x = 6 + i * slotWidth
+            if (kind == "node" && speciesId != null) {
+                val target = allEntries.firstOrNull { it.speciesId == speciesId }
+                if (target != null) {
+                    val icon = addIdleIcon(x + slotWidth / 2 - 12, 50, 24, 24, target.assetFolder)
+                    if (target.speciesId != entry.speciesId) {
+                        icon.setOnClickListener {
+                            startActivity(Intent(this, PokedexDetailActivity::class.java).putExtra(EXTRA_SPECIES_ID, target.speciesId))
+                        }
+                    }
+                }
+                addText(x, 78, slotWidth, 8, label ?: "", TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, bold = speciesId == entry.speciesId)
+            } else {
+                addText(x, 58, slotWidth, 16, "→\n${label ?: ""}", TEXT_SMALL - 1f, gravity = Gravity.CENTER_HORIZONTAL, lines = 2)
+            }
         }
     }
 
-    // ===================== CRY =====================
+    // ===================== CRY (real sprite/text anchors + a live meter+waveform) ===========
 
     private fun populateCry() {
-        val caption = findViewById<TextView>(R.id.cryCaption)
-        val button = findViewById<TextView>(R.id.cryPlayButton)
+        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+
+        addBitmap(48, 56, 64, 64, assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) })
+        addText(82, 33, 120, 8, getString(R.string.pokedex_cry_of), TEXT_MAIN, bold = true)
+        addText(82, 49, 120, 8, entry.displayName, TEXT_MAIN, bold = true)
+
+        val scope = CryScopeView(this)
+        gba.addNative(scope, 8, 122, 224, 36)
+        contentViews.add(scope)
+        cryScope = scope
+
         val cryAssetPath = "cries/${entry.assetFolder}.wav"
+        val available = try { assets.open(cryAssetPath).close(); true } catch (e: java.io.IOException) { false }
+        if (!available) return
 
-        val available = try {
-            assets.open(cryAssetPath).close()
-            true
-        } catch (e: java.io.IOException) {
-            false
-        }
-
-        if (!available) {
-            button.isEnabled = false
-            button.alpha = 0.4f
-            caption.text = getString(R.string.pokedex_cry_unavailable)
-            return
-        }
-
-        caption.text = getString(R.string.pokedex_cry_caption_format, entry.assetFolder)
-        button.setOnClickListener {
+        scope.loadWav(this, cryAssetPath)
+        scope.setOnClickListener {
             cryPlayer?.release()
-            cryPlayer = MediaPlayer().apply {
-                val afd = assets.openFd(cryAssetPath)
+            val afd = assets.openFd(cryAssetPath)
+            val mp = MediaPlayer().apply {
                 setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
                 afd.close()
                 prepare()
                 start()
             }
+            cryPlayer = mp
+            scope.attachPlayer(mp)
         }
+        // Auto-play once on entering the tab, like the real CRY screen does.
+        scope.performClick()
     }
 
-    // ===================== SIZE =====================
+    // ===================== SIZE (real Task_LoadSizeScreen anchors: mon (88,56), trainer (152,56)) =
 
     private fun populateSize() {
-        findViewById<TextView>(R.id.sizeTitle).text =
-            getString(R.string.pokedex_size_title_format, getString(R.string.pokedex_size_trainer_name))
+        setBackground("pokedex_chrome/tabbar_strip_fill.png")
 
-        val scale = SizeScreenRepository.get(this, entry.nationalDexNumber)
-        val figuresRow = findViewById<LinearLayout>(R.id.sizeFiguresRow)
-        val caption = findViewById<TextView>(R.id.sizeCaption)
+        addText(
+            0, 121, GbaScreenLayout.NATIVE_W, 8,
+            getString(R.string.pokedex_size_title_format, getString(R.string.pokedex_size_trainer_name)),
+            TEXT_SMALL, bold = true, gravity = Gravity.CENTER_HORIZONTAL
+        )
 
-        if (scale == null) {
-            figuresRow.visibility = View.GONE
-            caption.text = getString(R.string.pokedex_size_unavailable)
+        val scale = SizeScreenRepository.get(this, entry.nationalDexNumber) ?: run {
+            addText(20, 60, 200, 30, getString(R.string.pokedex_size_unavailable), TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 3)
             return
         }
-        figuresRow.visibility = View.VISIBLE
 
-        val density = resources.displayMetrics.density
-        val basePx = 84f * density
-        val monPx = (basePx * 256f / scale.pokemonScale).toInt()
-        val trPx = (basePx * 256f / scale.trainerScale).toInt()
+        val nativeBase = 64f
+        val monSize = (nativeBase * 256f / scale.pokemonScale).toInt()
+        val trSize = (nativeBase * 256f / scale.trainerScale).toInt()
 
-        // Real Task_LoadSizeScreen technique: both sprites recolored to solid black
-        // (graphics/pokedex/size_silhouette.gbapal is literally all-black), then scaled/
-        // nudged with the per-species affine values above.
-        val monView = findViewById<ImageView>(R.id.sizePokemonImage)
-        monView.layoutParams = LinearLayout.LayoutParams(monPx, monPx)
-        monView.setImageBitmap(loadSpeciesBitmap(entry.assetFolder, "front.png"))
-        monView.colorFilter = PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
-        monView.translationY = scale.pokemonOffset * density
-        crispImageView(monView)
+        val monBmp = assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) }
+        val monIv = addBitmap(88 - monSize / 2, 90 - monSize + scale.pokemonOffset, monSize, monSize, monBmp)
+        monIv.colorFilter = PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
 
-        val trView = findViewById<ImageView>(R.id.sizeTrainerImage)
-        trView.layoutParams = LinearLayout.LayoutParams(trPx, trPx)
-        trView.setImageBitmap(
-            assets.open(SizeScreenRepository.trainerSilhouetteAssetPath()).use { BitmapFactory.decodeStream(it) }
-        )
-        trView.translationY = scale.trainerOffset * density
-        crispImageView(trView)
-
-        caption.text = getString(R.string.pokedex_size_caption_format, scale.pokemonScale, scale.trainerScale)
+        val trBmp = assets.open(SizeScreenRepository.trainerSilhouetteAssetPath()).use { BitmapFactory.decodeStream(it) }
+        addBitmap(152 - trSize / 2, 90 - trSize + scale.trainerOffset, trSize, trSize, trBmp)
     }
 
     override fun onDestroy() {
