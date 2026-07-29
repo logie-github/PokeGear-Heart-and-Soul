@@ -172,8 +172,7 @@ object BattleMoneyTracker {
                 val won = after - before
                 val total = addWinnings(context, won)
                 DebugLog.add("Battle money: won $won this battle, total tracked $total.")
-                notifyOsd(context, host, port, "PGearHS: won \$$won")
-                settledMoney = sendToMom(context, bridge, won, after)
+                settledMoney = sendToMom(context, host, port, bridge, won, after)
             } else {
                 DebugLog.add("Battle money: won, but couldn't compute the amount (before=$before, after=$after).")
             }
@@ -190,18 +189,32 @@ object BattleMoneyTracker {
     }
 
     /** Deducts Mom's cut from [currentMoney] in-game and adds it to the tracked savings pool. Returns the new in-game money if the write succeeded, otherwise [currentMoney] unchanged. */
-    private suspend fun sendToMom(context: Context, bridge: BattleStateBridge, won: Int, currentMoney: Int): Int {
+    private suspend fun sendToMom(
+        context: Context, host: String, port: Int,
+        bridge: BattleStateBridge, won: Int, currentMoney: Int
+    ): Int {
         val momShare = roundToNearestTen(won * MOM_SHARE_FRACTION)
-        if (momShare <= 0) return currentMoney
+        if (momShare <= 0) {
+            notifyOsd(context, host, port, "PGearHS: won \$$won, but 25% rounds to \$0 - nothing deducted")
+            return currentMoney
+        }
 
         val newMoney = currentMoney - momShare
         if (!bridge.writeMoney(newMoney)) {
             DebugLog.add("! Battle money: couldn't send \$$momShare to Mom - write failed.")
+            notifyOsd(context, host, port, "PGearHS: won \$$won (25%=\$$momShare) but the write FAILED - nothing deducted")
             return currentMoney
         }
 
         val savingsTotal = addSavings(context, momShare)
         DebugLog.add("Battle money: sent \$$momShare to Mom, savings now \$$savingsTotal.")
+        // Proof-of-work debug notice, distinct from the in-game "Sent $Y to MOM" dialogue
+        // below - spells out the actual arithmetic (won, cut, before/after totals) so a
+        // deduction can be visually verified against the real in-game money each time.
+        notifyOsd(
+            context, host, port,
+            "PGearHS: won \$$won (25%=\$$momShare) \$$currentMoney-\$$momShare=\$$newMoney"
+        )
         GlobalDialogueNotices.notify(context, listOf(context.getString(R.string.battle_money_sent_to_mom, momShare)))
         return newMoney
     }
