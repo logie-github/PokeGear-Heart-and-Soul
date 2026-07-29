@@ -14,4 +14,14 @@
     <color name="dialogueBoxText">#202020</color>
     <color name="dialogueBoxTextShadow">#D0D0D0</color>
     <color name="dialogueBoxOptionSelected">#CC3B30</color>
+
+    <!-- HGSS Pokédex detail screen chrome - sampled from the decomp's real composited
+         Info/Stats screenshots (see pokedex_plus_hgss.c / graphics/pokedex/hgss). -->
+    <color name="pokedexRed">#E93131</color>
+    <color name="pokedexRedDeep">#911121</color>
+    <color name="pokedexPink">#F999A1</color>
+    <color name="pokedexPaper">#F9F9F9</color>
+    <color name="pokedexGridline">#A9A9A9</color>
+    <color name="pokedexInk">#2A2A2A</color>
+    <color name="pokedexInkDim">#8A8A8A</color>
 </resources>

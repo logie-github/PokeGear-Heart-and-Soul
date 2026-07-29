@@ -27,6 +27,37 @@
     <string name="pokedex_abilities_label">Abilities</string>
     <string name="pokedex_base_stats_label">Base Stats</string>
     <string name="pokedex_temp_button">Pokedex (temp)</string>
+
+    <!-- HGSS-style detail screen tabs -->
+    <string name="pokedex_tab_info">Info</string>
+    <string name="pokedex_tab_area">Area</string>
+    <string name="pokedex_tab_stats">Stats</string>
+    <string name="pokedex_tab_evo">Evo</string>
+    <string name="pokedex_tab_cry">Cry</string>
+    <string name="pokedex_tab_size">Size</string>
+    <string name="pokedex_id_header_format">No. %1$03d %2$s</string>
+    <string name="pokedex_category_format">%1$s Pokémon</string>
+    <string name="pokedex_total_label">TOTAL</string>
+
+    <string name="pokedex_area_no_wild">No wild-encounter data on record for %1$s.\nIt\'s a starter Pokémon — obtained directly, not found in the wild.</string>
+    <string name="pokedex_area_habitat_format">Habitat: %1$s</string>
+
+    <string name="pokedex_evo_no_data">No evolution data — %1$s neither evolves nor evolves from anything.</string>
+    <string name="pokedex_evo_method_level">Level %1$d</string>
+    <string name="pokedex_evo_method_level_day">Level %1$d (day)</string>
+    <string name="pokedex_evo_method_level_night">Level %1$d (night)</string>
+    <string name="pokedex_evo_method_item">Use item</string>
+    <string name="pokedex_evo_method_friendship">High friendship</string>
+    <string name="pokedex_evo_method_trade">Trade</string>
+
+    <string name="pokedex_cry_play">▶ Play cry</string>
+    <string name="pokedex_cry_caption_format">real cry sample, converted from %1$s.aif</string>
+    <string name="pokedex_cry_unavailable">No cry sample bundled for this species.</string>
+
+    <string name="pokedex_size_title_format">SIZE COMPARED TO %1$s</string>
+    <string name="pokedex_size_trainer_name">YOU</string>
+    <string name="pokedex_size_caption_format">real pokedex_entries.h values — pokemonScale %1$d, trainerScale %2$d (256 = native size, higher = smaller)</string>
+    <string name="pokedex_size_unavailable">No size-comparison data on record for this species.</string>
     <string name="coming_soon_toast">Coming soon!</string>
     <string name="retroarch_sync_label">RetroArch Live Sync</string>
     <string name="retroarch_host_hint">Host (e.g. 127.0.0.1)</string>

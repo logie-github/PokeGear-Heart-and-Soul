@@ -37,6 +37,9 @@ object PokedexRepository {
             val statsObj = obj.getJSONObject("baseStats")
             val baseStats = statsObj.keys().asSequence().associateWith { statsObj.getInt(it) }
 
+            val evolvesFrom = parseEvolutions(obj.optJSONArray("evolvesFrom"))
+            val evolvesTo = parseEvolutions(obj.optJSONArray("evolvesTo"))
+
             entries.add(
                 PokedexEntry(
                     speciesId = obj.getInt("speciesId"),
@@ -50,13 +53,29 @@ object PokedexRepository {
                     pokedexEntry = obj.getString("pokedexEntry"),
                     abilities = abilities,
                     baseStats = baseStats,
-                    assetFolder = folderNameFor(name)
+                    assetFolder = folderNameFor(name),
+                    habitat = if (obj.isNull("habitat")) null else obj.optString("habitat", null),
+                    evolvesFrom = evolvesFrom,
+                    evolvesTo = evolvesTo
                 )
             )
         }
 
         cached = entries
         return entries
+    }
+
+    private fun parseEvolutions(array: org.json.JSONArray?): List<Evolution> {
+        if (array == null) return emptyList()
+        return (0 until array.length()).map { i ->
+            val e = array.getJSONObject(i)
+            Evolution(
+                species = e.getString("species"),
+                speciesId = e.getInt("speciesId"),
+                method = e.getString("method"),
+                param = e.optInt("param", 0)
+            )
+        }
     }
 
     fun byNationalDex(context: Context): List<PokedexEntry> =
