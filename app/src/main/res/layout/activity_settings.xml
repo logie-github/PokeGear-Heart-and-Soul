@@ -248,6 +248,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/retroArchSyncStatus" />
 
+        <Button
+            android:id="@+id/testMomGiftButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/test_mom_gift_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/debugLogButton" />
+
         <TextView
             android:id="@+id/battleWinningsLabel"
             android:layout_width="0dp"
@@ -259,7 +268,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/battleWinningsAmount"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/debugLogButton" />
+            app:layout_constraintTop_toBottomOf="@id/testMomGiftButton" />
 
         <TextView
             android:id="@+id/battleWinningsAmount"

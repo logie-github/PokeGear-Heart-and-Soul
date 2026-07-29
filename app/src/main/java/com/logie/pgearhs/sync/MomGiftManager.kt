@@ -52,6 +52,7 @@ object MomGiftManager {
 
     // Item ids from pokemonHnS-v121/include/constants/items.h (this hack's actual compiled
     // list, not vanilla Emerald's - checked directly, not assumed).
+    private const val ITEM_POTION = 21
     private const val ITEM_HYPER_POTION = 29
     private const val ITEM_SUPER_POTION = 30
     private const val ITEM_REPEL = 86
@@ -141,21 +142,43 @@ object MomGiftManager {
         val bridge = MomGiftBridge(host, port, onDiagnostic = DebugLog::add)
         val stillPending = mutableListOf<PendingGift>()
         for (gift in pending) {
-            val delivered = bridge.addItem(gift.itemId, gift.quantity, gift.pocket)
-            if (delivered) {
-                DebugLog.add("Mom gift: delivered ${gift.displayName} x${gift.quantity}.")
-                notifyOsd(context, host, port, "PGearHS: ${gift.displayName} added to your bag!")
-                GlobalDialogueNotices.notify(
-                    context,
-                    listOf(context.getString(R.string.mom_gift_delivered, gift.displayName))
-                )
-            } else {
+            if (!deliverAndNotify(context, host, port, bridge, gift)) {
                 stillPending += gift
             }
         }
         if (stillPending.size != pending.size) {
             savePendingItems(context, stillPending)
         }
+    }
+
+    /**
+     * Debug-only: delivers one test Potion straight to the bag right now and fires the exact
+     * same "MOM sent you a %s!" dialogue and OSD notice a real gift would - doesn't touch
+     * threshold/purchased/pending state at all, so it can't consume a real once-only item or
+     * throw off progress tracking. For verifying the delivery write path actually lands
+     * correctly in the bag without needing to grind savings up to a real threshold.
+     */
+    suspend fun forceTestDelivery(context: Context, host: String, port: Int): Boolean {
+        val bridge = MomGiftBridge(host, port, onDiagnostic = DebugLog::add)
+        val testGift = PendingGift(ITEM_POTION, 1, "Potion (test)", MomGiftBridge.Pocket.ITEMS)
+        return deliverAndNotify(context, host, port, bridge, testGift)
+    }
+
+    private suspend fun deliverAndNotify(
+        context: Context, host: String, port: Int, bridge: MomGiftBridge, gift: PendingGift
+    ): Boolean {
+        val delivered = bridge.addItem(gift.itemId, gift.quantity, gift.pocket)
+        if (delivered) {
+            DebugLog.add("Mom gift: delivered ${gift.displayName} x${gift.quantity}.")
+            notifyOsd(context, host, port, "PGearHS: ${gift.displayName} added to your bag!")
+            GlobalDialogueNotices.notify(
+                context,
+                listOf(context.getString(R.string.mom_gift_delivered, gift.displayName))
+            )
+        } else {
+            DebugLog.add("! Mom gift: delivery failed for ${gift.displayName}.")
+        }
+        return delivered
     }
 
     fun pendingCount(context: Context): Int = pendingItems(context).size

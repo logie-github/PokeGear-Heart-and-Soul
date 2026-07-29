@@ -76,6 +76,24 @@ class SettingsActivity : BaseImmersiveActivity() {
         findViewById<android.widget.Button>(R.id.debugLogButton).setOnClickListener {
             showDebugLog()
         }
+
+        findViewById<android.widget.Button>(R.id.testMomGiftButton).setOnClickListener {
+            testMomGiftDelivery()
+        }
+    }
+
+    /** Forces one test Potion through the exact same delivery + dialogue path a real Mom gift uses, without touching real gift progress. */
+    private fun testMomGiftDelivery() {
+        val host = RetroArchConnection.getHost(this)
+        val port = RetroArchConnection.getPort(this)
+        lifecycleScope.launch {
+            val delivered = withContext(Dispatchers.IO) {
+                MomGiftManager.forceTestDelivery(applicationContext, host, port)
+            }
+            if (!delivered) {
+                android.widget.Toast.makeText(this@SettingsActivity, R.string.test_mom_gift_failed, android.widget.Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun showDebugLog() {

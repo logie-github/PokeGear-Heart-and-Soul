@@ -40,6 +40,8 @@
     <string name="pokedex_sync_status_inactive">Not live-synced — showing the full dex. Retry from Settings if this doesn\'t update.</string>
     <string name="pokedex_sync_status_syncing">Syncing with RetroArch…</string>
     <string name="debug_log_button">Debug Log</string>
+    <string name="test_mom_gift_button">Test Mom Gift Delivery</string>
+    <string name="test_mom_gift_failed">Test delivery failed - see Debug Log for details.</string>
     <string name="debug_log_title">Debug Log</string>
     <string name="debug_log_empty">No entries logged yet.</string>
     <string name="debug_log_send">Send to Git</string>
