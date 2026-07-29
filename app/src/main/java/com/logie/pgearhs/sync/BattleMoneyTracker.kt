@@ -185,6 +185,11 @@ object BattleMoneyTracker {
         if (!state.inBattle) {
             if (settledMoney != null) lastKnownMoney = settledMoney
             bridge.captureMoneySnapshot()?.let { lastMoneySnapshot = it }
+            // Only attempt delivery out of battle, same as every other write here - and only
+            // when something's actually queued, so this is a no-op most polls.
+            if (MomGiftManager.pendingCount(context) > 0) {
+                MomGiftManager.attemptDelivery(context, host, port)
+            }
         }
     }
 
@@ -216,6 +221,7 @@ object BattleMoneyTracker {
             "PGearHS: won \$$won (25%=\$$momShare) \$$currentMoney-\$$momShare=\$$newMoney"
         )
         GlobalDialogueNotices.notify(context, listOf(context.getString(R.string.battle_money_sent_to_mom, momShare)))
+        MomGiftManager.grantEligibleGifts(context, host, port, savingsTotal)
         return newMoney
     }
 

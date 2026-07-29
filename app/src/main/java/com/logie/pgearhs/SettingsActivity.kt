@@ -18,6 +18,7 @@ import com.logie.pgearhs.retroarch.PokedexMemoryCalibrator
 import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.retroarch.RetroArchOsdPrefs
 import com.logie.pgearhs.sync.BattleMoneyTracker
+import com.logie.pgearhs.sync.MomGiftManager
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 import com.logie.pgearhs.trainers.TrainerCallPrefs
 import com.logie.pgearhs.ui.MenuBackgroundPrefs
@@ -200,6 +201,12 @@ class SettingsActivity : BaseImmersiveActivity() {
             getString(R.string.battle_winnings_amount, BattleMoneyTracker.totalWinnings(this))
         findViewById<TextView>(R.id.savingsAmount).text =
             getString(R.string.savings_amount, BattleMoneyTracker.savings(this))
+        findViewById<TextView>(R.id.momGiftsAmount).text = getString(
+            R.string.mom_gifts_amount,
+            MomGiftManager.purchasedOnceItemCount(this),
+            MomGiftManager.totalOnceItemCount(),
+            MomGiftManager.pendingCount(this)
+        )
     }
 
     override fun onResume() {
