@@ -275,7 +275,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
     private fun populateCry() {
         val caption = findViewById<TextView>(R.id.cryCaption)
-        val button = findViewById<android.widget.Button>(R.id.cryPlayButton)
+        val button = findViewById<TextView>(R.id.cryPlayButton)
         val cryAssetPath = "cries/${entry.assetFolder}.wav"
 
         val available = try {
@@ -287,6 +287,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
         if (!available) {
             button.isEnabled = false
+            button.alpha = 0.4f
             caption.text = getString(R.string.pokedex_cry_unavailable)
             return
         }

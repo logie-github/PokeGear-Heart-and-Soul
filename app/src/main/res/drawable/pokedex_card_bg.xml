@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/pokedexPaper" />
-    <stroke android:width="2dp" android:color="#000000" />
-    <corners android:radius="8dp" />
-</shape>
+<!-- Real HGSS card: white panel, black outline, HARD offset shadow (not blurred) -
+     matches the real screenshots' box-shadow:2px 2px 0 #A9A9A9 pixel-art style. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="3dp" android:left="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/pokedexGridline" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <item android:right="3dp" android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/pokedexPaper" />
+            <stroke android:width="2dp" android:color="#000000" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</layer-list>

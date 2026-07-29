@@ -39,8 +39,8 @@ android {
         applicationId = "com.logie.pgearhs"
         minSdk = 26
         targetSdk = 35
-        versionCode = 55
-        versionName = "1.0.55"
+        versionCode = 56
+        versionName = "1.0.56"
 
         buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
 
