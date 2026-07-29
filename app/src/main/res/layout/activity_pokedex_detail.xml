@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The whole screen is built in Kotlin at exact native 240x160 GBA coordinates inside
-     GbaScreenLayout (see PokedexDetailActivity), which stretches to fill this container
-     exactly - no letterboxing/black bars, X and Y scale independently to match whatever
-     the device's actual screen ratio is. -->
+     GbaScreenLayout (see PokedexDetailActivity). It's scaled by one uniform factor - never
+     stretched - and centered here. Any leftover margin on a non-3:2 screen shows the same
+     repeating grid-paper tile as the rest of the chrome (not black bars), so the extra space
+     reads as real background, not empty letterboxing. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pokedexPaper">
+    android:background="@drawable/pokedex_grid_bg">
 
     <com.logie.pgearhs.pokedex.GbaScreenLayout
         android:id="@+id/gbaScreen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 </FrameLayout>

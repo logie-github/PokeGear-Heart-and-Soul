@@ -6,16 +6,19 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlin.math.min
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 /**
  * Recreates the real GBA Pokédex screen's coordinate space: every child is placed using the
  * *exact* native 240x160 pixel coordinates read out of pokedex_plus_hgss.c (the same numbers
- * the HTML prototype used). Rather than letterboxing to preserve the GBA's native 3:2 aspect
- * (which leaves black bars on a differently-shaped screen), this fills its container edge to
- * edge: X and Y each get their own scale factor, so the whole layout stretches to exactly match
- * the device's actual screen ratio instead of leaving empty space.
+ * the HTML prototype used). This is scaled by ONE uniform factor - never stretched/warped -
+ * so sprites, type icons and text always keep their real proportions. On a screen that isn't
+ * exactly 3:2, the leftover margin is NOT black letterboxing: the caller is expected to give
+ * this view a background that's the same repeating grid-paper tile used everywhere else in the
+ * chrome (see activity_pokedex_detail.xml), so the extra space reads as "more of the same real
+ * background", not empty bars - i.e. the screen is rearranged onto the real tileset, not
+ * stretched onto it.
  */
 class GbaScreenLayout @JvmOverloads constructor(
     context: Context,
@@ -28,10 +31,8 @@ class GbaScreenLayout @JvmOverloads constructor(
         const val NATIVE_H = 160
     }
 
-    /** Current native-px -> real-px scale factors, valid after layout. */
-    var nativeScaleX: Float = 1f
-        private set
-    var nativeScaleY: Float = 1f
+    /** Current native-px -> real-px uniform scale factor, valid after layout. */
+    var nativeScale: Float = 1f
         private set
 
     class LayoutParams(
@@ -50,20 +51,22 @@ class GbaScreenLayout @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val availW = MeasureSpec.getSize(widthMeasureSpec)
         val availH = MeasureSpec.getSize(heightMeasureSpec)
-        nativeScaleX = availW.toFloat() / NATIVE_W
-        nativeScaleY = if (availH > 0) availH.toFloat() / NATIVE_H else nativeScaleX
-        val textScale = sqrt(nativeScaleX * nativeScaleY)
+        val byWidth = availW.toFloat() / NATIVE_W
+        val byHeight = if (availH > 0) availH.toFloat() / NATIVE_H else byWidth
+        nativeScale = if (availH > 0) min(byWidth, byHeight) else byWidth
 
-        setMeasuredDimension(availW, availH)
+        val myWidth = (NATIVE_W * nativeScale).roundToInt()
+        val myHeight = (NATIVE_H * nativeScale).roundToInt()
+        setMeasuredDimension(myWidth, myHeight)
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             val lp = child.layoutParams as? LayoutParams ?: continue
             if (lp.nativeTextSizePx > 0f && child is TextView) {
-                child.setTextSize(TypedValue.COMPLEX_UNIT_PX, lp.nativeTextSizePx * textScale)
+                child.setTextSize(TypedValue.COMPLEX_UNIT_PX, lp.nativeTextSizePx * nativeScale)
             }
-            val childWidthSpec = MeasureSpec.makeMeasureSpec((lp.nativeWidth * nativeScaleX).roundToInt(), MeasureSpec.EXACTLY)
-            val childHeightSpec = MeasureSpec.makeMeasureSpec((lp.nativeHeight * nativeScaleY).roundToInt(), MeasureSpec.EXACTLY)
+            val childWidthSpec = MeasureSpec.makeMeasureSpec((lp.nativeWidth * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
+            val childHeightSpec = MeasureSpec.makeMeasureSpec((lp.nativeHeight * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
             child.measure(childWidthSpec, childHeightSpec)
         }
     }
@@ -72,8 +75,8 @@ class GbaScreenLayout @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             val lp = child.layoutParams as? LayoutParams ?: continue
-            val left = (lp.nativeLeft * nativeScaleX).roundToInt()
-            val top = (lp.nativeTop * nativeScaleY).roundToInt()
+            val left = (lp.nativeLeft * nativeScale).roundToInt()
+            val top = (lp.nativeTop * nativeScale).roundToInt()
             child.layout(left, top, left + child.measuredWidth, top + child.measuredHeight)
         }
     }
