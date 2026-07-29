@@ -13,6 +13,7 @@ import com.logie.pgearhs.debug.DebugLog
 import com.logie.pgearhs.retroarch.PlayerProfileBridge
 import com.logie.pgearhs.retroarch.RetroArchConnection
 import com.logie.pgearhs.retroarch.TrainerFlagsBridge
+import com.logie.pgearhs.sync.BattleMoneyTracker
 import com.logie.pgearhs.ui.BaseImmersiveActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,16 +45,19 @@ class TrainerCallActivity : BaseImmersiveActivity() {
 
         trainerList = findViewById(R.id.trainerCallList)
         trainerList.layoutManager = LinearLayoutManager(this)
+        val momCallEntry = findViewById<TextView>(R.id.momCallEntry)
 
-        // While the dialogue box is up, the list must not be able to hold focus or intercept
-        // DPAD_CENTER - otherwise a still-focused row underneath re-triggers its own click
-        // mid-call, clobbering whichever trainer's dialogue was showing with a different one.
+        // While the dialogue box is up, the list (and the MOM entry above it) must not be
+        // able to hold focus or intercept DPAD_CENTER/a tap - otherwise a still-focused row
+        // underneath re-triggers its own click mid-call, clobbering whichever call was in
+        // progress with a different one.
         dialogueBox.onVisibilityChanged = { visible ->
             trainerList.descendantFocusability = if (visible) {
                 ViewGroup.FOCUS_BLOCK_DESCENDANTS
             } else {
                 ViewGroup.FOCUS_AFTER_DESCENDANTS
             }
+            momCallEntry.isEnabled = !visible
         }
 
         allTrainers = TrainerRepository.loadAll(this).associateBy { it.id }
@@ -61,6 +65,8 @@ class TrainerCallActivity : BaseImmersiveActivity() {
         rematchAnchors = RematchPositionRepository.loadAnchors(this)
         adapter = TrainerCallAdapter(emptyList()) { trainer -> confirmRematch(trainer) }
         trainerList.adapter = adapter
+
+        momCallEntry.setOnClickListener { confirmMomCall() }
 
         syncDefeatedTrainers()
     }
@@ -209,5 +215,86 @@ class TrainerCallActivity : BaseImmersiveActivity() {
                 Toast.makeText(this@TrainerCallActivity, resultLine, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    // --- Call MOM -----------------------------------------------------------------------
+    //
+    // Modeled on pokecrystal's real Mom phone call (engine/phone/scripts/mom.asm), researched
+    // directly from source rather than assumed - but adapted, not copied verbatim, since it's
+    // a different Mom in a different game. Two real differences from the source:
+    //  - pokecrystal's call is one linear script (greeting, then a location comment, then the
+    //    savings prompt, every single call) - there's no Talk/Savings/Bye menu to extract,
+    //    that structure is new here, built to give the player a choice of which part to hear.
+    //  - The source's location dialogue does real landmark detection (getcurlandmarkname,
+    //    environment/town-vs-route checks, per-city special text for 5 named cities via
+    //    getlandmarkname). This hack has an equivalent region-map system
+    //    (constants/region_map_sections.h) but wiring live landmark detection to it is a
+    //    separate follow-up - Talk's response is generic for now, not location-aware yet.
+    //  - The savings prompt has 4 real variants gated on (is Mom currently saving, is there a
+    //    nonzero balance) - reproduced faithfully here using BattleMoneyTracker's real
+    //    isSavingEnabled()/savings() state instead of pokecrystal's ENGINE_MOM_SAVING_MONEY
+    //    flag and checkmoney MOMS_MONEY check, which read the same shape of information.
+    //    Accepting always sets saving on ("OK. I'll save your money"); declining always turns
+    //    it off ("OK. I won't save your money") - pokecrystal has no separate "already off"
+    //    message for declining, matched here.
+    //
+    // Always uses the in-game dialogue box regardless of the "In-Game Text" Settings toggle -
+    // the menu requires it (there's no AlertDialog equivalent built for 3-option menus), and
+    // Mom's call is meant to be the flagship version of this UI.
+
+    private fun confirmMomCall() {
+        dialogueBox.showText(listOf(getString(R.string.mom_call_prompt))) {
+            dialogueBox.showYesNo { callHer -> if (callHer) placeMomCall() else dialogueBox.hide() }
+        }
+    }
+
+    private fun placeMomCall() {
+        dialogueBox.showText(listOf(getString(R.string.mom_call_greeting, playerName))) {
+            showMomMenu()
+        }
+    }
+
+    private fun showMomMenu() {
+        val options = listOf(
+            getString(R.string.mom_menu_talk),
+            getString(R.string.mom_menu_savings),
+            getString(R.string.mom_menu_bye)
+        )
+        dialogueBox.showMenu(options) { index ->
+            when (index) {
+                0 -> momTalk()
+                1 -> momSavings()
+                else -> momBye()
+            }
+        }
+    }
+
+    private fun momTalk() {
+        dialogueBox.showText(listOf(getString(R.string.mom_talk_response, playerName))) {
+            showMomMenu()
+        }
+    }
+
+    private fun momSavings() {
+        val isSaving = BattleMoneyTracker.isSavingEnabled(this)
+        val balance = BattleMoneyTracker.savings(this)
+        val prompt = when {
+            isSaving && balance > 0 -> getString(R.string.mom_savings_prompt_saving_with_balance, balance)
+            isSaving -> getString(R.string.mom_savings_prompt_saving_no_balance)
+            !isSaving && balance > 0 -> getString(R.string.mom_savings_prompt_not_saving_with_balance, balance)
+            else -> getString(R.string.mom_savings_prompt_not_saving_no_balance, playerName)
+        }
+        dialogueBox.showText(listOf(prompt)) {
+            dialogueBox.showYesNo { yes ->
+                BattleMoneyTracker.setSavingEnabled(this, yes)
+                DebugLog.add("Call MOM: savings toggled to $yes.")
+                val response = getString(if (yes) R.string.mom_savings_yes else R.string.mom_savings_no)
+                dialogueBox.showText(listOf(response)) { showMomMenu() }
+            }
+        }
+    }
+
+    private fun momBye() {
+        dialogueBox.showText(listOf(getString(R.string.mom_bye, playerName))) { dialogueBox.hide() }
     }
 }

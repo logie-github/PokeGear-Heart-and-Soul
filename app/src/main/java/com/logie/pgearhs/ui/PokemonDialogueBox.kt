@@ -34,11 +34,17 @@ class PokemonDialogueBox(overlayRoot: View) {
     private val yesNoBox: View = overlayRoot.findViewById(R.id.yesNoBox)
     private val yesOption: TextView = overlayRoot.findViewById(R.id.yesOption)
     private val noOption: TextView = overlayRoot.findViewById(R.id.noOption)
+    private val menuBox: View = overlayRoot.findViewById(R.id.menuBox)
+    private val menuOptionViews: List<TextView> = listOf(
+        overlayRoot.findViewById(R.id.menuOption1),
+        overlayRoot.findViewById(R.id.menuOption2),
+        overlayRoot.findViewById(R.id.menuOption3)
+    )
 
     private val selectedColor = ContextCompat.getColor(overlayRoot.context, R.color.dialogueBoxOptionSelected)
     private val unselectedColor = ContextCompat.getColor(overlayRoot.context, R.color.dialogueBoxText)
 
-    private enum class Mode { HIDDEN, TEXT, YES_NO }
+    private enum class Mode { HIDDEN, TEXT, YES_NO, MENU }
 
     private var mode = Mode.HIDDEN
     private var pages: List<String> = emptyList()
@@ -46,6 +52,9 @@ class PokemonDialogueBox(overlayRoot: View) {
     private var onTextFinished: (() -> Unit)? = null
     private var onYesNoChosen: ((Boolean) -> Unit)? = null
     private var yesSelected = true
+    private var menuOptionCount = 0
+    private var menuSelectedIndex = 0
+    private var onMenuChosen: ((Int) -> Unit)? = null
     private var blinkAnimator: ValueAnimator? = null
 
     val isVisible: Boolean get() = mode != Mode.HIDDEN
@@ -73,6 +82,7 @@ class PokemonDialogueBox(overlayRoot: View) {
         root.visibility = View.VISIBLE
         dialogueBox.visibility = View.VISIBLE
         yesNoBox.visibility = View.GONE
+        menuBox.visibility = View.GONE
         dialogueBox.requestFocus()
         renderPage()
     }
@@ -84,9 +94,34 @@ class PokemonDialogueBox(overlayRoot: View) {
         yesSelected = true
         nextIndicator.visibility = View.INVISIBLE
         stopBlink()
+        menuBox.visibility = View.GONE
         yesNoBox.visibility = View.VISIBLE
         root.requestFocus()
         updateYesNoHighlight()
+    }
+
+    /**
+     * Shows a vertical list menu (up to 3 [labels]) over the dialogue box; [onChosen] fires
+     * with the chosen option's index. Same up/down-highlight-select interaction as
+     * [showYesNo], generalized to more than 2 choices - built for Call MOM's Talk/Savings/Bye
+     * menu, not a generic N-option system (the layout has exactly 3 option slots).
+     */
+    fun showMenu(labels: List<String>, onChosen: (Int) -> Unit) {
+        require(labels.size in 1..menuOptionViews.size) { "showMenu supports 1..${menuOptionViews.size} options, got ${labels.size}" }
+        setMode(Mode.MENU)
+        onMenuChosen = onChosen
+        menuOptionCount = labels.size
+        menuSelectedIndex = 0
+        nextIndicator.visibility = View.INVISIBLE
+        stopBlink()
+        yesNoBox.visibility = View.GONE
+        menuOptionViews.forEachIndexed { i, view ->
+            view.text = labels.getOrNull(i)
+            view.visibility = if (i < labels.size) View.VISIBLE else View.GONE
+        }
+        menuBox.visibility = View.VISIBLE
+        root.requestFocus()
+        updateMenuHighlight()
     }
 
     fun hide() {
@@ -95,6 +130,7 @@ class PokemonDialogueBox(overlayRoot: View) {
         root.visibility = View.GONE
         dialogueBox.visibility = View.GONE
         yesNoBox.visibility = View.GONE
+        menuBox.visibility = View.GONE
     }
 
     private fun setMode(newMode: Mode) {
@@ -122,15 +158,31 @@ class PokemonDialogueBox(overlayRoot: View) {
                 yesNoBox.visibility = View.GONE
                 callback?.invoke(yesSelected)
             }
+            Mode.MENU -> {
+                val callback = onMenuChosen
+                onMenuChosen = null
+                menuBox.visibility = View.GONE
+                callback?.invoke(menuSelectedIndex)
+            }
             Mode.HIDDEN -> Unit
         }
     }
 
-    /** Wire to DPAD_UP ([delta]=-1) / DPAD_DOWN ([delta]=+1) - only affects the Yes/No prompt. */
+    /** Wire to DPAD_UP ([delta]=-1) / DPAD_DOWN ([delta]=+1) - affects the Yes/No prompt or the menu, whichever is showing. */
     fun onNavigate(delta: Int) {
-        if (mode != Mode.YES_NO) return
-        if (delta != 0) yesSelected = !yesSelected
-        updateYesNoHighlight()
+        when (mode) {
+            Mode.YES_NO -> {
+                if (delta != 0) yesSelected = !yesSelected
+                updateYesNoHighlight()
+            }
+            Mode.MENU -> {
+                if (delta != 0) {
+                    menuSelectedIndex = (menuSelectedIndex + delta + menuOptionCount) % menuOptionCount
+                }
+                updateMenuHighlight()
+            }
+            else -> Unit
+        }
     }
 
     private fun renderPage() {
@@ -142,6 +194,12 @@ class PokemonDialogueBox(overlayRoot: View) {
     private fun updateYesNoHighlight() {
         yesOption.setTextColor(if (yesSelected) selectedColor else unselectedColor)
         noOption.setTextColor(if (!yesSelected) selectedColor else unselectedColor)
+    }
+
+    private fun updateMenuHighlight() {
+        menuOptionViews.forEachIndexed { i, view ->
+            view.setTextColor(if (i == menuSelectedIndex) selectedColor else unselectedColor)
+        }
     }
 
     private fun startBlink() {

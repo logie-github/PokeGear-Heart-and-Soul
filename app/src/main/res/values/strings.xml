@@ -56,6 +56,21 @@
     <string name="trainer_call_prompt">Call %1$s?</string>
     <string name="trainer_call_rematch_confirm">Call</string>
     <string name="trainer_call_rematch_cancel">Not now</string>
+
+    <string name="mom_call_contact_name">MOM</string>
+    <string name="mom_call_prompt">Call MOM?</string>
+    <string name="mom_call_greeting">Hello? Oh, hi, %1$s! Working hard?</string>
+    <string name="mom_menu_talk">Talk</string>
+    <string name="mom_menu_savings">Savings</string>
+    <string name="mom_menu_bye">Bye</string>
+    <string name="mom_talk_response">How\'s your journey going, %1$s? Stay safe out there, okay?</string>
+    <string name="mom_savings_prompt_saving_with_balance">By the way, you\'ve saved up $%1$,d. Do you want me to keep saving?</string>
+    <string name="mom_savings_prompt_saving_no_balance">It\'s important to save your money. Should I start setting some aside for you?</string>
+    <string name="mom_savings_prompt_not_saving_no_balance">You\'re not saving any money right now, %1$s. Would you like me to start?</string>
+    <string name="mom_savings_prompt_not_saving_with_balance">By the way, you\'ve still got $%1$,d saved up from before. Want me to start saving again?</string>
+    <string name="mom_savings_yes">OK. I\'ll save your money!</string>
+    <string name="mom_savings_no">OK. I won\'t save your money.</string>
+    <string name="mom_bye">Keep it up, %1$s! I\'m rooting for you!</string>
     <string name="trainer_call_rematch_working">Calling %1$s…</string>
     <string name="trainer_call_rematch_success">Rematch set! %1$s will fight you again.</string>
     <string name="trainer_call_rematch_failed">Couldn\'t reach %1$s. Check the RetroArch connection and try again.</string>

@@ -1,0 +1,2028 @@
+{
+  "repository": "pret/pokecrystal",
+  "commit": "3438c7003a57fa2987fcb223d14b660761b33c64",
+  "entrypoint": "MomPhoneCalleeScript",
+  "source_files": [
+    "data/phone/phone_contacts.asm",
+    "constants/phone_constants.asm",
+    "engine/phone/scripts/mom.asm",
+    "data/phone/text/mom.asm",
+    "constants/event_flags.asm",
+    "constants/engine_flags.asm",
+    "constants/script_constants.asm",
+    "constants/landmark_constants.asm",
+    "constants/map_constants.asm"
+  ],
+  "scripts": [
+    {
+      "label": "MomPhoneCalleeScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 1,
+        "end_line": 21
+      },
+      "operations": [
+        {
+          "opcode": "checkevent",
+          "arguments": [
+            "EVENT_TALKED_TO_MOM_AFTER_MYSTERY_EGG_QUEST"
+          ],
+          "source_line": 2
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            ".started_quest"
+          ],
+          "source_line": 3
+        },
+        {
+          "opcode": "checkevent",
+          "arguments": [
+            "EVENT_DUDE_TALKED_TO_YOU"
+          ],
+          "source_line": 4
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneLectureScript"
+          ],
+          "source_line": 5
+        },
+        {
+          "opcode": "checkevent",
+          "arguments": [
+            "EVENT_GAVE_MYSTERY_EGG_TO_ELM"
+          ],
+          "source_line": 6
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneNoGymQuestScript"
+          ],
+          "source_line": 7
+        },
+        {
+          "opcode": "checkevent",
+          "arguments": [
+            "EVENT_GOT_A_POKEMON_FROM_ELM"
+          ],
+          "source_line": 8
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneNoPokedexScript"
+          ],
+          "source_line": 9
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneNoPokemonScript"
+          ],
+          "source_line": 10
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".started_quest"
+          ],
+          "source_line": 12
+        },
+        {
+          "opcode": "checkevent",
+          "arguments": [
+            "EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8"
+          ],
+          "source_line": 13
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneHangUpScript"
+          ],
+          "source_line": 14
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneGreetingText"
+          ],
+          "source_line": 15
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 16
+        },
+        {
+          "opcode": "getcurlandmarkname",
+          "arguments": [
+            "STRING_BUFFER_3"
+          ],
+          "source_line": 17
+        },
+        {
+          "opcode": "readvar",
+          "arguments": [
+            "VAR_ENVIRONMENT"
+          ],
+          "source_line": 18
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "TOWN",
+            "MomPhoneInTown"
+          ],
+          "source_line": 19
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "ROUTE",
+            "MomPhoneOnRoute"
+          ],
+          "source_line": 20
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneOther"
+          ],
+          "source_line": 21
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneLandmark",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 23,
+        "end_line": 26
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneLandmarkText"
+          ],
+          "source_line": 24
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 25
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 26
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneInTown",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 28,
+        "end_line": 57
+      },
+      "operations": [
+        {
+          "opcode": "readvar",
+          "arguments": [
+            "VAR_MAPGROUP"
+          ],
+          "source_line": 29
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "GROUP_NEW_BARK_TOWN",
+            ".newbark"
+          ],
+          "source_line": 30
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "GROUP_CHERRYGROVE_CITY",
+            ".cherrygrove"
+          ],
+          "source_line": 31
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "GROUP_VIOLET_CITY",
+            ".violet"
+          ],
+          "source_line": 32
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "GROUP_AZALEA_TOWN",
+            ".azalea"
+          ],
+          "source_line": 33
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "GROUP_GOLDENROD_CITY",
+            ".goldenrod"
+          ],
+          "source_line": 34
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneGenericAreaText"
+          ],
+          "source_line": 35
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 36
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 37
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".newbark"
+          ],
+          "source_line": 39
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneNewBarkText"
+          ],
+          "source_line": 40
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 41
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 42
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".cherrygrove"
+          ],
+          "source_line": 44
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneCherrygroveText"
+          ],
+          "source_line": 45
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 46
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 47
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".violet"
+          ],
+          "source_line": 49
+        },
+        {
+          "opcode": "getlandmarkname",
+          "arguments": [
+            "STRING_BUFFER_4",
+            "LANDMARK_SPROUT_TOWER"
+          ],
+          "source_line": 50
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneLandmark"
+          ],
+          "source_line": 51
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".azalea"
+          ],
+          "source_line": 52
+        },
+        {
+          "opcode": "getlandmarkname",
+          "arguments": [
+            "STRING_BUFFER_4",
+            "LANDMARK_SLOWPOKE_WELL"
+          ],
+          "source_line": 53
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneLandmark"
+          ],
+          "source_line": 54
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".goldenrod"
+          ],
+          "source_line": 55
+        },
+        {
+          "opcode": "getlandmarkname",
+          "arguments": [
+            "STRING_BUFFER_4",
+            "LANDMARK_RADIO_TOWER"
+          ],
+          "source_line": 56
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneLandmark"
+          ],
+          "source_line": 57
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneOnRoute",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 59,
+        "end_line": 62
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomOtherAreaText"
+          ],
+          "source_line": 60
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 61
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 62
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneOther",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 64,
+        "end_line": 67
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomDeterminedText"
+          ],
+          "source_line": 65
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 66
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomSavingMoney"
+          ],
+          "source_line": 67
+        }
+      ]
+    },
+    {
+      "label": "MomSavingMoney",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 69,
+        "end_line": 105
+      },
+      "operations": [
+        {
+          "opcode": "checkflag",
+          "arguments": [
+            "ENGINE_MOM_SAVING_MONEY"
+          ],
+          "source_line": 70
+        },
+        {
+          "opcode": "iffalse",
+          "arguments": [
+            ".NotSaving"
+          ],
+          "source_line": 71
+        },
+        {
+          "opcode": "checkmoney",
+          "arguments": [
+            "MOMS_MONEY",
+            "0"
+          ],
+          "source_line": 72
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "HAVE_MORE",
+            ".SavingHasMoney"
+          ],
+          "source_line": 73
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            ".SavingNoMoney"
+          ],
+          "source_line": 74
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".NotSaving"
+          ],
+          "source_line": 76
+        },
+        {
+          "opcode": "checkmoney",
+          "arguments": [
+            "MOMS_MONEY",
+            "0"
+          ],
+          "source_line": 77
+        },
+        {
+          "opcode": "ifequal",
+          "arguments": [
+            "HAVE_MORE",
+            ".HasMoney"
+          ],
+          "source_line": 78
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            ".NoMoney"
+          ],
+          "source_line": 79
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".SavingHasMoney"
+          ],
+          "source_line": 81
+        },
+        {
+          "opcode": "getmoney",
+          "arguments": [
+            "STRING_BUFFER_3",
+            "MOMS_MONEY"
+          ],
+          "source_line": 82
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomCheckBalanceText"
+          ],
+          "source_line": 83
+        },
+        {
+          "opcode": "yesorno",
+          "arguments": [],
+          "source_line": 84
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneSaveMoneyScript"
+          ],
+          "source_line": 85
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneWontSaveMoneyScript"
+          ],
+          "source_line": 86
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".SavingNoMoney"
+          ],
+          "source_line": 88
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomImportantToSaveText"
+          ],
+          "source_line": 89
+        },
+        {
+          "opcode": "yesorno",
+          "arguments": [],
+          "source_line": 90
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneSaveMoneyScript"
+          ],
+          "source_line": 91
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneWontSaveMoneyScript"
+          ],
+          "source_line": 92
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".NoMoney"
+          ],
+          "source_line": 94
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomYoureNotSavingText"
+          ],
+          "source_line": 95
+        },
+        {
+          "opcode": "yesorno",
+          "arguments": [],
+          "source_line": 96
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneSaveMoneyScript"
+          ],
+          "source_line": 97
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneWontSaveMoneyScript"
+          ],
+          "source_line": 98
+        },
+        {
+          "opcode": "label",
+          "arguments": [
+            ".HasMoney"
+          ],
+          "source_line": 100
+        },
+        {
+          "opcode": "getmoney",
+          "arguments": [
+            "STRING_BUFFER_3",
+            "MOMS_MONEY"
+          ],
+          "source_line": 101
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomYouveSavedText"
+          ],
+          "source_line": 102
+        },
+        {
+          "opcode": "yesorno",
+          "arguments": [],
+          "source_line": 103
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneSaveMoneyScript"
+          ],
+          "source_line": 104
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneWontSaveMoneyScript"
+          ],
+          "source_line": 105
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneSaveMoneyScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 107,
+        "end_line": 111
+      },
+      "operations": [
+        {
+          "opcode": "setflag",
+          "arguments": [
+            "ENGINE_MOM_SAVING_MONEY"
+          ],
+          "source_line": 108
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomOKIllSaveText"
+          ],
+          "source_line": 109
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 110
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneHangUpScript"
+          ],
+          "source_line": 111
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneWontSaveMoneyScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 113,
+        "end_line": 117
+      },
+      "operations": [
+        {
+          "opcode": "clearflag",
+          "arguments": [
+            "ENGINE_MOM_SAVING_MONEY"
+          ],
+          "source_line": 114
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneWontSaveMoneyText"
+          ],
+          "source_line": 115
+        },
+        {
+          "opcode": "promptbutton",
+          "arguments": [],
+          "source_line": 116
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneHangUpScript"
+          ],
+          "source_line": 117
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneHangUpScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 119,
+        "end_line": 121
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneHangUpText"
+          ],
+          "source_line": 120
+        },
+        {
+          "opcode": "end",
+          "arguments": [],
+          "source_line": 121
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneNoPokemonScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 123,
+        "end_line": 125
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneNoPokemonText"
+          ],
+          "source_line": 124
+        },
+        {
+          "opcode": "end",
+          "arguments": [],
+          "source_line": 125
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneNoPokedexScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 127,
+        "end_line": 129
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneNoPokedexText"
+          ],
+          "source_line": 128
+        },
+        {
+          "opcode": "end",
+          "arguments": [],
+          "source_line": 129
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneNoGymQuestScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 131,
+        "end_line": 133
+      },
+      "operations": [
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneNoGymQuestText"
+          ],
+          "source_line": 132
+        },
+        {
+          "opcode": "end",
+          "arguments": [],
+          "source_line": 133
+        }
+      ]
+    },
+    {
+      "label": "MomPhoneLectureScript",
+      "source": {
+        "path": "engine/phone/scripts/mom.asm",
+        "start_line": 135,
+        "end_line": 142
+      },
+      "operations": [
+        {
+          "opcode": "setevent",
+          "arguments": [
+            "EVENT_TALKED_TO_MOM_AFTER_MYSTERY_EGG_QUEST"
+          ],
+          "source_line": 136
+        },
+        {
+          "opcode": "setflag",
+          "arguments": [
+            "ENGINE_MOM_ACTIVE"
+          ],
+          "source_line": 137
+        },
+        {
+          "opcode": "specialphonecall",
+          "arguments": [
+            "SPECIALCALL_NONE"
+          ],
+          "source_line": 138
+        },
+        {
+          "opcode": "farwritetext",
+          "arguments": [
+            "MomPhoneLectureText"
+          ],
+          "source_line": 139
+        },
+        {
+          "opcode": "yesorno",
+          "arguments": [],
+          "source_line": 140
+        },
+        {
+          "opcode": "iftrue",
+          "arguments": [
+            "MomPhoneSaveMoneyScript"
+          ],
+          "source_line": 141
+        },
+        {
+          "opcode": "sjump",
+          "arguments": [
+            "MomPhoneWontSaveMoneyScript"
+          ],
+          "source_line": 142
+        }
+      ]
+    }
+  ],
+  "text_entries": [
+    {
+      "label": "MomPhoneGreetingText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 1,
+        "end_line": 6
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Hello?",
+          "source_line": 2
+        },
+        {
+          "opcode": "para",
+          "value": "Oh, hi, <PLAYER>!",
+          "source_line": 4
+        },
+        {
+          "opcode": "line",
+          "value": "Working hard?",
+          "source_line": 5
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 6
+        }
+      ],
+      "rendered_text": "Hello? Oh, hi, <PLAYER>! Working hard?"
+    },
+    {
+      "label": "MomPhoneLandmarkText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 8,
+        "end_line": 20
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Oh, so you're in",
+          "source_line": 9
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 10
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 11
+        },
+        {
+          "opcode": "text",
+          "value": "…",
+          "source_line": 12
+        },
+        {
+          "opcode": "para",
+          "value": "Isn't that where",
+          "source_line": 14
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 15
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer4",
+          "source_line": 16
+        },
+        {
+          "opcode": "text_start",
+          "value": "",
+          "source_line": 17
+        },
+        {
+          "opcode": "para",
+          "value": "is? Did you go",
+          "source_line": 18
+        },
+        {
+          "opcode": "line",
+          "value": "take a look?",
+          "source_line": 19
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 20
+        }
+      ],
+      "rendered_text": "Oh, so you're in {wStringBuffer3}… Isn't that where {wStringBuffer4} is? Did you go take a look?"
+    },
+    {
+      "label": "MomPhoneGenericAreaText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 22,
+        "end_line": 31
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Really, you're in",
+          "source_line": 23
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 24
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 25
+        },
+        {
+          "opcode": "text",
+          "value": "?",
+          "source_line": 26
+        },
+        {
+          "opcode": "para",
+          "value": "I've never gone",
+          "source_line": 28
+        },
+        {
+          "opcode": "line",
+          "value": "there. That's kind",
+          "source_line": 29
+        },
+        {
+          "opcode": "cont",
+          "value": "of neat, <PLAYER>.",
+          "source_line": 30
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 31
+        }
+      ],
+      "rendered_text": "Really, you're in {wStringBuffer3}? I've never gone there. That's kind of neat, <PLAYER>."
+    },
+    {
+      "label": "MomPhoneNewBarkText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 33,
+        "end_line": 41
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "What? You're in",
+          "source_line": 34
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 35
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 36
+        },
+        {
+          "opcode": "text",
+          "value": "?",
+          "source_line": 37
+        },
+        {
+          "opcode": "para",
+          "value": "Come see your MOM",
+          "source_line": 39
+        },
+        {
+          "opcode": "line",
+          "value": "sometime!",
+          "source_line": 40
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 41
+        }
+      ],
+      "rendered_text": "What? You're in {wStringBuffer3}? Come see your MOM sometime!"
+    },
+    {
+      "label": "MomPhoneCherrygroveText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 43,
+        "end_line": 51
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "You're visiting",
+          "source_line": 44
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 45
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 46
+        },
+        {
+          "opcode": "text",
+          "value": "?",
+          "source_line": 47
+        },
+        {
+          "opcode": "para",
+          "value": "How about coming",
+          "source_line": 49
+        },
+        {
+          "opcode": "line",
+          "value": "home for a bit?",
+          "source_line": 50
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 51
+        }
+      ],
+      "rendered_text": "You're visiting {wStringBuffer3}? How about coming home for a bit?"
+    },
+    {
+      "label": "MomOtherAreaText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 53,
+        "end_line": 61
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Wow, you're in",
+          "source_line": 54
+        },
+        {
+          "opcode": "line",
+          "value": "@",
+          "source_line": 55
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 56
+        },
+        {
+          "opcode": "text",
+          "value": "?",
+          "source_line": 57
+        },
+        {
+          "opcode": "para",
+          "value": "Good luck on your",
+          "source_line": 59
+        },
+        {
+          "opcode": "line",
+          "value": "#MON quest!",
+          "source_line": 60
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 61
+        }
+      ],
+      "rendered_text": "Wow, you're in {wStringBuffer3}? Good luck on your #MON quest!"
+    },
+    {
+      "label": "MomDeterminedText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 63,
+        "end_line": 72
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "That sounds really",
+          "source_line": 64
+        },
+        {
+          "opcode": "line",
+          "value": "tough.",
+          "source_line": 65
+        },
+        {
+          "opcode": "para",
+          "value": "But, <PLAYER>, I",
+          "source_line": 67
+        },
+        {
+          "opcode": "line",
+          "value": "know you're really",
+          "source_line": 68
+        },
+        {
+          "opcode": "para",
+          "value": "determined. You'll",
+          "source_line": 70
+        },
+        {
+          "opcode": "line",
+          "value": "be OK, right?",
+          "source_line": 71
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 72
+        }
+      ],
+      "rendered_text": "That sounds really tough. But, <PLAYER>, I know you're really determined. You'll be OK, right?"
+    },
+    {
+      "label": "MomCheckBalanceText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 74,
+        "end_line": 82
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "By the way, you've",
+          "source_line": 75
+        },
+        {
+          "opcode": "line",
+          "value": "saved up ¥@",
+          "source_line": 76
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 77
+        },
+        {
+          "opcode": "text",
+          "value": ".",
+          "source_line": 78
+        },
+        {
+          "opcode": "para",
+          "value": "Do you want to",
+          "source_line": 80
+        },
+        {
+          "opcode": "line",
+          "value": "keep on saving?",
+          "source_line": 81
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 82
+        }
+      ],
+      "rendered_text": "By the way, you've saved up ¥{wStringBuffer3}. Do you want to keep on saving?"
+    },
+    {
+      "label": "MomImportantToSaveText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 84,
+        "end_line": 87
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "It's important to",
+          "source_line": 85
+        },
+        {
+          "opcode": "line",
+          "value": "save your money.",
+          "source_line": 86
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 87
+        }
+      ],
+      "rendered_text": "It's important to save your money."
+    },
+    {
+      "label": "MomYoureNotSavingText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 89,
+        "end_line": 95
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Oh, <PLAYER>,",
+          "source_line": 90
+        },
+        {
+          "opcode": "line",
+          "value": "you're not saving",
+          "source_line": 91
+        },
+        {
+          "opcode": "para",
+          "value": "any money. Would",
+          "source_line": 93
+        },
+        {
+          "opcode": "line",
+          "value": "you like to save?",
+          "source_line": 94
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 95
+        }
+      ],
+      "rendered_text": "Oh, <PLAYER>, you're not saving any money. Would you like to save?"
+    },
+    {
+      "label": "MomYouveSavedText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 97,
+        "end_line": 105
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "By the way, you've",
+          "source_line": 98
+        },
+        {
+          "opcode": "line",
+          "value": "saved up ¥@",
+          "source_line": 99
+        },
+        {
+          "opcode": "text_ram",
+          "value": "wStringBuffer3",
+          "source_line": 100
+        },
+        {
+          "opcode": "text",
+          "value": ".",
+          "source_line": 101
+        },
+        {
+          "opcode": "para",
+          "value": "Want to start",
+          "source_line": 103
+        },
+        {
+          "opcode": "line",
+          "value": "saving again?",
+          "source_line": 104
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 105
+        }
+      ],
+      "rendered_text": "By the way, you've saved up ¥{wStringBuffer3}. Want to start saving again?"
+    },
+    {
+      "label": "MomOKIllSaveText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 107,
+        "end_line": 110
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "OK. I'll save your",
+          "source_line": 108
+        },
+        {
+          "opcode": "line",
+          "value": "money.",
+          "source_line": 109
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 110
+        }
+      ],
+      "rendered_text": "OK. I'll save your money."
+    },
+    {
+      "label": "MomPhoneWontSaveMoneyText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 112,
+        "end_line": 115
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "OK. I won't save",
+          "source_line": 113
+        },
+        {
+          "opcode": "line",
+          "value": "your money.",
+          "source_line": 114
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 115
+        }
+      ],
+      "rendered_text": "OK. I won't save your money."
+    },
+    {
+      "label": "MomPhoneHangUpText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 117,
+        "end_line": 121
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "<PLAYER>, keep it",
+          "source_line": 118
+        },
+        {
+          "opcode": "line",
+          "value": "up! I'm rooting",
+          "source_line": 119
+        },
+        {
+          "opcode": "cont",
+          "value": "for you, baby!",
+          "source_line": 120
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 121
+        }
+      ],
+      "rendered_text": "<PLAYER>, keep it up! I'm rooting for you, baby!"
+    },
+    {
+      "label": "MomPhoneNoPokemonText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 123,
+        "end_line": 129
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Hello?",
+          "source_line": 124
+        },
+        {
+          "opcode": "para",
+          "value": "Oh, hi, <PLAYER>!",
+          "source_line": 126
+        },
+        {
+          "opcode": "line",
+          "value": "Wasn't PROF.ELM",
+          "source_line": 127
+        },
+        {
+          "opcode": "cont",
+          "value": "waiting for you?",
+          "source_line": 128
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 129
+        }
+      ],
+      "rendered_text": "Hello? Oh, hi, <PLAYER>! Wasn't PROF.ELM waiting for you?"
+    },
+    {
+      "label": "MomPhoneNoPokedexText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 131,
+        "end_line": 139
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Hello?",
+          "source_line": 132
+        },
+        {
+          "opcode": "para",
+          "value": "Oh, hi, <PLAYER>!",
+          "source_line": 134
+        },
+        {
+          "opcode": "line",
+          "value": "You're on a big",
+          "source_line": 135
+        },
+        {
+          "opcode": "para",
+          "value": "mission for PROF.",
+          "source_line": 137
+        },
+        {
+          "opcode": "line",
+          "value": "ELM? Be good!",
+          "source_line": 138
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 139
+        }
+      ],
+      "rendered_text": "Hello? Oh, hi, <PLAYER>! You're on a big mission for PROF. ELM? Be good!"
+    },
+    {
+      "label": "MomPhoneNoGymQuestText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 141,
+        "end_line": 149
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Hello?",
+          "source_line": 142
+        },
+        {
+          "opcode": "para",
+          "value": "Hi, <PLAYER>! If",
+          "source_line": 144
+        },
+        {
+          "opcode": "line",
+          "value": "you're done with",
+          "source_line": 145
+        },
+        {
+          "opcode": "para",
+          "value": "your errand come",
+          "source_line": 147
+        },
+        {
+          "opcode": "line",
+          "value": "on home, dear.",
+          "source_line": 148
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 149
+        }
+      ],
+      "rendered_text": "Hello? Hi, <PLAYER>! If you're done with your errand come on home, dear."
+    },
+    {
+      "label": "MomPhoneLectureText",
+      "source": {
+        "path": "data/phone/text/mom.asm",
+        "start_line": 151,
+        "end_line": 165
+      },
+      "raw_commands": [
+        {
+          "opcode": "text",
+          "value": "Hello?",
+          "source_line": 152
+        },
+        {
+          "opcode": "para",
+          "value": "…… <PLAYER>?",
+          "source_line": 154
+        },
+        {
+          "opcode": "line",
+          "value": "I heard from PROF.",
+          "source_line": 155
+        },
+        {
+          "opcode": "para",
+          "value": "ELM that you went",
+          "source_line": 157
+        },
+        {
+          "opcode": "line",
+          "value": "on a long trip.",
+          "source_line": 158
+        },
+        {
+          "opcode": "para",
+          "value": "I wish you would",
+          "source_line": 160
+        },
+        {
+          "opcode": "line",
+          "value": "have told me…",
+          "source_line": 161
+        },
+        {
+          "opcode": "para",
+          "value": "What about money?",
+          "source_line": 163
+        },
+        {
+          "opcode": "line",
+          "value": "Should I save it?",
+          "source_line": 164
+        },
+        {
+          "opcode": "done",
+          "value": "",
+          "source_line": 165
+        }
+      ],
+      "rendered_text": "Hello? …… <PLAYER>? I heard from PROF. ELM that you went on a long trip. I wish you would have told me… What about money? Should I save it?"
+    }
+  ],
+  "references": [
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "iftrue",
+      "target": ".started_quest",
+      "source_line": 3
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "iftrue",
+      "target": "MomPhoneLectureScript",
+      "source_line": 5
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "iftrue",
+      "target": "MomPhoneNoGymQuestScript",
+      "source_line": 7
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "iftrue",
+      "target": "MomPhoneNoPokedexScript",
+      "source_line": 9
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "sjump",
+      "target": "MomPhoneNoPokemonScript",
+      "source_line": 10
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "iftrue",
+      "target": "MomPhoneHangUpScript",
+      "source_line": 14
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneGreetingText",
+      "source_line": 15
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "ifequal",
+      "target": "MomPhoneInTown",
+      "source_line": 19
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "ifequal",
+      "target": "MomPhoneOnRoute",
+      "source_line": 20
+    },
+    {
+      "from_script": "MomPhoneCalleeScript",
+      "opcode": "sjump",
+      "target": "MomPhoneOther",
+      "source_line": 21
+    },
+    {
+      "from_script": "MomPhoneLandmark",
+      "opcode": "farwritetext",
+      "target": "MomPhoneLandmarkText",
+      "source_line": 24
+    },
+    {
+      "from_script": "MomPhoneLandmark",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 26
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "ifequal",
+      "target": ".newbark",
+      "source_line": 30
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "ifequal",
+      "target": ".cherrygrove",
+      "source_line": 31
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "ifequal",
+      "target": ".violet",
+      "source_line": 32
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "ifequal",
+      "target": ".azalea",
+      "source_line": 33
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "ifequal",
+      "target": ".goldenrod",
+      "source_line": 34
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "farwritetext",
+      "target": "MomPhoneGenericAreaText",
+      "source_line": 35
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 37
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "farwritetext",
+      "target": "MomPhoneNewBarkText",
+      "source_line": 40
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 42
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "farwritetext",
+      "target": "MomPhoneCherrygroveText",
+      "source_line": 45
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 47
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomPhoneLandmark",
+      "source_line": 51
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomPhoneLandmark",
+      "source_line": 54
+    },
+    {
+      "from_script": "MomPhoneInTown",
+      "opcode": "sjump",
+      "target": "MomPhoneLandmark",
+      "source_line": 57
+    },
+    {
+      "from_script": "MomPhoneOnRoute",
+      "opcode": "farwritetext",
+      "target": "MomOtherAreaText",
+      "source_line": 60
+    },
+    {
+      "from_script": "MomPhoneOnRoute",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 62
+    },
+    {
+      "from_script": "MomPhoneOther",
+      "opcode": "farwritetext",
+      "target": "MomDeterminedText",
+      "source_line": 65
+    },
+    {
+      "from_script": "MomPhoneOther",
+      "opcode": "sjump",
+      "target": "MomSavingMoney",
+      "source_line": 67
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "iffalse",
+      "target": ".NotSaving",
+      "source_line": 71
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "ifequal",
+      "target": ".SavingHasMoney",
+      "source_line": 73
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": ".SavingNoMoney",
+      "source_line": 74
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "ifequal",
+      "target": ".HasMoney",
+      "source_line": 78
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": ".NoMoney",
+      "source_line": 79
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "farwritetext",
+      "target": "MomCheckBalanceText",
+      "source_line": 83
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "iftrue",
+      "target": "MomPhoneSaveMoneyScript",
+      "source_line": 85
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": "MomPhoneWontSaveMoneyScript",
+      "source_line": 86
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "farwritetext",
+      "target": "MomImportantToSaveText",
+      "source_line": 89
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "iftrue",
+      "target": "MomPhoneSaveMoneyScript",
+      "source_line": 91
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": "MomPhoneWontSaveMoneyScript",
+      "source_line": 92
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "farwritetext",
+      "target": "MomYoureNotSavingText",
+      "source_line": 95
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "iftrue",
+      "target": "MomPhoneSaveMoneyScript",
+      "source_line": 97
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": "MomPhoneWontSaveMoneyScript",
+      "source_line": 98
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "farwritetext",
+      "target": "MomYouveSavedText",
+      "source_line": 102
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "iftrue",
+      "target": "MomPhoneSaveMoneyScript",
+      "source_line": 104
+    },
+    {
+      "from_script": "MomSavingMoney",
+      "opcode": "sjump",
+      "target": "MomPhoneWontSaveMoneyScript",
+      "source_line": 105
+    },
+    {
+      "from_script": "MomPhoneSaveMoneyScript",
+      "opcode": "farwritetext",
+      "target": "MomOKIllSaveText",
+      "source_line": 109
+    },
+    {
+      "from_script": "MomPhoneSaveMoneyScript",
+      "opcode": "sjump",
+      "target": "MomPhoneHangUpScript",
+      "source_line": 111
+    },
+    {
+      "from_script": "MomPhoneWontSaveMoneyScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneWontSaveMoneyText",
+      "source_line": 115
+    },
+    {
+      "from_script": "MomPhoneWontSaveMoneyScript",
+      "opcode": "sjump",
+      "target": "MomPhoneHangUpScript",
+      "source_line": 117
+    },
+    {
+      "from_script": "MomPhoneHangUpScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneHangUpText",
+      "source_line": 120
+    },
+    {
+      "from_script": "MomPhoneNoPokemonScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneNoPokemonText",
+      "source_line": 124
+    },
+    {
+      "from_script": "MomPhoneNoPokedexScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneNoPokedexText",
+      "source_line": 128
+    },
+    {
+      "from_script": "MomPhoneNoGymQuestScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneNoGymQuestText",
+      "source_line": 132
+    },
+    {
+      "from_script": "MomPhoneLectureScript",
+      "opcode": "farwritetext",
+      "target": "MomPhoneLectureText",
+      "source_line": 139
+    },
+    {
+      "from_script": "MomPhoneLectureScript",
+      "opcode": "iftrue",
+      "target": "MomPhoneSaveMoneyScript",
+      "source_line": 141
+    },
+    {
+      "from_script": "MomPhoneLectureScript",
+      "opcode": "sjump",
+      "target": "MomPhoneWontSaveMoneyScript",
+      "source_line": 142
+    }
+  ],
+  "validation": {
+    "referenced_text_labels": [
+      "MomCheckBalanceText",
+      "MomDeterminedText",
+      "MomImportantToSaveText",
+      "MomOKIllSaveText",
+      "MomOtherAreaText",
+      "MomPhoneCherrygroveText",
+      "MomPhoneGenericAreaText",
+      "MomPhoneGreetingText",
+      "MomPhoneHangUpText",
+      "MomPhoneLandmarkText",
+      "MomPhoneLectureText",
+      "MomPhoneNewBarkText",
+      "MomPhoneNoGymQuestText",
+      "MomPhoneNoPokedexText",
+      "MomPhoneNoPokemonText",
+      "MomPhoneWontSaveMoneyText",
+      "MomYoureNotSavingText",
+      "MomYouveSavedText"
+    ],
+    "included_text_labels": [
+      "MomCheckBalanceText",
+      "MomDeterminedText",
+      "MomImportantToSaveText",
+      "MomOKIllSaveText",
+      "MomOtherAreaText",
+      "MomPhoneCherrygroveText",
+      "MomPhoneGenericAreaText",
+      "MomPhoneGreetingText",
+      "MomPhoneHangUpText",
+      "MomPhoneLandmarkText",
+      "MomPhoneLectureText",
+      "MomPhoneNewBarkText",
+      "MomPhoneNoGymQuestText",
+      "MomPhoneNoPokedexText",
+      "MomPhoneNoPokemonText",
+      "MomPhoneWontSaveMoneyText",
+      "MomYoureNotSavingText",
+      "MomYouveSavedText"
+    ],
+    "missing_labels": [],
+    "duplicate_labels": []
+  }
+}

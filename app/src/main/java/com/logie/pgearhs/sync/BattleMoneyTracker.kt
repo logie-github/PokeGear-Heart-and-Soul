@@ -35,6 +35,7 @@ object BattleMoneyTracker {
     private const val KEY_SAVINGS = "battle_mom_savings"
     private const val MOM_SHARE_FRACTION = 0.25
     private const val MOM_SHARE_ROUND_TO = 10
+    private const val KEY_SAVING_ENABLED = "battle_mom_saving_enabled"
 
     private var started = false
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -87,6 +88,14 @@ object BattleMoneyTracker {
 
     fun savings(context: Context): Int =
         prefs(context).getInt(KEY_SAVINGS, 0)
+
+    /** Whether Mom is currently saving 25% of each win - the Call MOM "Savings" option toggles this. Defaults on (the existing always-on behavior). */
+    fun isSavingEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_SAVING_ENABLED, true)
+
+    fun setSavingEnabled(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_SAVING_ENABLED, enabled).apply()
+    }
 
     private suspend fun poll(context: Context, host: String, port: Int) {
         pollCount++
@@ -172,7 +181,12 @@ object BattleMoneyTracker {
                 val won = after - before
                 val total = addWinnings(context, won)
                 DebugLog.add("Battle money: won $won this battle, total tracked $total.")
-                settledMoney = sendToMom(context, host, port, bridge, won, after)
+                settledMoney = if (isSavingEnabled(context)) {
+                    sendToMom(context, host, port, bridge, won, after)
+                } else {
+                    DebugLog.add("Battle money: saving is turned off - not sending anything to Mom.")
+                    after
+                }
             } else {
                 DebugLog.add("Battle money: won, but couldn't compute the amount (before=$before, after=$after).")
             }

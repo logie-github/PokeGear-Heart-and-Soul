@@ -115,4 +115,74 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/menuBox"
+        android:layout_width="160dp"
+        android:layout_height="108dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/pokemon_dialogue_box_bg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/dialogueBox"
+        app:layout_constraintEnd_toEndOf="@id/dialogueBox">
+
+        <TextView
+            android:id="@+id/menuOption1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/pokemon_emerald"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:paddingStart="14dp"
+            android:shadowColor="@color/dialogueBoxTextShadow"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="0.1"
+            android:textColor="@color/dialogueBoxText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.333"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/menuOption2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/pokemon_emerald"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:paddingStart="14dp"
+            android:shadowColor="@color/dialogueBoxTextShadow"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="0.1"
+            android:textColor="@color/dialogueBoxText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.333"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuOption1" />
+
+        <TextView
+            android:id="@+id/menuOption3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/pokemon_emerald"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:paddingStart="14dp"
+            android:shadowColor="@color/dialogueBoxTextShadow"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="0.1"
+            android:textColor="@color/dialogueBoxText"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.333"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuOption2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
