@@ -2,13 +2,14 @@
 <!-- The whole screen is built in Kotlin at exact native 240x160 GBA coordinates inside
      GbaScreenLayout (see PokedexDetailActivity). It's scaled by one uniform factor - never
      stretched. Pinned to the top (not vertically centered) so the red tab bar always sits
-     flush against the real top of the screen; any leftover margin collects at the bottom
-     instead, showing the same repeating grid-paper tile as the rest of the chrome (not black
-     bars), so the extra space reads as real background, not empty letterboxing. -->
+     flush against the real top of the screen; any leftover margin collects at the bottom.
+     Flat paper-color margin (not the tiled grid drawable) - the inner screen already draws
+     its own grid at the real scaled cell size, and a second, differently-scaled tiled pattern
+     right next to it looked like two mismatched grids colliding. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pokedex_grid_bg">
+    android:background="@color/pokedexPaper">
 
     <com.logie.pgearhs.pokedex.GbaScreenLayout
         android:id="@+id/gbaScreen"

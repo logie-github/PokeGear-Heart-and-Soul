@@ -13,12 +13,20 @@ import kotlin.math.roundToInt
  * Recreates the real GBA Pokédex screen's coordinate space: every child is placed using the
  * *exact* native 240x160 pixel coordinates read out of pokedex_plus_hgss.c (the same numbers
  * the HTML prototype used). This is scaled by ONE uniform factor - never stretched/warped -
- * so sprites, type icons and text always keep their real proportions. On a screen that isn't
- * exactly 3:2, the leftover margin is NOT black letterboxing: the caller is expected to give
- * this view a background that's the same repeating grid-paper tile used everywhere else in the
- * chrome (see activity_pokedex_detail.xml), so the extra space reads as "more of the same real
- * background", not empty bars - i.e. the screen is rearranged onto the real tileset, not
- * stretched onto it.
+ * so sprites, type icons and text always keep their real proportions.
+ *
+ * The real chrome's text (`.txt` in the HTML prototype it was ported from) is CSS
+ * `white-space:nowrap` with no fixed width - it's anchored at a left/top point and grows
+ * naturally to whatever width its content needs. [WRAP] reproduces that: pass it as
+ * nativeWidth/nativeHeight to size a child to its natural content size instead of forcing
+ * an exact box, which is what real single-line labels (name, category, HT/WT, tab labels)
+ * want. Only elements the real chrome actually constrains (type icons, the description
+ * paragraph, right-aligned stat values) should get an explicit fixed size.
+ *
+ * On a screen that isn't exactly 3:2, the leftover margin is NOT black letterboxing: the
+ * caller is expected to give this view a background that matches the rest of the chrome
+ * (see activity_pokedex_detail.xml), so the extra space reads as more of the real background,
+ * not empty bars.
  */
 class GbaScreenLayout @JvmOverloads constructor(
     context: Context,
@@ -29,6 +37,7 @@ class GbaScreenLayout @JvmOverloads constructor(
     companion object {
         const val NATIVE_W = 240
         const val NATIVE_H = 160
+        const val WRAP = -1
     }
 
     /** Current native-px -> real-px uniform scale factor, valid after layout. */
@@ -43,7 +52,11 @@ class GbaScreenLayout @JvmOverloads constructor(
         val nativeTextSizePx: Float = 0f
     ) : ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
 
-    /** Adds a child positioned at exact native (240x160) coordinates. */
+    /**
+     * Adds a child positioned at exact native (240x160) coordinates. Pass [WRAP] for [w]/[h]
+     * to size that axis to the child's natural content size (matching the real chrome's
+     * unconstrained single-line text) instead of a forced exact box.
+     */
     fun addNative(view: View, x: Int, y: Int, w: Int, h: Int, nativeTextSizePx: Float = 0f) {
         addView(view, LayoutParams(x, y, w, h, nativeTextSizePx))
     }
@@ -65,9 +78,15 @@ class GbaScreenLayout @JvmOverloads constructor(
             if (lp.nativeTextSizePx > 0f && child is TextView) {
                 child.setTextSize(TypedValue.COMPLEX_UNIT_PX, lp.nativeTextSizePx * nativeScale)
             }
-            val childWidthSpec = MeasureSpec.makeMeasureSpec((lp.nativeWidth * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
-            val childHeightSpec = MeasureSpec.makeMeasureSpec((lp.nativeHeight * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
-            child.measure(childWidthSpec, childHeightSpec)
+            val widthSpec = if (lp.nativeWidth == WRAP)
+                MeasureSpec.makeMeasureSpec(myWidth - (lp.nativeLeft * nativeScale).roundToInt(), MeasureSpec.AT_MOST)
+            else
+                MeasureSpec.makeMeasureSpec((lp.nativeWidth * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
+            val heightSpec = if (lp.nativeHeight == WRAP)
+                MeasureSpec.makeMeasureSpec(myHeight, MeasureSpec.AT_MOST)
+            else
+                MeasureSpec.makeMeasureSpec((lp.nativeHeight * nativeScale).roundToInt(), MeasureSpec.EXACTLY)
+            child.measure(widthSpec, heightSpec)
         }
     }
 
