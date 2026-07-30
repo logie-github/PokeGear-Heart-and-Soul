@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/pokedex_grid_bg"
-    android:padding="10dp">
+    android:background="@drawable/pokedex_grid_bg">
 
-    <!-- Tab bar: ◀ INFO AREA STATS EVO CRY SIZE ▶ -->
+    <!-- Tab bar: ◀ INFO AREA STATS EVO CRY SIZE ▶ - flush against the real top/left/right edges
+         of the screen, full width, square corners, like the real chrome (no card margin/rounding). -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,16 +18,16 @@
 
         <LinearLayout
             android:id="@+id/tabBar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@drawable/pokedex_tabbar_bg"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="4dp" />
+            android:background="@color/pokedexRedDeep" />
     </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="10dp"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="10dp">
