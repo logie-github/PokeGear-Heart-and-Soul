@@ -21,21 +21,19 @@ import com.logie.pgearhs.ui.BaseImmersiveActivity
  * The real HGSS Pokédex detail screen, rebuilt at the actual native 240x160 GBA coordinates
  * (see pokedex_plus_hgss.c) inside a [GbaScreenLayout], instead of a reflowed phone-style UI.
  *
- * The tab bar (◀ INFO AREA STATS EVO CRY SIZE ▶) is real TextViews, not a baked screenshot -
- * it's the same real chrome content and position as the decomp screens, but has to be dynamic
- * so the active tab actually updates when you tap a different one.
- *
- * INFO and STATS reuse the decomp's real composited screenshots (with the baked tab-bar row
- * stripped out and replaced by more of the grid pattern, since the dynamic bar sits on top of
- * every tab now) as backgrounds, with content placed at the exact pixel offsets
- * pokedex_plus_hgss.c uses. Most single-line labels are sized to their natural text width
- * (GbaScreenLayout.WRAP) rather than a forced box, matching the real chrome's unconstrained
- * `white-space:nowrap` text - only elements the real chrome actually constrains (type icons,
- * the description paragraph, right-aligned stat values) get a fixed width.
+ * Each tab is the decomp's own real, fully composited screenshot used as-is (the tab bar's
+ * active-tab highlight is pre-baked per screen in HGSS_tilemap_{info,stats,evo,cry,size}_screen.bin
+ * - it is NOT a separate dynamic layer here, so there is nothing to re-render). Real per-species
+ * text/sprites from pokemon_dex_data.json are placed on top at the exact pixel offsets
+ * pokedex_plus_hgss.c uses. Navigation is the real ◀/▶ arrows baked into every one of those
+ * screenshots (x=0-16 and x=224-240), cycling through the six real screens in order - the same
+ * left/right paging the real Pokédex uses, not invented per-tab tap zones.
  *
  * SIZE reuses Task_LoadSizeScreen's real sprite anchors (88,56)/(152,56) and title position.
- * AREA/EVO/CRY have no equivalent reference screenshot in this decomp, so their content is a
- * best-effort card in the same coordinate space and shared chrome.
+ * CRY reuses pokedex_cry_screen.c's real box positions and the real cry_meter.png/
+ * cry_meter_needle.png sprites (needle rotated from its real base pivot, not hand-drawn).
+ * AREA has no equivalent full-screen reference in this decomp; it shows the real
+ * johto_region_map.png with no marker, since no real per-species map-coordinate data exists.
  */
 class PokedexDetailActivity : BaseImmersiveActivity() {
 
@@ -46,37 +44,34 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         // prototype's .txt / .txt.small / .desc rules, themselves read off the real chrome).
         private const val TEXT_MAIN = 6.3f
         private const val TEXT_SMALL = 4.3f
-        private const val TEXT_TAB = 5.2f
         private const val TEXT_DESC = 5.3f
 
         private val COLOR_WHITE = Color.WHITE
         private val COLOR_DARK = Color.parseColor("#4A4A52")
-        private val COLOR_RED_DEEP = Color.parseColor("#911121")
-        private val COLOR_RED = Color.parseColor("#E93131")
-        private val COLOR_PINK = Color.parseColor("#F999A1")
 
         private const val WRAP = GbaScreenLayout.WRAP
+
+        // Real ◀/▶ arrow glyph bounds, measured directly off the decoded tab-bar row -
+        // every one of the five real screenshots below has them at the same position.
+        private const val ARROW_W = 16
     }
 
-    private enum class Tab { INFO, AREA, STATS, EVO, CRY, SIZE }
-
-    // Real tab hit-zones: INFO (x=0,w=40) and STATS (x=76,w=46) come directly from the tabbtn
-    // rects in pokedex_plus_hgss.c / the HTML port; AREA/EVO/CRY/SIZE are reconstructed from the
-    // gaps between those two confirmed anchors and the real tab bar's pixel boundaries.
-    private val tabRanges = linkedMapOf(
-        Tab.INFO to Triple(0, 40, R.string.pokedex_tab_info),
-        Tab.AREA to Triple(40, 76, R.string.pokedex_tab_area),
-        Tab.STATS to Triple(76, 122, R.string.pokedex_tab_stats),
-        Tab.EVO to Triple(122, 156, R.string.pokedex_tab_evo),
-        Tab.CRY to Triple(156, 190, R.string.pokedex_tab_cry),
-        Tab.SIZE to Triple(190, 224, R.string.pokedex_tab_size)
-    )
+    // null = no real full-screen background exists for that tab in this decomp (AREA);
+    // its real content (johto_region_map.png) is placed at its own true, undistorted proportions
+    // instead of stretched to fill the 240x160 slot every other tab's real screenshot fills exactly.
+    private enum class Tab(val backgroundAsset: String?) {
+        INFO("pokedex_chrome/info_bg.png"),
+        AREA(null),
+        STATS("pokedex_chrome/stats_bg.png"),
+        EVO("pokedex_chrome/evo_bg.png"),
+        CRY("pokedex_chrome/cry_bg.png"),
+        SIZE("pokedex_chrome/size_bg.png")
+    }
 
     private lateinit var gba: GbaScreenLayout
     private lateinit var bgImage: ImageView
     private lateinit var entry: PokedexEntry
     private var allEntries: List<PokedexEntry> = emptyList()
-    private val tabViews = mutableMapOf<Tab, TextView>()
     private var activeTab: Tab = Tab.INFO
 
     private var cryPlayer: MediaPlayer? = null
@@ -98,39 +93,19 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         bgImage = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_XY }
         gba.addNative(bgImage, 0, 0, GbaScreenLayout.NATIVE_W, GbaScreenLayout.NATIVE_H)
 
-        buildTabBar()
+        // The real ◀/▶ arrows, baked into every screenshot at the same spot - cycle tabs in order.
+        val leftArrow = View(this).apply { setOnClickListener { cycleTab(-1) } }
+        gba.addNative(leftArrow, 0, 0, ARROW_W, 16)
+        val rightArrow = View(this).apply { setOnClickListener { cycleTab(1) } }
+        gba.addNative(rightArrow, GbaScreenLayout.NATIVE_W - ARROW_W, 0, ARROW_W, 16)
+
         showTab(Tab.INFO)
     }
 
-    // ===================== tab bar (real, dynamic - not baked pixels) =====================
-
-    private fun buildTabBar() {
-        val bar = View(this).apply { setBackgroundColor(COLOR_RED_DEEP) }
-        gba.addNative(bar, 0, 0, GbaScreenLayout.NATIVE_W, 16)
-
-        for ((tab, info) in tabRanges) {
-            val (startX, endX, labelRes) = info
-            val tv = TextView(this).apply {
-                text = getString(labelRes)
-                gravity = Gravity.CENTER
-                setTypeface(typeface, Typeface.BOLD)
-                includeFontPadding = false
-                isClickable = true
-                isFocusable = true
-                setOnClickListener { showTab(tab) }
-            }
-            gba.addNative(tv, startX, 0, endX - startX, 16, TEXT_TAB)
-            tabViews[tab] = tv
-        }
-        updateTabBarState()
-    }
-
-    private fun updateTabBarState() {
-        for ((tab, tv) in tabViews) {
-            val active = tab == activeTab
-            tv.setBackgroundResource(if (active) R.drawable.pokedex_tab_active_bg else 0)
-            tv.setTextColor(if (active) COLOR_RED else COLOR_PINK)
-        }
+    private fun cycleTab(delta: Int) {
+        val tabs = Tab.entries
+        val next = (activeTab.ordinal + delta + tabs.size) % tabs.size
+        showTab(tabs[next])
     }
 
     // ===================== shared helpers =====================
@@ -201,8 +176,8 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
     private fun showTab(tab: Tab) {
         activeTab = tab
-        updateTabBarState()
         clearContent()
+        tab.backgroundAsset?.let { setBackground(it) } ?: bgImage.setImageDrawable(null)
         when (tab) {
             Tab.INFO -> populateInfo()
             Tab.AREA -> populateArea()
@@ -216,8 +191,6 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     // ===================== INFO (real pokedex_chrome/info_bg.png + real coords) =====================
 
     private fun populateInfo() {
-        setBackground("pokedex_chrome/info_bg.png")
-
         addBitmap(16, 24, 64, 64, assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) })
         try {
             addAsset(120, 56, 16, 16, "pokemon/${entry.assetFolder}/footprint.png")
@@ -246,8 +219,6 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     // ===================== STATS (real pokedex_chrome/stats_bg.png + real coords) =====================
 
     private fun populateStats() {
-        setBackground("pokedex_chrome/stats_bg.png")
-
         addIdleIcon(4, 4, 32, 32, entry.assetFolder)
         addText(44, 6, WRAP, 6, entry.displayName, TEXT_SMALL, bold = true)
         entry.types.forEachIndexed { i, type ->
@@ -279,7 +250,9 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     // route/coordinate data exists in this decomp's dex JSON to place one honestly) ===========
 
     private fun populateArea() {
-        setBackground("pokedex_chrome/tabbar_strip_fill.png")
+        // No real full-screen AREA background exists in this decomp (see Tab.AREA), so the real
+        // johto_region_map.png (128x128) is placed at its own true square proportions rather than
+        // stretched to fill the 240x160 slot - 96x96 here is a uniform 0.75x scale, not a warp.
         addAsset(72, 16, 96, 96, "pokedex_chrome/johto_region_map.png")
         val message = entry.habitat?.let { getString(R.string.pokedex_area_habitat_format, it) }
             ?: getString(R.string.pokedex_area_no_wild, entry.displayName)
@@ -301,8 +274,6 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     }
 
     private fun populateEvo() {
-        setBackground("pokedex_chrome/evo_bg.png")
-
         if (entry.evolvesFrom.isEmpty() && entry.evolvesTo.isEmpty()) {
             addText(2, 90, 235, 20, getString(R.string.pokedex_evo_no_data, entry.displayName), TEXT_SMALL, gravity = Gravity.CENTER_HORIZONTAL, lines = 3)
             return
@@ -344,12 +315,10 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     // ===================== CRY - real HGSS_tilemap_cry_screen.bin chrome + the real
     // cry_meter.png/cry_meter_needle.png sprites (not a hand-drawn gauge). Box positions measured
     // off the decoded tilemap: waveform 16,24,64,64 (left box); meter 144,24,80,64 (right box,
-    // matches cry_meter.png's real 80x64 size exactly). Sprite/text anchors are the real
+    // matches cry_meter.png's actual 80x64 size exactly). Sprite/text anchors are the real
     // MON_PAGE_X/Y (48,56) and PrintInfoScreenText/PrintCryScreenSpeciesName calls (82,33/82,49). =
 
     private fun populateCry() {
-        setBackground("pokedex_chrome/cry_bg.png")
-
         addBitmap(48, 56, 64, 64, assets.open("pokemon/${entry.assetFolder}/front.png").use { BitmapFactory.decodeStream(it) })
         addText(82, 33, WRAP, 8, getString(R.string.pokedex_cry_of), TEXT_MAIN, bold = true)
         addText(82, 49, WRAP, 8, entry.displayName, TEXT_MAIN, bold = true)
@@ -393,8 +362,6 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     // ===================== SIZE (real Task_LoadSizeScreen anchors: mon (88,56), trainer (152,56)) =
 
     private fun populateSize() {
-        setBackground("pokedex_chrome/size_bg.png")
-
         addText(
             0, 121, GbaScreenLayout.NATIVE_W, 8,
             getString(R.string.pokedex_size_title_format, getString(R.string.pokedex_size_trainer_name)),
