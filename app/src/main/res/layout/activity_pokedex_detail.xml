@@ -49,6 +49,7 @@
                     android:layout_marginEnd="10dp"
                     android:contentDescription="@null" />
 
+                <!-- id + vitals cards: half the screen width, not the whole remaining space -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -104,6 +105,13 @@
                             android:layout_marginTop="6dp" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <!-- empty spacer: matches the id/vitals column's weight so together they split
+                     the remaining width 50/50, keeping the cards to about half the screen -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="1dp" />
             </LinearLayout>
 
             <View
