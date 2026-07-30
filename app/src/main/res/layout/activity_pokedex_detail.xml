@@ -1,19 +1,402 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The whole screen is built in Kotlin at exact native 240x160 GBA coordinates inside
-     GbaScreenLayout (see PokedexDetailActivity). It's scaled by one uniform factor - never
-     stretched. Pinned to the top (not vertically centered) so the red tab bar always sits
-     flush against the real top of the screen; any leftover margin collects at the bottom.
-     Flat paper-color margin (not the tiled grid drawable) - the inner screen already draws
-     its own grid at the real scaled cell size, and a second, differently-scaled tiled pattern
-     right next to it looked like two mismatched grids colliding. -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Ports the "Sidebar" layout from the Pokédex Screen HTML prototype directly: a real
+     responsive grid (not a fixed-pixel GBA canvas), so 4:3/16:9 landscape both just work with
+     no scaling tricks. Real per-species data from pokemon_dex_data.json; card/tab-bar chrome
+     uses colors sampled from the real decomp screenshots. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pokedexPaper">
+    android:orientation="vertical"
+    android:background="@drawable/pokedex_grid_bg"
+    android:padding="10dp">
 
-    <com.logie.pgearhs.pokedex.GbaScreenLayout
-        android:id="@+id/gbaScreen"
+    <!-- Tab bar: ◀ INFO AREA STATS EVO CRY SIZE ▶ -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top|center_horizontal" />
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/tabBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/pokedex_tabbar_bg"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="4dp" />
+    </HorizontalScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp">
+
+        <!-- ===================== INFO: sprite | id/vitals, description below ===================== -->
+        <LinearLayout
+            android:id="@+id/infoTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/detailSprite"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/pokedex_card_bg"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/detailIdHeader"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/pokedex_card_header_bg"
+                            android:padding="8dp"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/detailCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:textColor="@color/pokedexInkDim"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/pokedex_card_bg"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/detailHeightWeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/pokedexInk"
+                            android:textStyle="bold"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:id="@+id/detailTypeChips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/pokedex_card_bg"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/detailPokedexEntry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="@color/pokedexInk"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ===================== STATS ===================== -->
+        <LinearLayout
+            android:id="@+id/statsTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/pokedex_card_bg"
+                android:padding="10dp"
+                android:layout_marginBottom="8dp">
+
+                <com.logie.pgearhs.pokedex.IdleIconView
+                    android:id="@+id/statsIcon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/statsName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/pokedexInk"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/statsTypeChips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/pokedex_card_bg"
+                android:padding="10dp">
+
+                <GridLayout
+                    android:id="@+id/statsGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="4" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DDDDDD"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pokedex_total_label"
+                        android:textStyle="bold"
+                        android:textColor="@color/pokedexInk" />
+
+                    <TextView
+                        android:id="@+id/statsTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/pokedexInk" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===================== AREA ===================== -->
+        <LinearLayout
+            android:id="@+id/areaTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/areaMap"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:id="@+id/areaMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:textColor="@color/pokedexInk"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- ===================== EVO ===================== -->
+        <LinearLayout
+            android:id="@+id/evoTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/pokedex_card_bg"
+                android:padding="14dp">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/evoChainContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical" />
+                </HorizontalScrollView>
+
+                <TextView
+                    android:id="@+id/evoEmptyMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/pokedexInkDim"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===================== CRY ===================== -->
+        <LinearLayout
+            android:id="@+id/cryTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <com.logie.pgearhs.pokedex.CryScopeView
+                android:id="@+id/cryScope"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="90dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/pokedex_card_bg" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/crySprite"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/cryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/pokedexInk"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="90dp"
+                android:layout_height="72dp"
+                android:layout_marginStart="12dp">
+
+                <ImageView
+                    android:id="@+id/cryMeter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null" />
+
+                <ImageView
+                    android:id="@+id/cryNeedle"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="4dp"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- ===================== SIZE ===================== -->
+        <LinearLayout
+            android:id="@+id/sizeTabContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/sizeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/pokedexInk"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/sizeFiguresRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom">
+
+                <ImageView
+                    android:id="@+id/sizePokemonImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null" />
+
+                <Space
+                    android:layout_width="24dp"
+                    android:layout_height="1dp" />
+
+                <ImageView
+                    android:id="@+id/sizeTrainerImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="200dp"
+                android:layout_height="2dp"
+                android:background="#000000"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/sizeCaption"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:textColor="@color/pokedexInkDim"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>
