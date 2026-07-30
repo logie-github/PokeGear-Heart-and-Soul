@@ -55,6 +55,23 @@
                     android:layout_weight="1"
                     android:layout_height="1dp" />
 
+                <!-- footprint box: square, sized/positioned in code to exactly match the height
+                     and vertical position of the weight box below (see populateInfo()) -->
+                <FrameLayout
+                    android:id="@+id/detailFootprintBox"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/pokedex_card_bg">
+
+                    <ImageView
+                        android:id="@+id/detailFootprint"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null" />
+                </FrameLayout>
+
                 <!-- id + vitals cards: 75% of the remaining width (weight 3 of 4), same width as
                      each other - doubled font sizes, content right-aligned within each card -->
                 <LinearLayout
@@ -64,6 +81,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/detailIdCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -92,51 +110,29 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/detailVitalsCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:background="@drawable/pokedex_card_bg"
+                        android:padding="10dp">
 
-                        <!-- footprint box: square, directly to the left of the weight box -->
-                        <FrameLayout
-                            android:id="@+id/detailFootprintBox"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/pokedex_card_bg">
-
-                            <ImageView
-                                android:id="@+id/detailFootprint"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:layout_gravity="center"
-                                android:contentDescription="@null" />
-                        </FrameLayout>
+                        <TextView
+                            android:id="@+id/detailHeightWeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/pokedexInk"
+                            android:textStyle="bold"
+                            android:textSize="28sp" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:id="@+id/detailTypeChips"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:background="@drawable/pokedex_card_bg"
-                            android:padding="10dp">
-
-                            <TextView
-                                android:id="@+id/detailHeightWeight"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:textColor="@color/pokedexInk"
-                                android:textStyle="bold"
-                                android:textSize="28sp" />
-
-                            <LinearLayout
-                                android:id="@+id/detailTypeChips"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="end"
-                                android:layout_marginTop="6dp" />
-                        </LinearLayout>
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            android:layout_marginTop="6dp" />
                     </LinearLayout>
                 </LinearLayout>
 

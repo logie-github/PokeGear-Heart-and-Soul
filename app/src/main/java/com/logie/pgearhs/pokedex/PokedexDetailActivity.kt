@@ -182,6 +182,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             )
             crisp(footprint)
             footprintBox.visibility = View.VISIBLE
+            alignFootprintBoxToVitalsCard(footprintBox)
         } catch (e: java.io.IOException) {
             // not every species has a footprint asset
             footprintBox.visibility = View.GONE
@@ -192,6 +193,27 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
         findViewById<TextView>(R.id.detailPokedexEntry).text =
             entry.pokedexEntry.replace(entry.name, entry.displayName)
+    }
+
+    // Sizes the footprint box to a perfect square matching the vitals card's real
+    // (font-dependent) height, and offsets it down to sit level with that card - not the id
+    // card above it - since wrap_content heights aren't known until after layout.
+    private fun alignFootprintBoxToVitalsCard(footprintBox: View) {
+        val idCard = findViewById<View>(R.id.detailIdCard)
+        val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
+        footprintBox.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val h = vitalsCard.height
+                if (h <= 0 || idCard.height <= 0) return
+                footprintBox.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val topOffset = idCard.height + (idCard.layoutParams as LinearLayout.LayoutParams).bottomMargin
+                val lp = footprintBox.layoutParams as LinearLayout.LayoutParams
+                lp.width = h
+                lp.height = h
+                lp.topMargin = topOffset
+                footprintBox.layoutParams = lp
+            }
+        })
     }
 
     // ===================== AREA =====================
