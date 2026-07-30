@@ -11,6 +11,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -84,23 +85,42 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         return "pokedex_chrome/tabs/tab_${name}_$suffix.png"
     }
 
+    // Real native pixel widths of each tab's crop (see pokedex_chrome/tabs/) - these sum to
+    // exactly 240, the real HGSS tab bar's full native width, so sizing every tab proportionally
+    // to these always reproduces the real bar's proportions with the row filling the screen
+    // exactly - no scrolling, and the trailing ▶ baked into the SIZE crop never runs off the edge.
+    private val tabNativeWidths = mapOf(
+        Tab.INFO to 46, Tab.AREA to 38, Tab.STATS to 46,
+        Tab.EVO to 34, Tab.CRY to 30, Tab.SIZE to 46
+    )
+    private val tabNativeHeight = 16
+
     private fun buildTabBar(): Map<Tab, ImageView> {
         val bar = findViewById<LinearLayout>(R.id.tabBar)
-        val density = resources.displayMetrics.density
         val map = mutableMapOf<Tab, ImageView>()
         for (tab in Tab.entries) {
             val iv = ImageView(this).apply {
-                adjustViewBounds = true
-                scaleType = ImageView.ScaleType.FIT_CENTER
-                // 40dp = 32dp * 1.25 - scales the whole real crop (background shading included)
-                // up together instead of padding around it with a flat color that can't match
-                // the gradient baked into the image.
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (40 * density).toInt())
+                scaleType = ImageView.ScaleType.FIT_XY
                 setOnClickListener { showTab(tab) }
             }
-            bar.addView(iv)
+            bar.addView(iv, LinearLayout.LayoutParams(0, 0))
             map[tab] = iv
         }
+        bar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val barWidth = bar.width
+                if (barWidth <= 0) return
+                bar.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val scale = barWidth / 240f
+                for (tab in Tab.entries) {
+                    val nativeW = tabNativeWidths.getValue(tab)
+                    map.getValue(tab).layoutParams = LinearLayout.LayoutParams(
+                        (nativeW * scale).toInt(), (tabNativeHeight * scale).toInt()
+                    )
+                }
+                bar.requestLayout()
+            }
+        })
         return map
     }
 

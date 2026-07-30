@@ -10,19 +10,16 @@
     android:background="@drawable/pokedex_grid_bg">
 
     <!-- Tab bar: ◀ INFO AREA STATS EVO CRY SIZE ▶ - flush against the real top/left/right edges
-         of the screen, full width, square corners, like the real chrome (no card margin/rounding). -->
-    <HorizontalScrollView
+         of the screen, full width, square corners, like the real chrome (no card margin/rounding).
+         No scroll view: each tab is sized in Kotlin to its real proportional share of the real
+         240px-wide bar, so the whole row - including the trailing ▶ baked into the SIZE crop -
+         always exactly fits the screen width instead of overflowing off the edge. -->
+    <LinearLayout
+        android:id="@+id/tabBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/tabBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/pokedexRedDeep" />
-    </HorizontalScrollView>
+        android:orientation="horizontal"
+        android:background="@color/pokedexRedDeep" />
 
     <FrameLayout
         android:layout_width="match_parent"
