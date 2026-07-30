@@ -39,7 +39,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     private var allEntries: List<PokedexEntry> = emptyList()
     private var cryPlayer: MediaPlayer? = null
 
-    private lateinit var tabViews: Map<Tab, TextView>
+    private lateinit var tabViews: Map<Tab, ImageView>
     private lateinit var contentViews: Map<Tab, View>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,35 +75,37 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
     // ===================== tab bar =====================
 
-    private fun buildTabBar(): Map<Tab, TextView> {
+    // Real tab-label pixel art, cropped straight out of the decoded HGSS_tilemap_*_screen.bin
+    // screenshots (see pokedex_chrome/tabs/) - not re-typed text. AREA has no real "active"
+    // screenshot anywhere in this decomp, so it only ever shows its real inactive-pink crop.
+    private fun tabAsset(tab: Tab, active: Boolean): String {
+        val name = tab.name.lowercase()
+        val suffix = if (active && tab != Tab.AREA) "active" else "inactive"
+        return "pokedex_chrome/tabs/tab_${name}_$suffix.png"
+    }
+
+    private fun buildTabBar(): Map<Tab, ImageView> {
         val bar = findViewById<LinearLayout>(R.id.tabBar)
-        val labels = mapOf(
-            Tab.INFO to R.string.pokedex_tab_info, Tab.AREA to R.string.pokedex_tab_area,
-            Tab.STATS to R.string.pokedex_tab_stats, Tab.EVO to R.string.pokedex_tab_evo,
-            Tab.CRY to R.string.pokedex_tab_cry, Tab.SIZE to R.string.pokedex_tab_size
-        )
-        val map = mutableMapOf<Tab, TextView>()
-        for ((tab, labelRes) in labels) {
-            val tv = TextView(this, null, 0, R.style.PokedexTab).apply {
-                text = getString(labelRes)
+        val density = resources.displayMetrics.density
+        val map = mutableMapOf<Tab, ImageView>()
+        for (tab in Tab.entries) {
+            val iv = ImageView(this).apply {
+                adjustViewBounds = true
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (32 * density).toInt())
                 setOnClickListener { showTab(tab) }
             }
-            bar.addView(tv)
-            map[tab] = tv
+            bar.addView(iv)
+            map[tab] = iv
         }
         return map
     }
 
     private fun showTab(tab: Tab) {
         contentViews.forEach { (t, view) -> view.visibility = if (t == tab) View.VISIBLE else View.GONE }
-        tabViews.forEach { (t, view) ->
-            if (t == tab) {
-                view.setBackgroundResource(R.drawable.pokedex_tab_active_bg)
-                view.setTextColor(getColorCompat(R.color.pokedexRedDeep))
-            } else {
-                view.background = null
-                view.setTextColor(getColorCompat(R.color.pokedexPink))
-            }
+        tabViews.forEach { (t, iv) ->
+            iv.setImageBitmap(assets.open(tabAsset(t, t == tab)).use { BitmapFactory.decodeStream(it) })
+            crisp(iv)
         }
         if (tab == Tab.CRY) playCry() else cryPlayer?.let { it.pause() }
     }
