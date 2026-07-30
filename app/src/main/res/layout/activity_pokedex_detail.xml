@@ -49,7 +49,8 @@
                     android:layout_marginEnd="10dp"
                     android:contentDescription="@null" />
 
-                <!-- id + vitals cards: half the screen width, not the whole remaining space -->
+                <!-- id + vitals cards: doubled back to the full remaining width (touching the
+                     right edge), doubled font sizes, content right-aligned within each card -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -69,17 +70,19 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/pokedex_card_header_bg"
                             android:padding="8dp"
+                            android:gravity="end"
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:textSize="32sp" />
 
                         <TextView
                             android:id="@+id/detailCategory"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="8dp"
+                            android:gravity="end"
                             android:textColor="@color/pokedexInkDim"
-                            android:textSize="13sp" />
+                            android:textSize="26sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -93,25 +96,20 @@
                             android:id="@+id/detailHeightWeight"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="end"
                             android:textColor="@color/pokedexInk"
                             android:textStyle="bold"
-                            android:textSize="14sp" />
+                            android:textSize="28sp" />
 
                         <LinearLayout
                             android:id="@+id/detailTypeChips"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
+                            android:gravity="end"
                             android:layout_marginTop="6dp" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <!-- empty spacer: matches the id/vitals column's weight so together they split
-                     the remaining width 50/50, keeping the cards to about half the screen -->
-                <View
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="1dp" />
             </LinearLayout>
 
             <View
