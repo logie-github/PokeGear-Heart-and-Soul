@@ -174,6 +174,19 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         findViewById<TextView>(R.id.detailHeightWeight).text =
             getString(R.string.pokedex_height_weight_format, entry.heightM, entry.weightKg)
 
+        val footprintBox = findViewById<View>(R.id.detailFootprintBox)
+        try {
+            val footprint = findViewById<ImageView>(R.id.detailFootprint)
+            footprint.setImageBitmap(
+                assets.open("pokemon/${entry.assetFolder}/footprint.png").use { BitmapFactory.decodeStream(it) }
+            )
+            crisp(footprint)
+            footprintBox.visibility = View.VISIBLE
+        } catch (e: java.io.IOException) {
+            // not every species has a footprint asset
+            footprintBox.visibility = View.GONE
+        }
+
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
         entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
 
