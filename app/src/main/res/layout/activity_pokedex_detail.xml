@@ -109,28 +109,29 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <ScrollView
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="8dp">
+                android:layout_weight="1" />
 
-                <LinearLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/pokedex_card_bg"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/detailPokedexEntry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/pokedex_card_bg"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:id="@+id/detailPokedexEntry"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingExtra="3dp"
-                        android:textColor="@color/pokedexInk"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </ScrollView>
+                    android:lineSpacingExtra="3dp"
+                    android:minLines="4"
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    android:textColor="@color/pokedexInk"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- ===================== STATS ===================== -->
