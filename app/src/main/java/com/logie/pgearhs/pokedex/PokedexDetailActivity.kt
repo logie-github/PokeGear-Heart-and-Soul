@@ -92,7 +92,10 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             val iv = ImageView(this).apply {
                 adjustViewBounds = true
                 scaleType = ImageView.ScaleType.FIT_CENTER
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (32 * density).toInt())
+                // 40dp = 32dp * 1.25 - scales the whole real crop (background shading included)
+                // up together instead of padding around it with a flat color that can't match
+                // the gradient baked into the image.
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (40 * density).toInt())
                 setOnClickListener { showTab(tab) }
             }
             bar.addView(iv)
