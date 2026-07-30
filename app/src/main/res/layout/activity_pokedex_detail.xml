@@ -130,7 +130,7 @@
                     android:maxLines="4"
                     android:ellipsize="end"
                     android:textColor="@color/pokedexInk"
-                    android:textSize="14sp" />
+                    android:textSize="28sp" />
             </LinearLayout>
         </LinearLayout>
 
