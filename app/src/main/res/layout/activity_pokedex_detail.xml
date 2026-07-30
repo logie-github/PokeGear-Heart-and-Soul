@@ -43,11 +43,17 @@
 
                 <ImageView
                     android:id="@+id/detailSprite"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="144dp"
+                    android:layout_height="144dp"
                     android:layout_gravity="top|center_horizontal"
                     android:layout_marginEnd="10dp"
                     android:contentDescription="@null" />
+
+                <!-- empty 25% gap now sits before the cards, pushing them to the right edge -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="1dp" />
 
                 <!-- id + vitals cards: 75% of the remaining width (weight 3 of 4) - doubled font
                      sizes, content right-aligned within each card -->
@@ -111,11 +117,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- remaining 25% of that width left empty -->
-                <View
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="1dp" />
             </LinearLayout>
 
             <View
