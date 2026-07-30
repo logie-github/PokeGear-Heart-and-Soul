@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -196,21 +197,18 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     }
 
     // Sizes the footprint box to a perfect square matching the vitals card's real
-    // (font-dependent) height, and offsets it down to sit level with that card - not the id
-    // card above it - since wrap_content heights aren't known until after layout.
+    // (font-dependent) height, since that wrap_content height isn't known until after layout.
+    // Vertical position is handled by layout_gravity="end|bottom" in the XML.
     private fun alignFootprintBoxToVitalsCard(footprintBox: View) {
-        val idCard = findViewById<View>(R.id.detailIdCard)
         val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
         footprintBox.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val h = vitalsCard.height
-                if (h <= 0 || idCard.height <= 0) return
+                if (h <= 0) return
                 footprintBox.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val topOffset = idCard.height + (idCard.layoutParams as LinearLayout.LayoutParams).bottomMargin
-                val lp = footprintBox.layoutParams as LinearLayout.LayoutParams
+                val lp = footprintBox.layoutParams as FrameLayout.LayoutParams
                 lp.width = h
                 lp.height = h
-                lp.topMargin = topOffset
                 footprintBox.layoutParams = lp
             }
         })

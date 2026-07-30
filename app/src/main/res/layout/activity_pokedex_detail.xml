@@ -49,27 +49,31 @@
                     android:layout_marginEnd="10dp"
                     android:contentDescription="@null" />
 
-                <!-- empty 25% gap now sits before the cards, pushing them to the right edge -->
-                <View
+                <!-- empty 25% gap now sits before the cards, pushing them to the right edge - the
+                     footprint box lives inside this gap (anchored to its bottom-end corner) so it
+                     no longer steals width from the id/vitals column below -->
+                <FrameLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="1dp" />
+                    android:layout_height="match_parent">
 
-                <!-- footprint box: square, sized/positioned in code to exactly match the height
-                     and vertical position of the weight box below (see populateInfo()) -->
-                <FrameLayout
-                    android:id="@+id/detailFootprintBox"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/pokedex_card_bg">
+                    <!-- footprint box: square, sized/positioned in code to exactly match the
+                         height of the weight box it sits level with (see populateInfo()) -->
+                    <FrameLayout
+                        android:id="@+id/detailFootprintBox"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/pokedex_card_bg">
 
-                    <ImageView
-                        android:id="@+id/detailFootprint"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@null" />
+                        <ImageView
+                            android:id="@+id/detailFootprint"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
                 </FrameLayout>
 
                 <!-- id + vitals cards: 75% of the remaining width (weight 3 of 4), same width as
@@ -97,7 +101,9 @@
                             android:gravity="end"
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
-                            android:textSize="28sp" />
+                            android:textSize="28sp"
+                            android:singleLine="true"
+                            android:ellipsize="end" />
 
                         <TextView
                             android:id="@+id/detailCategory"
