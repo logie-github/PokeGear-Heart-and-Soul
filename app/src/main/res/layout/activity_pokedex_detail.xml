@@ -42,12 +42,14 @@
                 android:orientation="horizontal">
 
                 <!-- sprite + footprint now share one flexible region (sprite + the former empty
-                     gap merged) so the sprite can sit centered in all the space left of the
-                     cards, instead of flush against the left edge. wrap_content + weight means
-                     the sprite's own 144dp is measured first, then the same proportional "extra"
-                     space as before is added around it - the id/vitals column's width is
-                     unaffected. -->
+                     gap merged). wrap_content + weight means the sprite's own 144dp is measured
+                     first, then the same proportional "extra" space as before is added around it
+                     - the id/vitals column's width is unaffected. The sprite is centered in code
+                     (see populateInfo()) between the left edge and the footprint box specifically,
+                     not across this whole region, since the footprint's width isn't known until
+                     it's sized to match the vitals card. -->
                 <FrameLayout
+                    android:id="@+id/detailLeftArea"
                     android:layout_width="wrap_content"
                     android:layout_weight="0.325"
                     android:layout_height="match_parent"
@@ -57,7 +59,7 @@
                         android:id="@+id/detailSprite"
                         android:layout_width="144dp"
                         android:layout_height="144dp"
-                        android:layout_gravity="top|center_horizontal"
+                        android:layout_gravity="top|start"
                         android:contentDescription="@null" />
 
                     <!-- footprint box: square, sized/positioned in code to exactly match the

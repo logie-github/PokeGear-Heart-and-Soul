@@ -176,18 +176,20 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             getString(R.string.pokedex_height_weight_format, entry.heightM, entry.weightKg)
 
         val footprintBox = findViewById<View>(R.id.detailFootprintBox)
-        try {
+        val hasFootprint = try {
             val footprint = findViewById<ImageView>(R.id.detailFootprint)
             footprint.setImageBitmap(
                 assets.open("pokemon/${entry.assetFolder}/footprint.png").use { BitmapFactory.decodeStream(it) }
             )
             crisp(footprint)
             footprintBox.visibility = View.VISIBLE
-            alignFootprintBoxToVitalsCard(footprintBox)
+            true
         } catch (e: java.io.IOException) {
             // not every species has a footprint asset
             footprintBox.visibility = View.GONE
+            false
         }
+        layoutSpriteAndFootprint(footprintBox, hasFootprint)
 
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
         entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
@@ -197,19 +199,33 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
     }
 
     // Sizes the footprint box to a perfect square matching the vitals card's real
-    // (font-dependent) height, since that wrap_content height isn't known until after layout.
-    // Vertical position is handled by layout_gravity="end|bottom" in the XML.
-    private fun alignFootprintBoxToVitalsCard(footprintBox: View) {
+    // (font-dependent) height, since that wrap_content height isn't known until after layout,
+    // then centers the sprite specifically between the left edge and that footprint box - not
+    // across the whole left region, which would leave room reserved for the footprint unused.
+    private fun layoutSpriteAndFootprint(footprintBox: View, hasFootprint: Boolean) {
+        val leftArea = findViewById<View>(R.id.detailLeftArea)
+        val sprite = findViewById<View>(R.id.detailSprite)
         val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
-        footprintBox.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        leftArea.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                val h = vitalsCard.height
-                if (h <= 0) return
-                footprintBox.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val lp = footprintBox.layoutParams as FrameLayout.LayoutParams
-                lp.width = h
-                lp.height = h
-                footprintBox.layoutParams = lp
+                if (leftArea.width <= 0 || sprite.width <= 0) return
+                if (hasFootprint && vitalsCard.height <= 0) return
+                leftArea.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                var reservedForFootprint = 0
+                if (hasFootprint) {
+                    val h = vitalsCard.height
+                    val footprintLp = footprintBox.layoutParams as FrameLayout.LayoutParams
+                    footprintLp.width = h
+                    footprintLp.height = h
+                    footprintBox.layoutParams = footprintLp
+                    reservedForFootprint = h + footprintLp.marginEnd
+                }
+
+                val availableForSprite = leftArea.width - leftArea.paddingEnd - reservedForFootprint
+                val spriteLp = sprite.layoutParams as FrameLayout.LayoutParams
+                spriteLp.marginStart = ((availableForSprite - sprite.width) / 2).coerceAtLeast(0)
+                sprite.layoutParams = spriteLp
             }
         })
     }
