@@ -54,7 +54,7 @@
                      no longer steals width from the id/vitals column below -->
                 <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.325"
                     android:layout_height="match_parent">
 
                     <!-- footprint box: square, sized/positioned in code to exactly match the
@@ -76,11 +76,12 @@
                     </FrameLayout>
                 </FrameLayout>
 
-                <!-- id + vitals cards: 75% of the remaining width (weight 3 of 4), same width as
-                     each other - doubled font sizes, content right-aligned within each card -->
+                <!-- id + vitals cards: 67.5% of the remaining width (10% narrower than before),
+                     same width as each other - doubled font sizes, content right-aligned within
+                     each card -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="0.675"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
