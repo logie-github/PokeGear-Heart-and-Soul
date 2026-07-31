@@ -41,21 +41,24 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/detailSprite"
-                    android:layout_width="144dp"
-                    android:layout_height="144dp"
-                    android:layout_gravity="top|center_horizontal"
-                    android:layout_marginEnd="10dp"
-                    android:contentDescription="@null" />
-
-                <!-- empty 25% gap now sits before the cards, pushing them to the right edge - the
-                     footprint box lives inside this gap (anchored to its bottom-end corner) so it
-                     no longer steals width from the id/vitals column below -->
+                <!-- sprite + footprint now share one flexible region (sprite + the former empty
+                     gap merged) so the sprite can sit centered in all the space left of the
+                     cards, instead of flush against the left edge. wrap_content + weight means
+                     the sprite's own 144dp is measured first, then the same proportional "extra"
+                     space as before is added around it - the id/vitals column's width is
+                     unaffected. -->
                 <FrameLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="0.325"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:paddingEnd="8dp">
+
+                    <ImageView
+                        android:id="@+id/detailSprite"
+                        android:layout_width="144dp"
+                        android:layout_height="144dp"
+                        android:layout_gravity="top|center_horizontal"
+                        android:contentDescription="@null" />
 
                     <!-- footprint box: square, sized/positioned in code to exactly match the
                          height of the weight box it sits level with (see populateInfo()) -->
@@ -64,7 +67,6 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="end|bottom"
-                        android:layout_marginEnd="8dp"
                         android:background="@drawable/pokedex_card_bg">
 
                         <ImageView
