@@ -41,11 +41,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- sprite region: 50% of the row, sprite centered in it -->
+                <!-- sprite region: 32.5% of the row, sprite centered in it -->
                 <FrameLayout
                     android:id="@+id/detailLeftArea"
                     android:layout_width="wrap_content"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.325"
                     android:layout_height="match_parent"
                     android:paddingEnd="8dp">
 
@@ -57,12 +57,12 @@
                         android:contentDescription="@null" />
                 </FrameLayout>
 
-                <!-- id / footprint / vitals cards: 50% of the row, same width as each other,
+                <!-- id / footprint / vitals cards: 67.5% of the row, same width as each other,
                      content left-aligned, each with a thin red accent matching the real HGSS
                      card chrome -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.675"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
