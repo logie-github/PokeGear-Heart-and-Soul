@@ -41,17 +41,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- sprite + footprint now share one flexible region (sprite + the former empty
-                     gap merged). wrap_content + weight means the sprite's own 144dp is measured
-                     first, then the same proportional "extra" space as before is added around it
-                     - the id/vitals column's width is unaffected. The sprite is centered in code
-                     (see populateInfo()) between the left edge and the footprint box specifically,
-                     not across this whole region, since the footprint's width isn't known until
-                     it's sized to match the vitals card. -->
+                <!-- sprite region: 50% of the row, sprite centered in it -->
                 <FrameLayout
                     android:id="@+id/detailLeftArea"
                     android:layout_width="wrap_content"
-                    android:layout_weight="0.325"
+                    android:layout_weight="0.5"
                     android:layout_height="match_parent"
                     android:paddingEnd="8dp">
 
@@ -61,15 +55,75 @@
                         android:layout_height="144dp"
                         android:layout_gravity="top|start"
                         android:contentDescription="@null" />
+                </FrameLayout>
 
-                    <!-- footprint box: square, sized/positioned in code to exactly match the
-                         height of the weight box it sits level with (see populateInfo()) -->
+                <!-- id / footprint / vitals cards: 50% of the row, same width as each other,
+                     content left-aligned, each with a thin red accent matching the real HGSS
+                     card chrome -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/detailIdCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/pokedex_card_bg"
+                        android:layout_marginBottom="8dp">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/pokedexRed" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/detailIdHeader"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:gravity="start"
+                                android:textColor="@color/pokedexInk"
+                                android:textStyle="bold"
+                                android:textSize="28sp"
+                                android:singleLine="true"
+                                android:ellipsize="end" />
+
+                            <TextView
+                                android:id="@+id/detailCategory"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:gravity="start"
+                                android:textColor="@color/pokedexInkDim"
+                                android:textSize="26sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- footprint box: same square size as before, now directly under the name
+                         box, with a top accent stripe the same thickness as the name box's side
+                         accent -->
                     <FrameLayout
                         android:id="@+id/detailFootprintBox"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_gravity="end|bottom"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="8dp"
                         android:background="@drawable/pokedex_card_bg">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_gravity="top"
+                            android:background="@color/pokedexRed" />
 
                         <ImageView
                             android:id="@+id/detailFootprint"
@@ -78,72 +132,80 @@
                             android:layout_gravity="center"
                             android:contentDescription="@null" />
                     </FrameLayout>
-                </FrameLayout>
-
-                <!-- id + vitals cards: 67.5% of the remaining width (10% narrower than before),
-                     same width as each other - doubled font sizes, content right-aligned within
-                     each card -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="0.675"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:id="@+id/detailIdCard"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@drawable/pokedex_card_bg"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:id="@+id/detailIdHeader"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/pokedex_card_header_bg"
-                            android:padding="8dp"
-                            android:gravity="end"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:textSize="28sp"
-                            android:singleLine="true"
-                            android:ellipsize="end" />
-
-                        <TextView
-                            android:id="@+id/detailCategory"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"
-                            android:gravity="end"
-                            android:textColor="@color/pokedexInkDim"
-                            android:textSize="26sp" />
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/detailVitalsCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@drawable/pokedex_card_bg"
-                        android:padding="10dp">
+                        android:orientation="horizontal"
+                        android:background="@drawable/pokedex_card_bg">
 
-                        <TextView
-                            android:id="@+id/detailHeightWeight"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:textColor="@color/pokedexInk"
-                            android:textStyle="bold"
-                            android:textSize="28sp" />
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/pokedexRed" />
 
                         <LinearLayout
-                            android:id="@+id/detailTypeChips"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="end"
-                            android:layout_marginTop="6dp" />
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:text="@string/pokedex_ht_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="start"
+                                    android:textColor="@color/pokedexInk"
+                                    android:textSize="28sp" />
+
+                                <TextView
+                                    android:id="@+id/detailHeightValue"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="end"
+                                    android:textColor="@color/pokedexInk"
+                                    android:textSize="28sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:text="@string/pokedex_wt_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="start"
+                                    android:textColor="@color/pokedexInk"
+                                    android:textSize="28sp" />
+
+                                <TextView
+                                    android:id="@+id/detailWeightValue"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="end"
+                                    android:textColor="@color/pokedexInk"
+                                    android:textSize="28sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/detailTypeChips"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="end"
+                                android:layout_marginTop="6dp" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 

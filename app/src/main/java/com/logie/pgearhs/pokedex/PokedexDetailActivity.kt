@@ -172,24 +172,24 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             getString(R.string.pokedex_id_header_format, entry.nationalDexNumber, entry.displayName)
         findViewById<TextView>(R.id.detailCategory).text =
             getString(R.string.pokedex_category_format, entry.category.lowercase().replaceFirstChar(Char::uppercase))
-        findViewById<TextView>(R.id.detailHeightWeight).text =
-            getString(R.string.pokedex_height_weight_format, entry.heightM, entry.weightKg)
+        findViewById<TextView>(R.id.detailHeightValue).text =
+            getString(R.string.pokedex_height_value_format, entry.heightM)
+        findViewById<TextView>(R.id.detailWeightValue).text =
+            getString(R.string.pokedex_weight_value_format, entry.weightKg)
 
         val footprintBox = findViewById<View>(R.id.detailFootprintBox)
-        val hasFootprint = try {
+        try {
             val footprint = findViewById<ImageView>(R.id.detailFootprint)
             footprint.setImageBitmap(
                 assets.open("pokemon/${entry.assetFolder}/footprint.png").use { BitmapFactory.decodeStream(it) }
             )
             crisp(footprint)
             footprintBox.visibility = View.VISIBLE
-            true
         } catch (e: java.io.IOException) {
             // not every species has a footprint asset
             footprintBox.visibility = View.GONE
-            false
         }
-        layoutSpriteAndFootprint(footprintBox, hasFootprint)
+        centerSpriteInLeftArea()
 
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
         entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
@@ -198,31 +198,16 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             entry.pokedexEntry.replace(entry.name, entry.displayName)
     }
 
-    // Sizes the footprint box to a perfect square matching the vitals card's real
-    // (font-dependent) height, since that wrap_content height isn't known until after layout,
-    // then centers the sprite specifically between the left edge and that footprint box - not
-    // across the whole left region, which would leave room reserved for the footprint unused.
-    private fun layoutSpriteAndFootprint(footprintBox: View, hasFootprint: Boolean) {
+    // Centers the sprite across the whole left region since that width isn't known until after
+    // layout (it's sized in wrap_content+weight to keep the right column's width unaffected).
+    private fun centerSpriteInLeftArea() {
         val leftArea = findViewById<View>(R.id.detailLeftArea)
         val sprite = findViewById<View>(R.id.detailSprite)
-        val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
         leftArea.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 if (leftArea.width <= 0 || sprite.width <= 0) return
-                if (hasFootprint && vitalsCard.height <= 0) return
                 leftArea.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                var reservedForFootprint = 0
-                if (hasFootprint) {
-                    val h = vitalsCard.height
-                    val footprintLp = footprintBox.layoutParams as FrameLayout.LayoutParams
-                    footprintLp.width = h
-                    footprintLp.height = h
-                    footprintBox.layoutParams = footprintLp
-                    reservedForFootprint = h + footprintLp.marginEnd
-                }
-
-                val availableForSprite = leftArea.width - leftArea.paddingEnd - reservedForFootprint
+                val availableForSprite = leftArea.width - leftArea.paddingEnd
                 val spriteLp = sprite.layoutParams as FrameLayout.LayoutParams
                 spriteLp.marginStart = ((availableForSprite - sprite.width) / 2).coerceAtLeast(0)
                 sprite.layoutParams = spriteLp
