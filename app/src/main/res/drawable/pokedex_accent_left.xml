@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Red accent bar for a card's left edge - only the two left corners are rounded, matching
+     the pokedex_card_bg panel underneath so the accent doesn't square off its rounded corners. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/pokedexRed" />
+    <corners
+        android:topLeftRadius="8dp"
+        android:bottomLeftRadius="8dp"
+        android:topRightRadius="0dp"
+        android:bottomRightRadius="0dp" />
+</shape>

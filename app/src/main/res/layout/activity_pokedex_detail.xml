@@ -70,42 +70,31 @@
                         android:id="@+id/detailIdCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:background="@drawable/pokedex_card_bg"
                         android:layout_marginBottom="8dp">
 
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/pokedexRed" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                        <TextView
+                            android:id="@+id/detailIdHeader"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:background="@drawable/pokedex_card_header_bg"
+                            android:padding="8dp"
+                            android:gravity="start"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="28sp"
+                            android:singleLine="true"
+                            android:ellipsize="end" />
 
-                            <TextView
-                                android:id="@+id/detailIdHeader"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="8dp"
-                                android:gravity="start"
-                                android:textColor="@color/pokedexInk"
-                                android:textStyle="bold"
-                                android:textSize="28sp"
-                                android:singleLine="true"
-                                android:ellipsize="end" />
-
-                            <TextView
-                                android:id="@+id/detailCategory"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="8dp"
-                                android:gravity="start"
-                                android:textColor="@color/pokedexInkDim"
-                                android:textSize="26sp" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/detailCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:gravity="start"
+                            android:textColor="@color/pokedexInkDim"
+                            android:textSize="26sp" />
                     </LinearLayout>
 
                     <!-- footprint box: same square size as before, now directly under the name
@@ -123,7 +112,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="8dp"
                             android:layout_gravity="top"
-                            android:background="@color/pokedexRed" />
+                            android:background="@drawable/pokedex_accent_top" />
 
                         <ImageView
                             android:id="@+id/detailFootprint"
@@ -143,7 +132,7 @@
                         <View
                             android:layout_width="8dp"
                             android:layout_height="match_parent"
-                            android:background="@color/pokedexRed" />
+                            android:background="@drawable/pokedex_accent_left" />
 
                         <LinearLayout
                             android:layout_width="0dp"
