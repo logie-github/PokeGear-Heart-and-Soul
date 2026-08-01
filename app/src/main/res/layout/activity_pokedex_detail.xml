@@ -140,6 +140,15 @@
                 android:layout_marginBottom="16dp"
                 android:orientation="vertical">
 
+                <!-- type chips: left-aligned, above the vitals card -->
+                <LinearLayout
+                    android:id="@+id/detailTypeChips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="8dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -211,14 +220,6 @@
                                     android:textColor="@color/pokedexInk"
                                     android:textSize="28sp" />
                             </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/detailTypeChips"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="end"
-                                android:layout_marginTop="6dp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
