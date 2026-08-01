@@ -39,12 +39,14 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/detailTopRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:orientation="horizontal">
 
-                <!-- sprite region: ~29% of the row, sprite centered in it -->
+                <!-- sprite region: sized in code to its bare minimum (sprite + end padding) once
+                     the id column needs the extra room - see widenIdColumn() -->
                 <FrameLayout
                     android:id="@+id/detailLeftArea"
                     android:layout_width="wrap_content"
@@ -60,9 +62,10 @@
                         android:contentDescription="@null" />
                 </FrameLayout>
 
-                <!-- id / footprint cards: weight increased another 25% (1.415 -> 1.76875) -
-                     left-aligned, with a thin red accent matching the real HGSS card chrome -->
+                <!-- id / footprint cards: width set in code to exactly 1.25x its previous real
+                     measured width - see widenIdColumn() -->
                 <LinearLayout
+                    android:id="@+id/detailIdColumn"
                     android:layout_width="0dp"
                     android:layout_weight="1.76875"
                     android:layout_height="wrap_content"

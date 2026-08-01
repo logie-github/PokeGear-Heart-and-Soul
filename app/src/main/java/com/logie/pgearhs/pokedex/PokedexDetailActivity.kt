@@ -189,8 +189,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             // not every species has a footprint asset
             footprintBox.visibility = View.GONE
         }
-        centerSpriteInLeftArea()
-        sizeVitalsCardToIdCard()
+        layoutTopRow { sizeVitalsCardToIdCard() }
 
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
         entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
@@ -231,19 +230,44 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         })
     }
 
-    // Centers the sprite across the whole left region since that width isn't known until after
-    // layout (it's sized in wrap_content+weight to keep the right column's width unaffected).
-    private fun centerSpriteInLeftArea() {
+    // Widens the id/footprint column to exactly 1.25x its real measured width, shrinking the
+    // sprite region down to its bare minimum (sprite + end padding, no extra breathing room) to
+    // make room - clamped so the sprite is never cut into. Then centers the sprite in whatever
+    // room is left, and finally runs onDone() (see sizeVitalsCardToIdCard()), since that depends
+    // on the id column's FINAL width, not its initial weight-based one.
+    private fun layoutTopRow(onDone: () -> Unit) {
+        val topRow = findViewById<View>(R.id.detailTopRow)
         val leftArea = findViewById<View>(R.id.detailLeftArea)
         val sprite = findViewById<View>(R.id.detailSprite)
-        leftArea.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        val idColumn = findViewById<View>(R.id.detailIdColumn)
+        var widthApplied = false
+        topRow.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if (leftArea.width <= 0 || sprite.width <= 0) return
-                leftArea.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                if (!widthApplied) {
+                    if (idColumn.width <= 0 || leftArea.width <= 0 || sprite.width <= 0 || topRow.width <= 0) return
+                    widthApplied = true
+                    val naturalLeftAreaWidth = sprite.width + leftArea.paddingEnd
+                    val target = (idColumn.width * 1.25f).toInt()
+                        .coerceAtMost(topRow.width - naturalLeftAreaWidth)
+
+                    val leftLp = leftArea.layoutParams as LinearLayout.LayoutParams
+                    leftLp.width = naturalLeftAreaWidth
+                    leftLp.weight = 0f
+                    leftArea.layoutParams = leftLp
+
+                    val colLp = idColumn.layoutParams as LinearLayout.LayoutParams
+                    colLp.width = target
+                    colLp.weight = 0f
+                    idColumn.layoutParams = colLp
+                    return // wait for the layout pass these changes trigger
+                }
+                if (leftArea.width <= 0) return
+                topRow.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val availableForSprite = leftArea.width - leftArea.paddingEnd
                 val spriteLp = sprite.layoutParams as FrameLayout.LayoutParams
                 spriteLp.marginStart = ((availableForSprite - sprite.width) / 2).coerceAtLeast(0)
                 sprite.layoutParams = spriteLp
+                onDone()
             }
         })
     }
