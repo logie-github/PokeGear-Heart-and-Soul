@@ -312,18 +312,18 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         map.setImageBitmap(assets.open("pokedex_chrome/johto_region_map.png").use { BitmapFactory.decodeStream(it) })
         crisp(map)
 
-        val markers = AreaMarkerRepository.get(this, entry.speciesConst)
+        val indicators = AreaMarkerRepository.get(this, entry.speciesConst)
         val messageView = findViewById<TextView>(R.id.areaMessage)
         val layer = findViewById<FrameLayout>(R.id.areaMarkerLayer)
         layer.removeAllViews()
 
-        if (markers.isEmpty()) {
+        if (indicators.isEmpty()) {
             messageView.text = getString(R.string.pokedex_area_no_wild, entry.displayName)
             addAreaOverlaySprite(layer, map, "pokedex_chrome/area/area_unknown.png", widthNative = 32, heightNative = 96)
             return
         }
 
-        val locationNames = markers.map { it.mapsec.removePrefix("MAPSEC_").split("_")
+        val locationNames = indicators.map { it.mapsec.removePrefix("MAPSEC_").split("_")
             .joinToString(" ") { w -> w.lowercase().replaceFirstChar(Char::uppercase) } }
             .distinct()
         messageView.text = getString(R.string.pokedex_area_found_in_format, locationNames.joinToString(", "))
@@ -334,18 +334,32 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
                 map.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val scale = map.width.toFloat() / AREA_MAP_NATIVE_SIZE
                 val markerSize = (AREA_MARKER_NATIVE_SIZE * scale).toInt()
-                markers.forEach { marker ->
-                    val dot = ImageView(this@PokedexDetailActivity).apply {
-                        setImageBitmap(
-                            assets.open("pokedex_chrome/area/area_marker.png").use { BitmapFactory.decodeStream(it) }
-                        )
-                        (drawable as? BitmapDrawable)?.isFilterBitmap = false
-                        layoutParams = FrameLayout.LayoutParams(markerSize, markerSize).apply {
-                            leftMargin = (marker.x * scale - markerSize / 2f).toInt()
-                            topMargin = (marker.y * scale - markerSize / 2f).toInt()
+                // glows first so marker dots always draw on top of them
+                indicators.sortedBy { it.type != "glow" }.forEach { indicator ->
+                    val view = if (indicator.type == "glow") {
+                        View(this@PokedexDetailActivity).apply {
+                            setBackgroundResource(R.drawable.pokedex_area_glow)
+                            layoutParams = FrameLayout.LayoutParams(
+                                (indicator.rectW * scale).toInt().coerceAtLeast(1),
+                                (indicator.rectH * scale).toInt().coerceAtLeast(1)
+                            ).apply {
+                                leftMargin = (indicator.rectX * scale).toInt()
+                                topMargin = (indicator.rectY * scale).toInt()
+                            }
+                        }
+                    } else {
+                        ImageView(this@PokedexDetailActivity).apply {
+                            setImageBitmap(
+                                assets.open("pokedex_chrome/area/area_marker.png").use { BitmapFactory.decodeStream(it) }
+                            )
+                            (drawable as? BitmapDrawable)?.isFilterBitmap = false
+                            layoutParams = FrameLayout.LayoutParams(markerSize, markerSize).apply {
+                                leftMargin = (indicator.x * scale - markerSize / 2f).toInt()
+                                topMargin = (indicator.y * scale - markerSize / 2f).toInt()
+                            }
                         }
                     }
-                    layer.addView(dot)
+                    layer.addView(view)
                 }
             }
         })

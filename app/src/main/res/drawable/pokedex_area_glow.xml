@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Real HGSS area-glow color, sampled from graphics/pokedex/area_glow.png (the real tileset
+     the game uses to highlight town/route sections on the Pokedex AREA screen), simplified to a
+     static translucent rounded rectangle rather than the game's animated edge/corner tile
+     compositing + flash. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#99FF7373" />
+    <stroke android:width="1dp" android:color="#CCFF7373" />
+    <corners android:radius="3dp" />
+</shape>
