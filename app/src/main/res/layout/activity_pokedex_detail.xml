@@ -358,12 +358,12 @@
             android:gravity="center"
             android:visibility="gone">
 
-            <!-- real johto_region_map.png at 1.5x native (128px -> 192dp) with a FrameLayout
+            <!-- real johto_region_map.png at 2x native (128px -> 256dp) with a FrameLayout
                  overlay for real per-species marker dots, positioned in code
                  (see populateArea()/AreaMarkerRepository) -->
             <FrameLayout
-                android:layout_width="192dp"
-                android:layout_height="192dp"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
                 android:background="@drawable/pokedex_card_bg"
                 android:padding="6dp">
 
