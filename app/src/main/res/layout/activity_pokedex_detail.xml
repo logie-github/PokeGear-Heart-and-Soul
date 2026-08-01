@@ -129,8 +129,8 @@
 
             <!-- bottom stack: vitals card sits directly above the description card, both pinned
                  near the bottom of the screen as one unit, independent of the id/footprint
-                 column above. The vitals card keeps its original width/height unchanged (same
-                 spacer + weight split as the sprite/column row above), just right-aligned to
+                 column above. The vitals card is sized to 3/4 of the name box's width (name box
+                 = 1.415/1.7075 of the row, so vitals card = 0.75x that share), right-aligned to
                  match the description card's right edge. -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -147,13 +147,13 @@
 
                     <View
                         android:layout_width="0dp"
-                        android:layout_weight="0.2925"
+                        android:layout_weight="0.3785"
                         android:layout_height="1dp" />
 
                     <LinearLayout
                         android:id="@+id/detailVitalsCard"
                         android:layout_width="0dp"
-                        android:layout_weight="0.7075"
+                        android:layout_weight="0.6215"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:background="@drawable/pokedex_card_bg">
