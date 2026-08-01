@@ -226,6 +226,34 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
                 val chipsLp = typeChips.layoutParams as LinearLayout.LayoutParams
                 chipsLp.marginStart = vitalsCard.left
                 typeChips.layoutParams = chipsLp
+                fillDottedDivider()
+            }
+        })
+    }
+
+    // Fills the HT/WT divider with real small dot Views spaced to exactly fill its final width -
+    // a GradientDrawable dashed stroke didn't reliably render across devices/hardware
+    // acceleration, so this builds the dots as plain Views instead.
+    private fun fillDottedDivider() {
+        val divider = findViewById<LinearLayout>(R.id.detailDottedDivider)
+        divider.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (divider.width <= 0) return
+                divider.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val density = resources.displayMetrics.density
+                val dotSize = (4 * density).toInt()
+                val gap = (5 * density).toInt()
+                val count = (divider.width / (dotSize + gap)).coerceAtLeast(1)
+                divider.removeAllViews()
+                for (i in 0 until count) {
+                    val dot = View(this@PokedexDetailActivity).apply {
+                        setBackgroundResource(R.drawable.pokedex_dot)
+                        layoutParams = LinearLayout.LayoutParams(dotSize, dotSize).apply {
+                            if (i < count - 1) marginEnd = gap
+                        }
+                    }
+                    divider.addView(dot)
+                }
             }
         })
     }

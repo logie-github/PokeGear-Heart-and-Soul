@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A single small round dot, used to build the HT/WT divider as a row of real Views
+     (see fillDottedDivider() in PokedexDetailActivity) instead of a drawn dashed stroke. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/pokedexGridline" />
+</shape>
