@@ -36,7 +36,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
         // Native pixel size of johto_region_map.png / the coordinate space AreaMarkerRepository's
         // marker x/y values are given in - see build_area_markers.py.
-        const val AREA_MAP_NATIVE_SIZE = 128
+        const val AREA_MAP_NATIVE_SIZE = 256
         const val AREA_MARKER_NATIVE_SIZE = 16
     }
 

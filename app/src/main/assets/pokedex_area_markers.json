@@ -8,13 +8,40 @@
       "src/data/region_map/region_map_sections.json (gRegionMapEntries' JSON source - the real, authoritative, hand-authored per-MAPSEC x/y/width/height table the game itself uses for marker placement)"
     ],
     "notes": [
-      "x/y (and rectX/Y/W/H for glow entries) are pixel coordinates/dimensions on the bundled 128x128 johto_region_map.png, at a CONFIRMED-exact native scale of 8px per MAPSEC tile with zero offset (pixel = tile*8) - verified by an exact 0.0% pixel-diff reconstruction of the real image from its own tileset in plain raster order, and by real gRegionMapEntries positions landing dead-on their baked map features. See build_area_markers.py's module docstring for the full verification.",
-      "This image only shows the western ~16 columns of the full 28-wide MAPSEC grid - sections entirely past that (e.g. Blackthorn City, New Bark Town, Mt Silver, Victory Road) are correctly absent here, since they're not visible on this specific map graphic either.",
+      "x/y (and rectX/Y/W/H for glow entries) are pixel coordinates/dimensions on the bundled 256x256 johto_region_map.png, at native scale 8px/MAPSEC-tile with zero offset (pixel = tile*8). This PNG is a from-scratch reconstruction of the real in-game tilemap (johto_region_map.bin + .8bpp + palette at BG_PLTT_ID(7)) - the previously-bundled 128x128 PNG was NOT the real map (naturalistic painted terrain, no road network; didn't match the real schematic HGSS Pokegear map style at all). Every gRegionMapEntries rect lands exactly on its real icon/feature on this reconstruction, with the full 28-wide MAPSEC grid fitting with no sections dropped.",
       "type=glow (towns/routes, real area_glow.png colors) vs type=marker (dungeons/special areas, real area_marker.png sprite) mirrors the real game's own two different indicator systems - see the comment block at the top of src/pokedex_area_screen.c.",
       "A species can have multiple entries (found in multiple areas)."
     ]
   },
   "markers": {
+    "SPECIES_SOLROCK": [
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      }
+    ],
+    "SPECIES_WURMPLE": [
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
+      }
+    ],
+    "SPECIES_POOCHYENA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      }
+    ],
     "SPECIES_WEEDLE": [
       {
         "mapsec": "MAPSEC_ILEX_FOREST",
@@ -47,6 +74,24 @@
         "rectY": 40,
         "rectW": 16,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
+      }
+    ],
+    "SPECIES_ZIGZAGOON": [
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
       }
     ],
     "SPECIES_RATTATA": [
@@ -57,6 +102,56 @@
         "y": 12.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
         "x": 92.0,
@@ -64,6 +159,16 @@
         "rectX": 80,
         "rectY": 88,
         "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -87,6 +192,56 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -105,6 +260,12 @@
         "y": 12.0
       },
       {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
+      },
+      {
         "mapsec": "MAPSEC_VIOLET_CITY",
         "type": "glow",
         "x": 100.0,
@@ -112,6 +273,52 @@
         "rectX": 96,
         "rectY": 32,
         "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_RALTS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SURSKIT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      }
+    ],
+    "SPECIES_SEEDOT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
         "rectH": 8
       }
     ],
@@ -141,9 +348,25 @@
     ],
     "SPECIES_GOLDEEN": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -159,6 +382,46 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -166,6 +429,16 @@
         "rectX": 88,
         "rectY": 16,
         "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
         "rectH": 8
       },
       {
@@ -181,6 +454,12 @@
         "y": 100.0
       },
       {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
+      },
+      {
         "mapsec": "MAPSEC_UNION_CAVE",
         "type": "marker",
         "x": 100.0,
@@ -188,6 +467,32 @@
       }
     ],
     "SPECIES_MAGIKARP": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
         "type": "glow",
@@ -209,9 +514,19 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -227,6 +542,16 @@
         "y": 20.0,
         "rectX": 80,
         "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
         "rectW": 8,
         "rectH": 8
       },
@@ -255,6 +580,16 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_OLIVINE_CITY",
         "type": "glow",
         "x": 52.0,
@@ -262,6 +597,176 @@
         "rectX": 48,
         "rectY": 32,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_19",
+        "type": "glow",
+        "x": 188.0,
+        "y": 104.0,
+        "rectX": 176,
+        "rectY": 96,
+        "rectW": 24,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
         "rectH": 8
       },
       {
@@ -312,6 +817,16 @@
         "rectX": 40,
         "rectY": 48,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -355,6 +870,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_47",
         "type": "glow",
         "x": 20.0,
@@ -362,6 +897,26 @@
         "rectX": 16,
         "rectY": 88,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
         "rectH": 8
       },
       {
@@ -383,10 +938,32 @@
         "y": 100.0
       },
       {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
+      },
+      {
         "mapsec": "MAPSEC_UNION_CAVE",
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       },
       {
         "mapsec": "MAPSEC_VIOLET_CITY",
@@ -399,10 +976,42 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
         "y": 92.0
+      }
+    ],
+    "SPECIES_CORPHISH": [
+      {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_CATERPIE": [
@@ -417,6 +1026,36 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_30",
@@ -437,6 +1076,12 @@
         "rectY": 40,
         "rectW": 16,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_SUNKERN": [
@@ -445,9 +1090,39 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
       }
     ],
     "SPECIES_BELLSPROUT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_31",
         "type": "glow",
@@ -489,6 +1164,18 @@
         "rectH": 8
       }
     ],
+    "SPECIES_WINGULL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_19",
+        "type": "glow",
+        "x": 188.0,
+        "y": 104.0,
+        "rectX": 176,
+        "rectY": 96,
+        "rectW": 24,
+        "rectH": 16
+      }
+    ],
     "SPECIES_TENTACOOL": [
       {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
@@ -511,6 +1198,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_OLIVINE_CITY",
         "type": "glow",
         "x": 52.0,
@@ -518,6 +1225,106 @@
         "rectX": 48,
         "rectY": 32,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_19",
+        "type": "glow",
+        "x": 188.0,
+        "y": 104.0,
+        "rectX": 176,
+        "rectY": 96,
+        "rectW": 24,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
         "rectH": 8
       },
       {
@@ -577,10 +1384,38 @@
         "y": 96.0
       },
       {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
+      },
+      {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
         "y": 92.0
+      }
+    ],
+    "SPECIES_WAILMER": [
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_TENTACRUEL": [
@@ -605,6 +1440,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_OLIVINE_CITY",
         "type": "glow",
         "x": 52.0,
@@ -612,6 +1467,96 @@
         "rectX": 48,
         "rectY": 32,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_19",
+        "type": "glow",
+        "x": 188.0,
+        "y": 104.0,
+        "rectX": 176,
+        "rectY": 96,
+        "rectW": 24,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
         "rectH": 8
       },
       {
@@ -671,6 +1616,22 @@
         "y": 96.0
       },
       {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
+      },
+      {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
@@ -678,6 +1639,32 @@
       }
     ],
     "SPECIES_POLIWAG": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ECRUTEAK_CITY",
         "type": "glow",
@@ -699,6 +1686,66 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_30",
@@ -741,6 +1788,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_RUINS_OF_ALPH",
         "type": "marker",
         "x": 52.0,
@@ -759,6 +1826,16 @@
         "y": 36.0,
         "rectX": 96,
         "rectY": 32,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
         "rectW": 8,
         "rectH": 8
       }
@@ -783,9 +1860,111 @@
         "rectY": 48,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_TAILLOW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_HOPPIP": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
@@ -798,6 +1977,36 @@
       }
     ],
     "SPECIES_PIDGEY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
@@ -857,6 +2066,16 @@
         "rectY": 32,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
       }
     ],
     "SPECIES_PICHU": [
@@ -883,6 +2102,36 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_29",
@@ -933,6 +2182,16 @@
         "rectY": 32,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
       }
     ],
     "SPECIES_KRABBY": [
@@ -1075,15 +2334,99 @@
         "y": 92.0
       }
     ],
+    "SPECIES_ELECTRIKE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_GULPIN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      }
+    ],
+    "SPECIES_MINUN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_ODDISH": [
       {
         "mapsec": "MAPSEC_ILEX_FOREST",
         "type": "marker",
         "x": 72.0,
         "y": 104.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
+      }
+    ],
+    "SPECIES_PLUSLE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_DROWZEE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_34",
         "type": "glow",
@@ -1095,6 +2438,16 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
@@ -1102,6 +2455,32 @@
       }
     ],
     "SPECIES_SANDSHREW": [
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
@@ -1116,6 +2495,12 @@
       }
     ],
     "SPECIES_GEODUDE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_CIANWOOD_CITY",
         "type": "glow",
@@ -1135,8 +2520,14 @@
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
+      },
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
       },
       {
         "mapsec": "MAPSEC_MT_MORTAR",
@@ -1151,6 +2542,22 @@
         "y": 28.0
       },
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -1161,6 +2568,16 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_CUBONE": [
@@ -1169,6 +2586,12 @@
         "type": "marker",
         "x": 100.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
       },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
@@ -1199,6 +2622,32 @@
     ],
     "SPECIES_POLIWHIRL": [
       {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ECRUTEAK_CITY",
         "type": "glow",
         "x": 84.0,
@@ -1219,6 +2668,56 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_30",
@@ -1251,6 +2750,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_RUINS_OF_ALPH",
         "type": "marker",
         "x": 52.0,
@@ -1271,13 +2790,23 @@
         "rectY": 32,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_LARVITAR": [
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -1293,12 +2822,44 @@
         "y": 76.0
       }
     ],
+    "SPECIES_SPINDA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      }
+    ],
     "SPECIES_SLUGMA": [
       {
         "mapsec": "MAPSEC_BURNED_TOWER",
         "type": "marker",
         "x": 76.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_SKARMORY": [
@@ -1317,6 +2878,16 @@
         "rectY": 8,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
       },
       {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
@@ -1365,6 +2936,16 @@
         "rectY": 80,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_HOUNDOUR": [
@@ -1375,6 +2956,16 @@
         "y": 12.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_36",
         "type": "glow",
         "x": 52.0,
@@ -1383,9 +2974,85 @@
         "rectY": 40,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SWABLU": [
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SEVIPER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_ZANGOOSE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_SPEAROW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_33",
         "type": "glow",
@@ -1394,6 +3061,46 @@
         "rectX": 56,
         "rectY": 96,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
         "rectH": 8
       }
     ],
@@ -1405,13 +3112,75 @@
         "y": 36.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
         "y": 76.0
       }
     ],
+    "SPECIES_NINCADA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
     "SPECIES_ABRA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
       {
         "mapsec": "MAPSEC_ROUTE_34",
         "type": "glow",
@@ -1430,6 +3199,48 @@
         "rectX": 40,
         "rectY": 48,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SKITTY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       }
     ],
@@ -1451,6 +3262,16 @@
     ],
     "SPECIES_EKANS": [
       {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_32",
         "type": "glow",
         "x": 60.0,
@@ -1471,6 +3292,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -1487,7 +3318,87 @@
         "y": 52.0
       }
     ],
+    "SPECIES_ILLUMISE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_VOLBEAT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_LICKITUNG": [
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_KECLEON": [
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_CARVANHA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      }
+    ],
     "SPECIES_EXEGGCUTE": [
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
         "type": "glow",
@@ -1505,6 +3416,16 @@
         "y": 20.0,
         "rectX": 80,
         "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
         "rectW": 8,
         "rectH": 8
       },
@@ -1531,6 +3452,26 @@
         "y": 4.0
       },
       {
+        "mapsec": "MAPSEC_LAVENDER_TOWN",
+        "type": "glow",
+        "x": 220.0,
+        "y": 44.0,
+        "rectX": 216,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_OLIVINE_CITY",
         "type": "glow",
         "x": 52.0,
@@ -1541,6 +3482,96 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PEWTER_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 20.0,
+        "rectX": 152,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
         "x": 92.0,
@@ -1548,6 +3579,16 @@
         "rectX": 80,
         "rectY": 88,
         "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -1641,6 +3682,16 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_43",
         "type": "glow",
         "x": 124.0,
@@ -1651,12 +3702,82 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "glow",
         "x": 20.0,
         "y": 76.0,
         "rectX": 16,
         "rectY": 72,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_SAFFRON_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 44.0,
+        "rectX": 192,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
         "rectW": 8,
         "rectH": 8
       }
@@ -1673,6 +3794,66 @@
         "type": "marker",
         "x": 100.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_38",
@@ -1693,6 +3874,16 @@
         "rectY": 16,
         "rectW": 8,
         "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_42",
@@ -1725,9 +3916,45 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
+        "y": 76.0
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
         "y": 76.0
       },
       {
@@ -1739,6 +3966,16 @@
     ],
     "SPECIES_SEEL": [
       {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_47",
         "type": "glow",
         "x": 20.0,
@@ -1749,6 +3986,12 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      },
+      {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
@@ -1757,13 +4000,31 @@
     ],
     "SPECIES_SLOWPOKE": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
         "mapsec": "MAPSEC_SLOWPOKE_WELL",
         "type": "marker",
         "x": 84.0,
         "y": 100.0
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
       }
     ],
     "SPECIES_SLOWBRO": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_SLOWPOKE_WELL",
         "type": "marker",
@@ -1775,6 +4036,30 @@
         "type": "marker",
         "x": 52.0,
         "y": 92.0
+      }
+    ],
+    "SPECIES_SHROOMISH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SLAKOTH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_METAPOD": [
@@ -1789,6 +4074,32 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_VENONAT": [
@@ -1811,6 +4122,76 @@
         "y": 36.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_43",
         "type": "glow",
         "x": 124.0,
@@ -1819,9 +4200,39 @@
         "rectY": 8,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_LEDYBA": [
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
         "type": "glow",
@@ -1843,6 +4254,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_GOLDENROD_CITY",
         "type": "glow",
         "x": 68.0,
@@ -1851,6 +4272,26 @@
         "rectY": 64,
         "rectW": 8,
         "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_LAVENDER_TOWN",
+        "type": "glow",
+        "x": 220.0,
+        "y": 44.0,
+        "rectX": 216,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_OLIVINE_CITY",
@@ -1863,6 +4304,86 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PEWTER_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 20.0,
+        "rectX": 152,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
         "x": 92.0,
@@ -1870,6 +4391,16 @@
         "rectX": 80,
         "rectY": 88,
         "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -1953,6 +4484,66 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "glow",
         "x": 20.0,
@@ -1963,12 +4554,32 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_SAFFRON_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 44.0,
+        "rectX": 192,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_VIOLET_CITY",
         "type": "glow",
         "x": 100.0,
         "y": 36.0,
         "rectX": 96,
         "rectY": 32,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
         "rectW": 8,
         "rectH": 8
       }
@@ -2003,6 +4614,12 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_PARAS": [
@@ -2013,10 +4630,22 @@
         "y": 104.0
       },
       {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      },
+      {
         "mapsec": "MAPSEC_NATIONAL_PARK",
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_SPINARAK": [
@@ -2027,6 +4656,26 @@
         "y": 108.0,
         "rectX": 80,
         "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
         "rectW": 8,
         "rectH": 8
       },
@@ -2051,6 +4700,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_GOLDENROD_CITY",
         "type": "glow",
         "x": 68.0,
@@ -2061,10 +4720,30 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_LAVENDER_TOWN",
+        "type": "glow",
+        "x": 220.0,
+        "y": 44.0,
+        "rectX": 216,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_NATIONAL_PARK",
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_OLIVINE_CITY",
@@ -2077,6 +4756,76 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PEWTER_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 20.0,
+        "rectX": 152,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
         "x": 92.0,
@@ -2084,6 +4833,16 @@
         "rectX": 80,
         "rectY": 88,
         "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -2167,6 +4926,66 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "glow",
         "x": 20.0,
@@ -2177,12 +4996,32 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_SAFFRON_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 44.0,
+        "rectX": 192,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_VIOLET_CITY",
         "type": "glow",
         "x": 100.0,
         "y": 36.0,
         "rectX": 96,
         "rectY": 32,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
         "rectW": 8,
         "rectH": 8
       }
@@ -2201,6 +5040,12 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2211,6 +5056,12 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_ZUBAT": [
@@ -2223,14 +5074,52 @@
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
       },
       {
         "mapsec": "MAPSEC_MT_MORTAR",
         "type": "marker",
         "x": 100.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_30",
@@ -2273,6 +5162,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -2283,10 +5182,26 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SLOWPOKE_WELL",
         "type": "marker",
         "x": 84.0,
         "y": 100.0
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
       },
       {
         "mapsec": "MAPSEC_UNION_CAVE",
@@ -2295,7 +5210,45 @@
         "y": 96.0
       }
     ],
+    "SPECIES_ARON": [
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_SABLEYE": [
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      }
+    ],
+    "SPECIES_SHUPPET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_GOLBAT": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_CLIFF_CAVE",
         "type": "marker",
@@ -2305,8 +5258,14 @@
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
       },
       {
         "mapsec": "MAPSEC_MT_MORTAR",
@@ -2321,6 +5280,22 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -2337,10 +5312,22 @@
         "y": 100.0
       },
       {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
+      },
+      {
         "mapsec": "MAPSEC_UNION_CAVE",
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       },
       {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
@@ -2355,6 +5342,16 @@
         "type": "marker",
         "x": 100.0,
         "y": 20.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
       },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
@@ -2372,6 +5369,12 @@
       }
     ],
     "SPECIES_CROBAT": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_MT_SILVER",
         "type": "marker",
@@ -2417,6 +5420,36 @@
     ],
     "SPECIES_DODUO": [
       {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_38",
         "type": "glow",
         "x": 68.0,
@@ -2438,6 +5471,16 @@
       }
     ],
     "SPECIES_GLOOM": [
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
       {
         "mapsec": "MAPSEC_ROUTE_47",
         "type": "glow",
@@ -2461,9 +5504,23 @@
     ],
     "SPECIES_WOBBUFFET": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
+        "y": 40.0
+      }
+    ],
+    "SPECIES_PIKACHU": [
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
         "y": 40.0
       }
     ],
@@ -2505,6 +5562,30 @@
         "y": 76.0
       }
     ],
+    "SPECIES_BULBASAUR": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      }
+    ],
+    "SPECIES_CLAMPERL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
     "SPECIES_CHINCHOU": [
       {
         "mapsec": "MAPSEC_CIANWOOD_CITY",
@@ -2513,6 +5594,26 @@
         "y": 92.0,
         "rectX": 32,
         "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
         "rectW": 8,
         "rectH": 8
       },
@@ -2541,9 +5642,35 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_GASTLY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_31",
         "type": "glow",
@@ -2589,6 +5716,32 @@
     ],
     "SPECIES_HAUNTER": [
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2601,6 +5754,16 @@
         "type": "marker",
         "x": 76.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROCKET_HIDEOUT",
@@ -2623,6 +5786,12 @@
         "y": 12.0
       },
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_33",
         "type": "glow",
         "x": 60.0,
@@ -2639,7 +5808,49 @@
         "y": 76.0
       }
     ],
+    "SPECIES_TORKOAL": [
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_GRIMER": [
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      },
       {
         "mapsec": "MAPSEC_ROUTE_34",
         "type": "glow",
@@ -2651,7 +5862,67 @@
         "rectH": 16
       }
     ],
+    "SPECIES_LUNATONE": [
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      }
+    ],
+    "SPECIES_SPOINK": [
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      }
+    ],
     "SPECIES_PONYTA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_22",
+        "type": "glow",
+        "x": 144.0,
+        "y": 60.0,
+        "rectX": 136,
+        "rectY": 56,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_39",
         "type": "glow",
@@ -2669,12 +5940,34 @@
         "y": 52.0
       }
     ],
+    "SPECIES_MAGBY": [
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_MAGMAR": [
       {
         "mapsec": "MAPSEC_BURNED_TOWER",
         "type": "marker",
         "x": 76.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_MT_SILVER",
@@ -2691,6 +5984,26 @@
         "y": 92.0,
         "rectX": 32,
         "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
         "rectW": 8,
         "rectH": 8
       },
@@ -2729,9 +6042,35 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_JIGGLYPUFF": [
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_34",
         "type": "glow",
@@ -2741,9 +6080,119 @@
         "rectY": 72,
         "rectW": 8,
         "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_PIDGEOTTO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_37",
         "type": "glow",
@@ -2752,6 +6201,36 @@
         "rectX": 48,
         "rectY": 32,
         "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -2781,6 +6260,46 @@
     ],
     "SPECIES_NIDORINA": [
       {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2789,6 +6308,46 @@
     ],
     "SPECIES_NIDORINO": [
       {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2796,6 +6355,86 @@
       }
     ],
     "SPECIES_NOCTOWL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_37",
         "type": "glow",
@@ -2825,6 +6464,34 @@
         "rectY": 16,
         "rectW": 8,
         "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_PRIMEAPE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
       }
     ],
     "SPECIES_VOLTORB": [
@@ -2833,9 +6500,29 @@
         "type": "marker",
         "x": 76.0,
         "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_MAGNEMITE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_38",
         "type": "glow",
@@ -2857,13 +6544,37 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
         "y": 76.0
       }
     ],
+    "SPECIES_ELECTRODE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      }
+    ],
     "SPECIES_MAGNETON": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
@@ -2877,9 +6588,79 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_ARBOK": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
@@ -2905,6 +6686,16 @@
         "y": 20.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2912,6 +6703,46 @@
       }
     ],
     "SPECIES_FEAROW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
@@ -2943,6 +6774,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -2953,7 +6794,7 @@
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       }
     ],
@@ -2963,6 +6804,16 @@
         "type": "marker",
         "x": 76.0,
         "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_MT_SILVER",
@@ -2977,7 +6828,29 @@
         "y": 76.0
       }
     ],
+    "SPECIES_ROSELIA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_SKIPLOOM": [
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_48",
         "type": "glow",
@@ -2986,6 +6859,30 @@
         "rectX": 16,
         "rectY": 80,
         "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_HYPNO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_DUSKULL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
         "rectH": 8
       }
     ],
@@ -3009,14 +6906,52 @@
         "rectY": 80,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_DEWGONG": [
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      },
       {
         "mapsec": "MAPSEC_WHIRL_ISLANDS",
         "type": "marker",
         "x": 52.0,
         "y": 92.0
+      }
+    ],
+    "SPECIES_LUVDISC": [
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_CORSOLA": [
@@ -3183,9 +7118,31 @@
         "type": "marker",
         "x": 20.0,
         "y": 76.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_GYARADOS": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_LAKE_OF_RAGE",
         "type": "marker",
@@ -3197,6 +7154,34 @@
         "type": "marker",
         "x": 20.0,
         "y": 76.0
+      }
+    ],
+    "SPECIES_MAROWAK": [
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_SEADRA": [
@@ -3221,6 +7206,12 @@
     ],
     "SPECIES_PSYDUCK": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
         "mapsec": "MAPSEC_ILEX_FOREST",
         "type": "marker",
         "x": 72.0,
@@ -3243,6 +7234,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -3251,9 +7252,19 @@
     ],
     "SPECIES_SEAKING": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -3269,6 +7280,46 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -3276,6 +7327,16 @@
         "rectX": 88,
         "rectY": 16,
         "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
         "rectH": 8
       },
       {
@@ -3291,10 +7352,68 @@
         "y": 100.0
       },
       {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "type": "marker",
+        "x": 164.0,
+        "y": 76.0
+      },
+      {
         "mapsec": "MAPSEC_UNION_CAVE",
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      }
+    ],
+    "SPECIES_CHARMANDER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      }
+    ],
+    "SPECIES_CLEFAIRY": [
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_PHANPY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
       }
     ],
     "SPECIES_XATU": [
@@ -3317,6 +7436,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_MAHOGANY_TOWN",
         "type": "glow",
         "x": 124.0,
@@ -3333,6 +7462,26 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -3341,6 +7490,36 @@
         "rectY": 16,
         "rectW": 32,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
       },
       {
         "mapsec": "MAPSEC_ROUTE_47",
@@ -3364,6 +7543,12 @@
       }
     ],
     "SPECIES_KANGASKHAN": [
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE",
         "type": "marker",
@@ -3397,10 +7582,52 @@
         "y": 36.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE",
         "type": "marker",
         "x": 4.0,
         "y": 52.0
+      }
+    ],
+    "SPECIES_DODRIO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_PINSIR": [
@@ -3418,6 +7645,12 @@
       }
     ],
     "SPECIES_GOLDUCK": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_ILEX_FOREST",
         "type": "marker",
@@ -3441,6 +7674,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -3455,6 +7698,46 @@
     ],
     "SPECIES_CHANSEY": [
       {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_47",
         "type": "glow",
         "x": 20.0,
@@ -3465,7 +7748,43 @@
         "rectH": 8
       }
     ],
+    "SPECIES_SQUIRTLE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      }
+    ],
+    "SPECIES_MAWILE": [
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      }
+    ],
     "SPECIES_GRAVELER": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_CLIFF_CAVE",
         "type": "marker",
@@ -3475,7 +7794,7 @@
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -3491,6 +7810,16 @@
         "y": 60.0
       },
       {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -3503,6 +7832,12 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_LAPRAS": [
@@ -3529,12 +7864,72 @@
         "y": 92.0
       }
     ],
+    "SPECIES_SPHEAL": [
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      }
+    ],
+    "SPECIES_SNORUNT": [
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      }
+    ],
+    "SPECIES_SMOOCHUM": [
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      }
+    ],
+    "SPECIES_SWINUB": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
+      }
+    ],
     "SPECIES_PILOSWINE": [
       {
         "mapsec": "MAPSEC_MT_SILVER",
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      }
+    ],
+    "SPECIES_DELIBIRD": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
+      }
+    ],
+    "SPECIES_SNEASEL": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
       }
     ],
     "SPECIES_MAREEP": [
@@ -3571,6 +7966,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_MAHOGANY_TOWN",
         "type": "glow",
         "x": 124.0,
@@ -3579,6 +7984,16 @@
         "rectY": 16,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
       },
       {
         "mapsec": "MAPSEC_ROUTE_33",
@@ -3599,6 +8014,36 @@
         "rectY": 16,
         "rectW": 32,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
       },
       {
         "mapsec": "MAPSEC_ROUTE_47",
@@ -3645,6 +8090,16 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
@@ -3685,6 +8140,12 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_QUAGSIRE": [
@@ -3699,6 +8160,86 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_19",
+        "type": "glow",
+        "x": 188.0,
+        "y": 104.0,
+        "rectX": 176,
+        "rectY": 96,
+        "rectW": 24,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_20",
+        "type": "glow",
+        "x": 168.0,
+        "y": 108.0,
+        "rectX": 160,
+        "rectY": 104,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_ROUTE_32",
@@ -3727,6 +8268,12 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_REMORAID": [
@@ -3745,6 +8292,38 @@
         "type": "marker",
         "x": 20.0,
         "y": 76.0
+      }
+    ],
+    "SPECIES_TANGELA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_MANTYKE": [
@@ -3767,6 +8346,36 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CERULEAN_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 20.0,
+        "rectX": 192,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
         "type": "glow",
         "x": 116.0,
@@ -3783,6 +8392,16 @@
         "y": 20.0,
         "rectX": 80,
         "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
         "rectW": 8,
         "rectH": 8
       },
@@ -3809,12 +8428,32 @@
         "y": 4.0
       },
       {
+        "mapsec": "MAPSEC_LAVENDER_TOWN",
+        "type": "glow",
+        "x": 220.0,
+        "y": 44.0,
+        "rectX": 216,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_MAHOGANY_TOWN",
         "type": "glow",
         "x": 124.0,
         "y": 20.0,
         "rectX": 120,
         "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
         "rectW": 8,
         "rectH": 8
       },
@@ -3829,6 +8468,106 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_PALLET_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 92.0,
+        "rectX": 152,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_PEWTER_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 20.0,
+        "rectX": 152,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
         "x": 92.0,
@@ -3836,6 +8575,16 @@
         "rectX": 80,
         "rectY": 88,
         "rectW": 24,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
         "rectH": 8
       },
       {
@@ -3939,6 +8688,16 @@
         "rectH": 16
       },
       {
+        "mapsec": "MAPSEC_ROUTE_4",
+        "type": "glow",
+        "x": 184.0,
+        "y": 20.0,
+        "rectX": 176,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_42",
         "type": "glow",
         "x": 104.0,
@@ -3957,6 +8716,36 @@
         "rectY": 8,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "type": "glow",
+        "x": 140.0,
+        "y": 64.0,
+        "rectX": 136,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
       },
       {
         "mapsec": "MAPSEC_ROUTE_47",
@@ -3979,6 +8768,56 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "glow",
         "x": 20.0,
@@ -3987,13 +8826,33 @@
         "rectY": 72,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_SAFFRON_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 44.0,
+        "rectX": 192,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_TEDDIURSA": [
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       }
     ],
@@ -4039,6 +8898,16 @@
         "rectY": 88,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
       }
     ],
     "SPECIES_FARFETCHD": [
@@ -4074,6 +8943,12 @@
       }
     ],
     "SPECIES_DITTO": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_ROUTE_34",
         "type": "glow",
@@ -4113,6 +8988,22 @@
         "y": 52.0
       }
     ],
+    "SPECIES_DIGLETT": [
+      {
+        "mapsec": "MAPSEC_DIGLETTS_CAVE",
+        "type": "marker",
+        "x": 184.0,
+        "y": 40.0
+      }
+    ],
+    "SPECIES_DUGTRIO": [
+      {
+        "mapsec": "MAPSEC_DIGLETTS_CAVE",
+        "type": "marker",
+        "x": 184.0,
+        "y": 40.0
+      }
+    ],
     "SPECIES_UNOWN": [
       {
         "mapsec": "MAPSEC_RUINS_OF_ALPH",
@@ -4123,6 +9014,12 @@
     ],
     "SPECIES_PARASECT": [
       {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
         "mapsec": "MAPSEC_MT_SILVER",
         "type": "marker",
         "x": 116.0,
@@ -4130,6 +9027,12 @@
       }
     ],
     "SPECIES_MACHOKE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_CLIFF_CAVE",
         "type": "marker",
@@ -4147,9 +9050,63 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      }
+    ],
+    "SPECIES_MACHAMP": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      }
+    ],
+    "SPECIES_KADABRA": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_ALAKAZAM": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      }
+    ],
+    "SPECIES_MAGNEZONE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
       }
     ],
     "SPECIES_ANNIHILAPE": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      },
       {
         "mapsec": "MAPSEC_MT_SILVER",
         "type": "marker",
@@ -4157,7 +9114,25 @@
         "y": 60.0
       }
     ],
+    "SPECIES_SLOWKING": [
+      {
+        "mapsec": "MAPSEC_CERULEAN_CAVE",
+        "type": "marker",
+        "x": 188.0,
+        "y": 12.0
+      }
+    ],
     "SPECIES_SENTRET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
       {
         "mapsec": "MAPSEC_ROUTE_29",
         "type": "glow",
@@ -4177,6 +9152,26 @@
         "y": 92.0,
         "rectX": 32,
         "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
         "rectW": 8,
         "rectH": 8
       },
@@ -4205,6 +9200,22 @@
         "type": "marker",
         "x": 100.0,
         "y": 96.0
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_BUTTERFREE": [
@@ -4219,6 +9230,42 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_24",
+        "type": "glow",
+        "x": 196.0,
+        "y": 8.0,
+        "rectX": 192,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_25",
+        "type": "glow",
+        "x": 204.0,
+        "y": 4.0,
+        "rectX": 200,
+        "rectY": 0,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_BEEDRILL": [
@@ -4233,9 +9280,25 @@
         "type": "marker",
         "x": 68.0,
         "y": 36.0
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_FOREST",
+        "type": "marker",
+        "x": 156.0,
+        "y": 40.0
       }
     ],
     "SPECIES_LEDIAN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
       {
         "mapsec": "MAPSEC_ROUTE_37",
         "type": "glow",
@@ -4249,6 +9312,16 @@
     ],
     "SPECIES_ARIADOS": [
       {
+        "mapsec": "MAPSEC_ROUTE_2",
+        "type": "glow",
+        "x": 156.0,
+        "y": 40.0,
+        "rectX": 152,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_37",
         "type": "glow",
         "x": 52.0,
@@ -4260,6 +9333,16 @@
       }
     ],
     "SPECIES_MEOWTH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_ROUTE_38",
         "type": "glow",
@@ -4279,6 +9362,46 @@
         "rectY": 16,
         "rectW": 8,
         "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
       }
     ],
     "SPECIES_MANTINE": [
@@ -4305,9 +9428,25 @@
         "type": "marker",
         "x": 28.0,
         "y": 92.0
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_FURRET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_1",
+        "type": "glow",
+        "x": 156.0,
+        "y": 76.0,
+        "rectX": 152,
+        "rectY": 64,
+        "rectW": 8,
+        "rectH": 24
+      },
       {
         "mapsec": "MAPSEC_ROUTE_43",
         "type": "glow",
@@ -4333,6 +9472,56 @@
     ],
     "SPECIES_VENOMOTH": [
       {
+        "mapsec": "MAPSEC_ROUTE_10",
+        "type": "glow",
+        "x": 220.0,
+        "y": 28.0,
+        "rectX": 216,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_12",
+        "type": "glow",
+        "x": 220.0,
+        "y": 64.0,
+        "rectX": 216,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_13",
+        "type": "glow",
+        "x": 216.0,
+        "y": 84.0,
+        "rectX": 208,
+        "rectY": 80,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_14",
+        "type": "glow",
+        "x": 212.0,
+        "y": 92.0,
+        "rectX": 208,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_15",
+        "type": "glow",
+        "x": 204.0,
+        "y": 92.0,
+        "rectX": 200,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
         "mapsec": "MAPSEC_ROUTE_43",
         "type": "glow",
         "x": 124.0,
@@ -4341,14 +9530,48 @@
         "rectY": 8,
         "rectW": 8,
         "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_9",
+        "type": "glow",
+        "x": 212.0,
+        "y": 20.0,
+        "rectX": 200,
+        "rectY": 16,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_WEEPINBELL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "type": "glow",
+        "x": 136.0,
+        "y": 20.0,
+        "rectX": 128,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
         "x": 20.0,
         "y": 76.0
+      }
+    ],
+    "SPECIES_JYNX": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "type": "marker",
+        "x": 140.0,
+        "y": 12.0
+      },
+      {
+        "mapsec": "MAPSEC_SEAFOAM_ISLANDS",
+        "type": "marker",
+        "x": 180.0,
+        "y": 108.0
       }
     ],
     "SPECIES_DONPHAN": [
@@ -4357,13 +9580,29 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
       }
     ],
     "SPECIES_URSARING": [
       {
         "mapsec": "MAPSEC_DARK_CAVE",
         "type": "marker",
-        "x": 124.0,
+        "x": 132.0,
         "y": 40.0
       },
       {
@@ -4371,6 +9610,16 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "type": "glow",
+        "x": 148.0,
+        "y": 40.0,
+        "rectX": 144,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 32
       }
     ],
     "SPECIES_RAPIDASH": [
@@ -4379,6 +9628,36 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "type": "glow",
+        "x": 196.0,
+        "y": 68.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 40
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_VENUSAUR": [
@@ -4403,6 +9682,16 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_AMBIPOM": [
@@ -4411,6 +9700,16 @@
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 24,
+        "rectH": 8
       }
     ],
     "SPECIES_HOUNDOOM": [
@@ -4430,6 +9729,26 @@
       }
     ],
     "SPECIES_NONE": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "type": "glow",
+        "x": 148.0,
+        "y": 20.0,
+        "rectX": 144,
+        "rectY": 16,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_CHERRYGROVE_CITY",
         "type": "glow",
@@ -4451,6 +9770,12 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_DIGLETTS_CAVE",
+        "type": "marker",
+        "x": 184.0,
+        "y": 40.0
+      },
+      {
         "mapsec": "MAPSEC_ECRUTEAK_CITY",
         "type": "glow",
         "x": 84.0,
@@ -4461,10 +9786,36 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_FUCHSIA_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 92.0,
+        "rectX": 192,
+        "rectY": 88,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_MT_MOON",
+        "type": "marker",
+        "x": 176.0,
+        "y": 20.0
+      },
+      {
         "mapsec": "MAPSEC_MT_SILVER",
         "type": "marker",
         "x": 116.0,
         "y": 60.0
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "type": "glow",
+        "x": 156.0,
+        "y": 84.0,
+        "rectX": 152,
+        "rectY": 80,
+        "rectW": 8,
+        "rectH": 8
       },
       {
         "mapsec": "MAPSEC_OLIVINE_CITY",
@@ -4477,12 +9828,124 @@
         "rectH": 8
       },
       {
+        "mapsec": "MAPSEC_ROCK_TUNNEL",
+        "type": "marker",
+        "x": 220.0,
+        "y": 28.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_11",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_18",
+        "type": "glow",
+        "x": 184.0,
+        "y": 92.0,
+        "rectX": 176,
+        "rectY": 88,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_3",
+        "type": "glow",
+        "x": 168.0,
+        "y": 20.0,
+        "rectX": 160,
+        "rectY": 16,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_5",
+        "type": "glow",
+        "x": 196.0,
+        "y": 32.0,
+        "rectX": 192,
+        "rectY": 24,
+        "rectW": 8,
+        "rectH": 16
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_8",
+        "type": "glow",
+        "x": 208.0,
+        "y": 44.0,
+        "rectX": 200,
+        "rectY": 40,
+        "rectW": 16,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VERMILION_CITY",
+        "type": "glow",
+        "x": 196.0,
+        "y": 60.0,
+        "rectX": 192,
+        "rectY": 56,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
+      },
+      {
         "mapsec": "MAPSEC_VIOLET_CITY",
         "type": "glow",
         "x": 100.0,
         "y": 36.0,
         "rectX": 96,
         "rectY": 32,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_VIRIDIAN_CITY",
+        "type": "glow",
+        "x": 156.0,
+        "y": 60.0,
+        "rectX": 152,
+        "rectY": 56,
         "rectW": 8,
         "rectH": 8
       }
@@ -4495,7 +9958,141 @@
         "y": 60.0
       }
     ],
+    "SPECIES_CHIKORITA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_CYNDAQUIL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_TOTODILE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "type": "glow",
+        "x": 176.0,
+        "y": 84.0,
+        "rectX": 160,
+        "rectY": 80,
+        "rectW": 32,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_RHYDON": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "type": "marker",
+        "x": 196.0,
+        "y": 44.0
+      }
+    ],
+    "SPECIES_GRANBULL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_6",
+        "type": "glow",
+        "x": 196.0,
+        "y": 52.0,
+        "rectX": 192,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_PERSIAN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_7",
+        "type": "glow",
+        "x": 188.0,
+        "y": 44.0,
+        "rectX": 184,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_MUK": [
+      {
+        "mapsec": "MAPSEC_CELADON_CITY",
+        "type": "glow",
+        "x": 180.0,
+        "y": 44.0,
+        "rectX": 176,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_16",
+        "type": "glow",
+        "x": 172.0,
+        "y": 44.0,
+        "rectX": 168,
+        "rectY": 40,
+        "rectW": 8,
+        "rectH": 8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_17",
+        "type": "glow",
+        "x": 172.0,
+        "y": 72.0,
+        "rectX": 168,
+        "rectY": 48,
+        "rectW": 8,
+        "rectH": 48
+      }
+    ],
+    "SPECIES_WEEZING": [
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
+    "SPECIES_MAGCARGO": [
+      {
+        "mapsec": "MAPSEC_CINNABAR_ISLAND",
+        "type": "glow",
+        "x": 156.0,
+        "y": 108.0,
+        "rectX": 152,
+        "rectY": 104,
+        "rectW": 8,
+        "rectH": 8
+      }
+    ],
     "SPECIES_MR_MIME": [
+      {
+        "mapsec": "MAPSEC_ROUTE_21",
+        "type": "glow",
+        "x": 156.0,
+        "y": 100.0,
+        "rectX": 152,
+        "rectY": 96,
+        "rectW": 8,
+        "rectH": 8
+      },
       {
         "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
         "type": "marker",
