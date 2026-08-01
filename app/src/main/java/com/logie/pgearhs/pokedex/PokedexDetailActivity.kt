@@ -199,20 +199,34 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             entry.pokedexEntry.replace(entry.name, entry.displayName)
     }
 
-    // Sizes the vitals card to exactly 3/4 of the name box's real measured width. A static
-    // weight ratio can't hit this exactly since the name box's column weight also has the
-    // sprite region's fixed intrinsic width baked into its share - only a runtime measurement
-    // stays correct across every screen size.
+    // Sizes the vitals card to exactly 3/4 of the name box's real measured width, then aligns
+    // the type chips row (which sits above it) to start at the vitals card's real left edge -
+    // both need a runtime measurement since a static weight ratio can't hit them exactly (the
+    // name box's column weight also has the sprite region's fixed intrinsic width baked into
+    // its share, and the vitals card's left edge depends on its own resized width).
     private fun sizeVitalsCardToIdCard() {
         val idCard = findViewById<View>(R.id.detailIdCard)
         val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
+        val typeChips = findViewById<View>(R.id.detailTypeChips)
+        var widthApplied = false
         vitalsCard.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if (idCard.width <= 0) return
+                if (!widthApplied) {
+                    if (idCard.width <= 0) return
+                    val lp = vitalsCard.layoutParams as LinearLayout.LayoutParams
+                    val targetWidth = (idCard.width * 0.75f).toInt()
+                    widthApplied = true
+                    if (lp.width != targetWidth) {
+                        lp.width = targetWidth
+                        vitalsCard.layoutParams = lp
+                        return // wait for the layout pass this triggers before reading .left
+                    }
+                }
+                if (vitalsCard.width <= 0) return
                 vitalsCard.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val lp = vitalsCard.layoutParams as LinearLayout.LayoutParams
-                lp.width = (idCard.width * 0.75f).toInt()
-                vitalsCard.layoutParams = lp
+                val chipsLp = typeChips.layoutParams as LinearLayout.LayoutParams
+                chipsLp.marginStart = vitalsCard.left
+                typeChips.layoutParams = chipsLp
             }
         })
     }

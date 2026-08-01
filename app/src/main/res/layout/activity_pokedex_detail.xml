@@ -60,12 +60,11 @@
                         android:contentDescription="@null" />
                 </FrameLayout>
 
-                <!-- id / footprint cards: doubled weight (was 0.7075, matching the sprite region's
-                     0.2925) since the vitals card no longer shares this column - left-aligned,
-                     with a thin red accent matching the real HGSS card chrome -->
+                <!-- id / footprint cards: weight increased another 25% (1.415 -> 1.76875) -
+                     left-aligned, with a thin red accent matching the real HGSS card chrome -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1.415"
+                    android:layout_weight="1.76875"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
