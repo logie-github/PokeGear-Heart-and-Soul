@@ -190,12 +190,31 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
             footprintBox.visibility = View.GONE
         }
         centerSpriteInLeftArea()
+        sizeVitalsCardToIdCard()
 
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
         entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
 
         findViewById<TextView>(R.id.detailPokedexEntry).text =
             entry.pokedexEntry.replace(entry.name, entry.displayName)
+    }
+
+    // Sizes the vitals card to exactly 3/4 of the name box's real measured width. A static
+    // weight ratio can't hit this exactly since the name box's column weight also has the
+    // sprite region's fixed intrinsic width baked into its share - only a runtime measurement
+    // stays correct across every screen size.
+    private fun sizeVitalsCardToIdCard() {
+        val idCard = findViewById<View>(R.id.detailIdCard)
+        val vitalsCard = findViewById<View>(R.id.detailVitalsCard)
+        vitalsCard.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (idCard.width <= 0) return
+                vitalsCard.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val lp = vitalsCard.layoutParams as LinearLayout.LayoutParams
+                lp.width = (idCard.width * 0.75f).toInt()
+                vitalsCard.layoutParams = lp
+            }
+        })
     }
 
     // Centers the sprite across the whole left region since that width isn't known until after
