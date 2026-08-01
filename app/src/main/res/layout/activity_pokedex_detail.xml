@@ -60,12 +60,12 @@
                         android:contentDescription="@null" />
                 </FrameLayout>
 
-                <!-- id / footprint / vitals cards: ~71% of the row, same width as each other,
-                     content left-aligned, each with a thin red accent matching the real HGSS
-                     card chrome -->
+                <!-- id / footprint cards: doubled weight (was 0.7075, matching the sprite region's
+                     0.2925) since the vitals card no longer shares this column - left-aligned,
+                     with a thin red accent matching the real HGSS card chrome -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="0.7075"
+                    android:layout_weight="1.415"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
@@ -100,15 +100,14 @@
                             android:textSize="26sp" />
                     </LinearLayout>
 
-                    <!-- footprint box: same square size as before, now directly under the name
-                         box, with a top accent stripe the same thickness as the name box's side
-                         accent -->
+                    <!-- footprint box: same square size as before, still directly under and
+                         left-aligned with the name box, with a top accent stripe the same
+                         thickness as the name box's side accent -->
                     <FrameLayout
                         android:id="@+id/detailFootprintBox"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="start"
-                        android:layout_marginBottom="8dp"
                         android:background="@drawable/pokedex_card_bg">
 
                         <View
@@ -124,10 +123,37 @@
                             android:layout_gravity="center"
                             android:contentDescription="@null" />
                     </FrameLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- bottom stack: vitals card sits directly above the description card, both pinned
+                 near the bottom of the screen as one unit, independent of the id/footprint
+                 column above. The vitals card keeps its original width/height unchanged (same
+                 spacer + weight split as the sprite/column row above), just right-aligned to
+                 match the description card's right edge. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="0.2925"
+                        android:layout_height="1dp" />
 
                     <LinearLayout
                         android:id="@+id/detailVitalsCard"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.7075"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:background="@drawable/pokedex_card_bg">
@@ -201,29 +227,25 @@
                     </LinearLayout>
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <!-- description card: absolute-positioned near the bottom, fixed distance from the
-                 bottom edge regardless of the top row's height -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="16dp"
-                android:orientation="vertical"
-                android:background="@drawable/pokedex_card_bg"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/detailPokedexEntry"
+                <!-- description card -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="3dp"
-                    android:minLines="4"
-                    android:maxLines="4"
-                    android:ellipsize="end"
-                    android:textColor="@color/pokedexInk"
-                    android:textSize="28sp" />
+                    android:orientation="vertical"
+                    android:background="@drawable/pokedex_card_bg"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/detailPokedexEntry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="3dp"
+                        android:minLines="4"
+                        android:maxLines="4"
+                        android:ellipsize="end"
+                        android:textColor="@color/pokedexInk"
+                        android:textSize="28sp" />
+                </LinearLayout>
             </LinearLayout>
         </FrameLayout>
 
