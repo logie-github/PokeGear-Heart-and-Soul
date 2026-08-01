@@ -253,10 +253,14 @@
                     android:background="@drawable/pokedex_card_bg"
                     android:padding="10dp">
 
+                    <!-- includeFontPadding=false: the custom pixel font's own ascent/descent
+                         leading was making the vertical whitespace visually bigger than the
+                         10dp horizontal padding even though both were declared equal -->
                     <TextView
                         android:id="@+id/detailPokedexEntry"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:lineSpacingExtra="3dp"
                         android:minLines="4"
                         android:maxLines="4"
