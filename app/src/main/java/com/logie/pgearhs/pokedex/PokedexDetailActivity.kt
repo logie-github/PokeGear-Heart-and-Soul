@@ -192,7 +192,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         layoutTopRow { sizeVitalsCardToIdCard() }
 
         val chips = findViewById<LinearLayout>(R.id.detailTypeChips)
-        entry.types.forEach { addTypeChip(chips, it, widthDp = 36, heightDp = 18, marginEndDp = 6) }
+        entry.types.forEach { addTypeChip(chips, it, widthDp = 72, heightDp = 36, marginEndDp = 4) }
 
         findViewById<TextView>(R.id.detailPokedexEntry).text =
             entry.pokedexEntry.replace(entry.name, entry.displayName)

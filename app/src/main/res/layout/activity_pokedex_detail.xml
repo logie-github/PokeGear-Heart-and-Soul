@@ -200,6 +200,16 @@
                                     android:textSize="28sp" />
                             </LinearLayout>
 
+                            <!-- dotted divider between HT and WT, dot size matches the row's own
+                                 font size rather than a thin drawn line -->
+                            <TextView
+                                android:text="@string/pokedex_dotted_divider"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:textColor="@color/pokedexGridline"
+                                android:textSize="28sp" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
