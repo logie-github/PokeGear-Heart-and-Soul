@@ -226,6 +226,24 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
                 val chipsLp = typeChips.layoutParams as LinearLayout.LayoutParams
                 chipsLp.marginStart = vitalsCard.left
                 typeChips.layoutParams = chipsLp
+                fitDottedDivider()
+            }
+        })
+    }
+
+    // Sets the divider's dot count to exactly however many whole "dot + space" units fit its
+    // final width, instead of relying on a long fixed string that overflows and gets clipped -
+    // clipping was cutting the last dot off mid-glyph, making it look smaller than the rest.
+    private fun fitDottedDivider() {
+        val divider = findViewById<TextView>(R.id.detailDottedDivider)
+        divider.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (divider.width <= 0) return
+                divider.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val unit = ". "
+                val unitWidth = divider.paint.measureText(unit)
+                val count = (divider.width / unitWidth).toInt().coerceAtLeast(1)
+                divider.text = unit.repeat(count).trimEnd()
             }
         })
     }

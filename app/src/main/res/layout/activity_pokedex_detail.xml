@@ -203,11 +203,15 @@
                             </LinearLayout>
 
                             <!-- dotted divider between HT and WT, dot size matches the row's own
-                                 font size rather than a thin drawn line -->
+                                 font size rather than a thin drawn line. Its exact dot count is
+                                 computed in code (fitDottedDivider()) so it ends on a full dot
+                                 instead of clipping one mid-glyph. -->
                             <TextView
+                                android:id="@+id/detailDottedDivider"
                                 android:text="@string/pokedex_dotted_divider"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="-6dp"
                                 android:singleLine="true"
                                 android:includeFontPadding="false"
                                 android:textColor="@color/pokedexGridline"
