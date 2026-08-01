@@ -8,8 +8,9 @@ import org.json.JSONObject
  * HSSOURCE (see build_area_markers.py): wild_encounters.json (species -> maps) joined with
  * every map.json's region_map_section, resolved against the real 15x28 MAPSEC layout grid used
  * by the game's own Dex_FindLayoutRect(). x/y (and rect* for glows) are pixel coordinates on the
- * bundled 128x128 johto_region_map.png, proportionally scaled from that real grid (see the
- * JSON's own _meta notes for why this isn't a bit-exact native-GBA reproduction).
+ * bundled 128x128 johto_region_map.png, at a confirmed-exact native scale of 8px/tile with zero
+ * offset (verified by an exact pixel-diff match and real city landmark positions - see the
+ * JSON's own _meta notes and build_area_markers.py's docstring for the full verification).
  *
  * type mirrors the real game's own two indicator systems (src/pokedex_area_screen.c): "glow"
  * for towns/routes (a highlighted rectangle over the real MAPSEC bounding box, colored from the
