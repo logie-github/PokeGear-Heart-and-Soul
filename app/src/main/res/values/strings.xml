@@ -42,8 +42,9 @@
     <string name="pokedex_category_format">%1$s Pokémon</string>
     <string name="pokedex_total_label">TOTAL</string>
 
-    <string name="pokedex_area_no_wild">No wild-encounter data on record for %1$s.\nIt\'s a starter Pokémon — obtained directly, not found in the wild.</string>
+    <string name="pokedex_area_no_wild">No wild-encounter data on record for %1$s.\nIt\'s obtained directly, not found in the wild.</string>
     <string name="pokedex_area_habitat_format">Habitat: %1$s</string>
+    <string name="pokedex_area_found_in_format">Found in: %1$s</string>
     <string name="pokedex_cry_of">CRY OF</string>
 
     <string name="pokedex_evo_no_data">No evolution data — %1$s neither evolves nor evolves from anything.</string>

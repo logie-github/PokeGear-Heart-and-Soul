@@ -43,6 +43,7 @@ object PokedexRepository {
             entries.add(
                 PokedexEntry(
                     speciesId = obj.getInt("speciesId"),
+                    speciesConst = obj.getString("speciesConst"),
                     name = name,
                     nationalDexNumber = obj.getInt("nationalDexNumber"),
                     regionalDexNumber = obj.getInt("regionalDexNumber"),

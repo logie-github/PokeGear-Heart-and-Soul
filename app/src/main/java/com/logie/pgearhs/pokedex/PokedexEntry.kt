@@ -9,6 +9,7 @@ data class Evolution(
 
 data class PokedexEntry(
     val speciesId: Int,
+    val speciesConst: String,
     val name: String,
     val nationalDexNumber: Int,
     val regionalDexNumber: Int,

@@ -33,6 +33,11 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
     companion object {
         const val EXTRA_SPECIES_ID = "species_id"
+
+        // Native pixel size of johto_region_map.png / the coordinate space AreaMarkerRepository's
+        // marker x/y values are given in - see build_area_markers.py.
+        const val AREA_MAP_NATIVE_SIZE = 128
+        const val AREA_MARKER_NATIVE_SIZE = 16
     }
 
     private enum class Tab { INFO, AREA, STATS, EVO, CRY, SIZE }
@@ -306,9 +311,65 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         val map = findViewById<ImageView>(R.id.areaMap)
         map.setImageBitmap(assets.open("pokedex_chrome/johto_region_map.png").use { BitmapFactory.decodeStream(it) })
         crisp(map)
-        findViewById<TextView>(R.id.areaMessage).text = entry.habitat?.let {
-            getString(R.string.pokedex_area_habitat_format, it)
-        } ?: getString(R.string.pokedex_area_no_wild, entry.displayName)
+
+        val markers = AreaMarkerRepository.get(this, entry.speciesConst)
+        val messageView = findViewById<TextView>(R.id.areaMessage)
+        val layer = findViewById<FrameLayout>(R.id.areaMarkerLayer)
+        layer.removeAllViews()
+
+        if (markers.isEmpty()) {
+            messageView.text = getString(R.string.pokedex_area_no_wild, entry.displayName)
+            addAreaOverlaySprite(layer, map, "pokedex_chrome/area/area_unknown.png", widthNative = 32, heightNative = 96)
+            return
+        }
+
+        val locationNames = markers.map { it.mapsec.removePrefix("MAPSEC_").split("_")
+            .joinToString(" ") { w -> w.lowercase().replaceFirstChar(Char::uppercase) } }
+            .distinct()
+        messageView.text = getString(R.string.pokedex_area_found_in_format, locationNames.joinToString(", "))
+
+        map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (map.width <= 0) return
+                map.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val scale = map.width.toFloat() / AREA_MAP_NATIVE_SIZE
+                val markerSize = (AREA_MARKER_NATIVE_SIZE * scale).toInt()
+                markers.forEach { marker ->
+                    val dot = ImageView(this@PokedexDetailActivity).apply {
+                        setImageBitmap(
+                            assets.open("pokedex_chrome/area/area_marker.png").use { BitmapFactory.decodeStream(it) }
+                        )
+                        (drawable as? BitmapDrawable)?.isFilterBitmap = false
+                        layoutParams = FrameLayout.LayoutParams(markerSize, markerSize).apply {
+                            leftMargin = (marker.x * scale - markerSize / 2f).toInt()
+                            topMargin = (marker.y * scale - markerSize / 2f).toInt()
+                        }
+                    }
+                    layer.addView(dot)
+                }
+            }
+        })
+    }
+
+    // Overlays a real sprite (native GBA pixel size) centered on the area map, scaled by the
+    // map's own current display scale so it stays crisp and proportional at any screen size.
+    private fun addAreaOverlaySprite(layer: FrameLayout, map: ImageView, assetPath: String, widthNative: Int, heightNative: Int) {
+        map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (map.width <= 0) return
+                map.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val scale = map.width.toFloat() / AREA_MAP_NATIVE_SIZE
+                val sprite = ImageView(this@PokedexDetailActivity).apply {
+                    setImageBitmap(assets.open(assetPath).use { BitmapFactory.decodeStream(it) })
+                    (drawable as? BitmapDrawable)?.isFilterBitmap = false
+                    layoutParams = FrameLayout.LayoutParams(
+                        (widthNative * scale).toInt(),
+                        (heightNative * scale).toInt()
+                    ).apply { gravity = Gravity.CENTER }
+                }
+                layer.addView(sprite)
+            }
+        })
     }
 
     // ===================== STATS =====================

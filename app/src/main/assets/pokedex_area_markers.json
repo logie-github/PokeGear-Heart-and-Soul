@@ -1,0 +1,5708 @@
+{
+  "_meta": {
+    "source": "HSSOURCE (Heart & Soul ROM hack decomp)",
+    "generatedFrom": [
+      "src/data/wild_encounters.json (gWildMonHeaders group)",
+      "data/maps/*/map.json (region_map_section)",
+      "src/data/region_map/region_map_layout_johto.h (real 15x28 MAPSEC grid)"
+    ],
+    "notes": [
+      "x/y are pixel coordinates on the bundled 128x128 johto_region_map.png.",
+      "Computed by proportionally scaling the real 28x15 MAPSEC grid cell (or bounding rect, for multi-cell sections) onto the 128x128 image - the exact native-GBA pixel offset used by the live in-game area-screen renderer for this specific flattened map export was not confirmed, so this is a proportional approximation of real grid data, not a bit-exact reproduction.",
+      "A species can have multiple marker points (found in multiple areas)."
+    ]
+  },
+  "markers": {
+    "SPECIES_ESPEON": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_UMBREON": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_SOLROCK": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      }
+    ],
+    "SPECIES_WURMPLE": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_POOCHYENA": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_WEEDLE": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_ZIGZAGOON": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_EEVEE": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_RATTATA": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_SPROUT_TOWER",
+        "x": 57.1,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_TIN_TOWER",
+        "x": 48.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_LOTAD": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_RALTS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_SURSKIT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_SEEDOT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_MARILL": [
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_GOLDEEN": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MAGIKARP": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_CORPHISH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_CATERPIE": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_SUNKERN": [
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_BELLSPROUT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_MUNCHLAX": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_MIME_JR": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_WINGULL": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_TENTACOOL": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_PELIPPER": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_WAILMER": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SHARPEDO": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_TENTACRUEL": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_POLIWAG": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_SNUBBULL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_TAILLOW": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_HOPPIP": [
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_AZURILL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_PIDGEY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_PICHU": [
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_HOOTHOOT": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_KRABBY": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_KINGLER": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_ELECTRIKE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_GULPIN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_MINUN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_ODDISH": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_PLUSLE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_DROWZEE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SANDSHREW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_TRAPINCH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_BALTOY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_CACNEA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_GEODUDE": [
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_BARBOACH": [
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_NOSEPASS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      }
+    ],
+    "SPECIES_CUBONE": [
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_RHYHORN": [
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_NUMEL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_TYROGUE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_POLIWHIRL": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_LARVITAR": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_SPINDA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_SLUGMA": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_SKARMORY": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_GROWLITHE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_HOUNDOUR": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_SWABLU": [
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_LOMBRE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_SEVIPER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_ZANGOOSE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_NUZLEAF": [
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_SPEAROW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      }
+    ],
+    "SPECIES_MURKROW": [
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_WHISMUR": [
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_NINCADA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_ABRA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_SKITTY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_NIDORAN_M": [
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_NIDORAN_F": [
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_EKANS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_BUDEW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_ILLUMISE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_VOLBEAT": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_LICKITUNG": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_LINOONE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_MANECTRIC": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_KECLEON": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_CARVANHA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_MIGHTYENA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_EXEGGCUTE": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_GOLDENROD_CITY",
+        "x": 38.9,
+        "y": 76.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_RATICATE": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_SEEL": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SLOWPOKE": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_SLOWBRO": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SHROOMISH": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_SILCOON": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_CASCOON": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_SLAKOTH": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_METAPOD": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_VENONAT": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_LEDYBA": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_GOLDENROD_CITY",
+        "x": 38.9,
+        "y": 76.8
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_YANMA": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_KAKUNA": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_PARAS": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_SPINARAK": [
+      {
+        "mapsec": "MAPSEC_AZALEA_TOWN",
+        "x": 48.0,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_GOLDENROD_CITY",
+        "x": 38.9,
+        "y": 76.8
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_ONIX": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_ZUBAT": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MAKUHITA": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_ARON": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_SABLEYE": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_SHUPPET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_GOLBAT": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_HARIYAMA": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_LAIRON": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_LOUDRED": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_DRAGONAIR": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_PUPITAR": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_CROBAT": [
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_AGGRON": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_EXPLOUD": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_GIRAFARIG": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_NATU": [
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_DODUO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_GLOOM": [
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_WOBBUFFET": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_TAUROS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_BULBASAUR": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      }
+    ],
+    "SPECIES_CLAMPERL": [
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_SPROUT_TOWER",
+        "x": 57.1,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_CHINCHOU": [
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_SPROUT_TOWER",
+        "x": 57.1,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_RELICANTH": [
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_SPROUT_TOWER",
+        "x": 57.1,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_GASTLY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_SPROUT_TOWER",
+        "x": 57.1,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_TIN_TOWER",
+        "x": 48.0,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_HAUNTER": [
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_KOFFING": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_MACHOP": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_GRIMER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      }
+    ],
+    "SPECIES_BAGON": [
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      }
+    ],
+    "SPECIES_LUNATONE": [
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      }
+    ],
+    "SPECIES_WHISCASH": [
+      {
+        "mapsec": "MAPSEC_EMBEDDED_TOWER",
+        "x": 6.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_PONYTA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_MAGMAR": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_SHELLDER": [
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_SWELLOW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_JIGGLYPUFF": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_PIDGEOTTO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_MANKEY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_NIDORINA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_NIDORINO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_NOCTOWL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_IGGLYBUFF": [
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_PRIMEAPE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      }
+    ],
+    "SPECIES_MAGNEMITE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_MAGNETON": [
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_ELECTABUZZ": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_TROPIUS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_CASTFORM": [
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_ABSOL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_ARBOK": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_DRATINI": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_HONCHKROW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_FEAROW": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_DUNSPARCE": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      }
+    ],
+    "SPECIES_MISDREAVUS": [
+      {
+        "mapsec": "MAPSEC_BURNED_TOWER",
+        "x": 43.4,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_ROSELIA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_SKIPLOOM": [
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_HYPNO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_VULPIX": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_MEDITITE": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_DEWGONG": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_LUVDISC": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_CORSOLA": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_WAILORD": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_WYNAUT": [
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_HORSEA": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_QWILFISH": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_STARYU": [
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_40",
+        "x": 25.1,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SANDSLASH": [
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_GYARADOS": [
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_SEADRA": [
+      {
+        "mapsec": "MAPSEC_DRAGONS_DEN",
+        "x": 84.6,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_PSYDUCK": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_SEAKING": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_SLOWPOKE_WELL",
+        "x": 48.0,
+        "y": 106.7
+      },
+      {
+        "mapsec": "MAPSEC_TOHJO_FALLS",
+        "x": 93.7,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_CHARMANDER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      }
+    ],
+    "SPECIES_PHANPY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      }
+    ],
+    "SPECIES_XATU": [
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_HERACROSS": [
+      {
+        "mapsec": "MAPSEC_AZALEA_TOWN",
+        "x": 48.0,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_MAHOGANY_TOWN",
+        "x": 70.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_KANGASKHAN": [
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      }
+    ],
+    "SPECIES_SCYTHER": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_DODRIO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_PINSIR": [
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_GOLDUCK": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_CHANSEY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SQUIRTLE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      }
+    ],
+    "SPECIES_MAWILE": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MEDICHAM": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_GRAVELER": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_GOLEM": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_PROBOPASS": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_DUSCLOPS": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_CLOYSTER": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_LAPRAS": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_KABUTO": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_OMANYTE": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SWINUB": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_PILOSWINE": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_DELIBIRD": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_SNEASEL": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_MAREEP": [
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      }
+    ],
+    "SPECIES_AIPOM": [
+      {
+        "mapsec": "MAPSEC_AZALEA_TOWN",
+        "x": 48.0,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_MAHOGANY_TOWN",
+        "x": 70.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_STANTLER": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_GLIGAR": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_WOOPER": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_QUAGSIRE": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_REMORAID": [
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_TANGELA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      }
+    ],
+    "SPECIES_MANTYKE": [
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_PINECO": [
+      {
+        "mapsec": "MAPSEC_AZALEA_TOWN",
+        "x": 48.0,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_GOLDENROD_CITY",
+        "x": 38.9,
+        "y": 76.8
+      },
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_LAKE_OF_RAGE",
+        "x": 70.9,
+        "y": 4.3
+      },
+      {
+        "mapsec": "MAPSEC_MAHOGANY_TOWN",
+        "x": 70.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_30",
+        "x": 66.3,
+        "y": 64.0
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_31",
+        "x": 64.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_32",
+        "x": 57.1,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_33",
+        "x": 54.9,
+        "y": 115.2
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_36",
+        "x": 48.0,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_42",
+        "x": 59.4,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_46",
+        "x": 80.0,
+        "y": 68.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_TEDDIURSA": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_MILTANK": [
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SHUCKLE": [
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_FARFETCHD": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_48",
+        "x": 11.4,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_DITTO": [
+      {
+        "mapsec": "MAPSEC_ROUTE_34",
+        "x": 38.9,
+        "y": 93.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_35",
+        "x": 38.9,
+        "y": 55.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_SMEARGLE": [
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      }
+    ],
+    "SPECIES_UNOWN": [
+      {
+        "mapsec": "MAPSEC_RUINS_OF_ALPH",
+        "x": 50.3,
+        "y": 51.2
+      }
+    ],
+    "SPECIES_PARASECT": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MACHOKE": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_MT_MORTAR",
+        "x": 57.1,
+        "y": 12.8
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_ANNIHILAPE": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_SENTRET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_29",
+        "x": 77.7,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_LANTURN": [
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_47",
+        "x": 11.4,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_UNION_CAVE",
+        "x": 57.1,
+        "y": 102.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_BUTTERFREE": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_BEEDRILL": [
+      {
+        "mapsec": "MAPSEC_ILEX_FOREST",
+        "x": 41.1,
+        "y": 110.9
+      },
+      {
+        "mapsec": "MAPSEC_NATIONAL_PARK",
+        "x": 38.9,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_LEDIAN": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_ARIADOS": [
+      {
+        "mapsec": "MAPSEC_ROUTE_37",
+        "x": 48.0,
+        "y": 29.9
+      }
+    ],
+    "SPECIES_MEOWTH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_38",
+        "x": 38.9,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_39",
+        "x": 29.7,
+        "y": 25.6
+      }
+    ],
+    "SPECIES_MANTINE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_41",
+        "x": 25.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_WHIRL_ISLANDS",
+        "x": 29.7,
+        "y": 98.1
+      }
+    ],
+    "SPECIES_STEELIX": [
+      {
+        "mapsec": "MAPSEC_CLIFF_CAVE",
+        "x": 16.0,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_FURRET": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_FLAAFFY": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_VENOMOTH": [
+      {
+        "mapsec": "MAPSEC_ROUTE_43",
+        "x": 70.9,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_WEEPINBELL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_44",
+        "x": 77.7,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_JYNX": [
+      {
+        "mapsec": "MAPSEC_ICE_PATH",
+        "x": 80.0,
+        "y": 12.8
+      }
+    ],
+    "SPECIES_DONPHAN": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_URSARING": [
+      {
+        "mapsec": "MAPSEC_DARK_CAVE",
+        "x": 75.4,
+        "y": 42.7
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_45",
+        "x": 84.6,
+        "y": 42.7
+      }
+    ],
+    "SPECIES_RAPIDASH": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_26",
+        "x": 112.0,
+        "y": 72.5
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_VENUSAUR": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_CHARIZARD": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_FORRETRESS": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_AMBIPOM": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_ROUTE_28",
+        "x": 102.9,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_HOUNDOOM": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_BLASTOISE": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_NONE": [
+      {
+        "mapsec": "MAPSEC_BLACKTHORN_CITY",
+        "x": 84.6,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_CHERRYGROVE_CITY",
+        "x": 66.3,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_CIANWOOD_CITY",
+        "x": 20.6,
+        "y": 98.1
+      },
+      {
+        "mapsec": "MAPSEC_ECRUTEAK_CITY",
+        "x": 48.0,
+        "y": 21.3
+      },
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_NEW_BARK_TOWN",
+        "x": 89.1,
+        "y": 89.6
+      },
+      {
+        "mapsec": "MAPSEC_OLIVINE_CITY",
+        "x": 29.7,
+        "y": 38.4
+      },
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      },
+      {
+        "mapsec": "MAPSEC_VIOLET_CITY",
+        "x": 57.1,
+        "y": 38.4
+      }
+    ],
+    "SPECIES_MISMAGIUS": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_CHIKORITA": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_CYNDAQUIL": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_TOTODILE": [
+      {
+        "mapsec": "MAPSEC_ROUTE_27",
+        "x": 100.6,
+        "y": 89.6
+      }
+    ],
+    "SPECIES_RHYDON": [
+      {
+        "mapsec": "MAPSEC_VICTORY_ROAD",
+        "x": 112.0,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MR_MIME": [
+      {
+        "mapsec": "MAPSEC_SAFARI_ZONE_GATE",
+        "x": 11.4,
+        "y": 81.1
+      }
+    ],
+    "SPECIES_WEAVILE": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ],
+    "SPECIES_MAMOSWINE": [
+      {
+        "mapsec": "MAPSEC_MT_SILVER",
+        "x": 93.7,
+        "y": 46.9
+      }
+    ]
+  }
+}
