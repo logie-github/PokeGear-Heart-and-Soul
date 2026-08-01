@@ -29,16 +29,19 @@
         android:layout_weight="1"
         android:layout_marginTop="10dp">
 
-        <!-- ===================== INFO: sprite | id/vitals, description below ===================== -->
-        <LinearLayout
+        <!-- ===================== INFO: sprite | id/vitals, description below =====================
+             infoTabContent is a FrameLayout (not a weighted vertical stack) so the description
+             card is pinned to a fixed position near the bottom of the screen, independent of
+             however tall the top row ends up being - changes above no longer shift it. -->
+        <FrameLayout
             android:id="@+id/infoTabContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top"
                 android:orientation="horizontal">
 
                 <!-- sprite region: ~29% of the row, sprite centered in it -->
@@ -200,14 +203,13 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
+            <!-- description card: absolute-positioned near the bottom, fixed distance from the
+                 bottom edge regardless of the top row's height -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="16dp"
                 android:orientation="vertical"
                 android:background="@drawable/pokedex_card_bg"
                 android:padding="10dp">
@@ -223,7 +225,7 @@
                     android:textColor="@color/pokedexInk"
                     android:textSize="28sp" />
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
 
         <!-- ===================== STATS ===================== -->
         <LinearLayout
