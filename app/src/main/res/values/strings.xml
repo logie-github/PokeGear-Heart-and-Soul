@@ -27,7 +27,6 @@
     <string name="pokedex_weight_value_format">%1$.1f kg</string>
     <string name="pokedex_ht_label">HT</string>
     <string name="pokedex_wt_label">WT</string>
-    <string name="pokedex_dotted_divider">. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</string>
     <string name="pokedex_abilities_label">Abilities</string>
     <string name="pokedex_base_stats_label">Base Stats</string>
     <string name="pokedex_temp_button">Pokedex (temp)</string>
