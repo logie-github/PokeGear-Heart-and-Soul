@@ -319,7 +319,7 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
         if (indicators.isEmpty()) {
             messageView.text = getString(R.string.pokedex_area_no_wild, entry.displayName)
-            addAreaOverlaySprite(layer, map, "pokedex_chrome/area/area_unknown.png", widthNative = 32, heightNative = 96)
+            addAreaOverlaySprite(layer, map, "pokedex_chrome/area/area_unknown.png", widthNative = 96, heightNative = 32)
             return
         }
 
