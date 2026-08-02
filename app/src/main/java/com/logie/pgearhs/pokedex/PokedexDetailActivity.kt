@@ -330,9 +330,9 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
 
         map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if (map.width <= 0) return
+                if (map.width <= 0 || map.height <= 0) return
                 map.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val scale = map.width.toFloat() / AREA_MAP_NATIVE_SIZE
+                val (scale, offsetX, offsetY) = centerCropTransform(map)
                 val markerSize = (AREA_MARKER_NATIVE_SIZE * scale).toInt()
                 // glows first so marker dots always draw on top of them
                 indicators.sortedBy { it.type != "glow" }.forEach { indicator ->
@@ -343,8 +343,8 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
                                 (indicator.rectW * scale).toInt().coerceAtLeast(1),
                                 (indicator.rectH * scale).toInt().coerceAtLeast(1)
                             ).apply {
-                                leftMargin = (indicator.rectX * scale).toInt()
-                                topMargin = (indicator.rectY * scale).toInt()
+                                leftMargin = (offsetX + indicator.rectX * scale).toInt()
+                                topMargin = (offsetY + indicator.rectY * scale).toInt()
                             }
                         }
                     } else {
@@ -354,8 +354,8 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
                             )
                             (drawable as? BitmapDrawable)?.isFilterBitmap = false
                             layoutParams = FrameLayout.LayoutParams(markerSize, markerSize).apply {
-                                leftMargin = (indicator.x * scale - markerSize / 2f).toInt()
-                                topMargin = (indicator.y * scale - markerSize / 2f).toInt()
+                                leftMargin = (offsetX + indicator.x * scale - markerSize / 2f).toInt()
+                                topMargin = (offsetY + indicator.y * scale - markerSize / 2f).toInt()
                             }
                         }
                     }
@@ -365,14 +365,29 @@ class PokedexDetailActivity : BaseImmersiveActivity() {
         })
     }
 
-    // Overlays a real sprite (native GBA pixel size) centered on the area map, scaled by the
-    // map's own current display scale so it stays crisp and proportional at any screen size.
+    // areaMap uses scaleType="centerCrop" so it fully covers a non-square tab area with no white
+    // space - which means a single width-based scale factor isn't enough to place overlays
+    // correctly anymore. This mirrors ImageView's own centerCrop math: uniform scale is the
+    // LARGER of the two axis ratios, and whichever axis has leftover size gets a (possibly
+    // negative) centering offset applied, cropping that axis instead of letterboxing it.
+    private fun centerCropTransform(map: ImageView): Triple<Float, Float, Float> {
+        val scale = maxOf(
+            map.width.toFloat() / AREA_MAP_NATIVE_SIZE,
+            map.height.toFloat() / AREA_MAP_NATIVE_SIZE
+        )
+        val offsetX = (map.width - AREA_MAP_NATIVE_SIZE * scale) / 2f
+        val offsetY = (map.height - AREA_MAP_NATIVE_SIZE * scale) / 2f
+        return Triple(scale, offsetX, offsetY)
+    }
+
+    // Overlays a real sprite (native GBA pixel size) centered on the area map, scaled/offset by
+    // the map's own current centerCrop transform so it stays crisp and correctly placed.
     private fun addAreaOverlaySprite(layer: FrameLayout, map: ImageView, assetPath: String, widthNative: Int, heightNative: Int) {
         map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if (map.width <= 0) return
+                if (map.width <= 0 || map.height <= 0) return
                 map.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val scale = map.width.toFloat() / AREA_MAP_NATIVE_SIZE
+                val (scale, _, _) = centerCropTransform(map)
                 val sprite = ImageView(this@PokedexDetailActivity).apply {
                     setImageBitmap(assets.open(assetPath).use { BitmapFactory.decodeStream(it) })
                     (drawable as? BitmapDrawable)?.isFilterBitmap = false

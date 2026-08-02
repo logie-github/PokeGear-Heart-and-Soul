@@ -350,22 +350,19 @@
         </LinearLayout>
 
         <!-- ===================== AREA ===================== -->
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/areaTabContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
             android:visibility="gone">
 
-            <!-- real johto_region_map.png (256px native) with a FrameLayout overlay for real
-                 per-species marker dots, positioned in code (see populateArea()/
-                 AreaMarkerRepository). Sized to fill most of the available tab space instead of
-                 floating small in a sea of unused background. -->
+            <!-- real johto_region_map.png (256px native), filling the whole tab - no floating
+                 card with white space around it. centerCrop so a non-square tab area still gets
+                 fully covered with no white bars. -->
             <FrameLayout
                 android:id="@+id/areaMapCard"
-                android:layout_width="340dp"
-                android:layout_height="340dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/pokedex_card_bg"
                 android:padding="6dp">
 
@@ -373,23 +370,28 @@
                     android:id="@+id/areaMap"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     android:contentDescription="@null" />
 
                 <FrameLayout
                     android:id="@+id/areaMarkerLayer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-            </FrameLayout>
 
-            <TextView
-                android:id="@+id/areaMessage"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:textColor="@color/pokedexInk"
-                android:textSize="13sp" />
-        </LinearLayout>
+                <!-- real per-species "found in" route list, overlaid directly on the map
+                     instead of as separate text below it -->
+                <TextView
+                    android:id="@+id/areaMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="10dp"
+                    android:background="#CCFFFFFF"
+                    android:padding="8dp"
+                    android:textColor="@color/pokedexInk"
+                    android:textSize="13sp" />
+            </FrameLayout>
+        </FrameLayout>
 
         <!-- ===================== EVO ===================== -->
         <LinearLayout
